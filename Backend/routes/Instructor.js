@@ -453,9 +453,8 @@ router.post("/update-profile", async (req, res) => {
 });
 
 router.post("/update-course", async (req, res) => {
-  console.log(req.body);
   const { authorization } = req.headers;
-  console.log(req.headers);
+
   const token = authorization.split(" ")[1];
 
   const secretKey = process.env.JWT;
@@ -515,5 +514,40 @@ router.post("/update-course", async (req, res) => {
     }
   });
 });
+
+router.get("/fetch-course", (req, res) => {
+  const { authorization } = req.headers;
+  
+  const token = authorization.split(" ")[1];
+
+  const secretKey = process.env.JWT;
+  jwt.verify(token, secretKey,async (err, decoded) => {
+    if (err) {
+      const emailError = {
+        status: false,
+        errors: [
+          {
+            param: "access denied",
+            message: "Unautharized Access",
+            code: "No access",
+          },
+        ],
+      };
+      res.status(409).send({ data: emailError });
+    } else {
+      const AllCourse = await Course.find({ instructor: decoded._id })
+      const success = {
+        status: true,
+        content: {
+          data: AllCourse,
+        },
+      };
+      res.status(200).send({ data: success });
+      
+    }
+});
+})
+
+
 
 module.exports = router;

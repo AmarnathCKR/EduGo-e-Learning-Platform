@@ -14,6 +14,7 @@ import {
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GoogleInstructorAuth from "../../../googleLogin";
+import { CircleSpinner } from "react-spinners-kit";
 
 function InstructorLoginModal(props) {
   const [input, setInput] = useState({
@@ -75,7 +76,14 @@ function InstructorLoginModal(props) {
   return (
     <>
       <ToastContainer />
-      <div className="z-50 modal-local">
+      {loading ? (
+       <div className="z-40  p-64 loader-local "> <CircleSpinner size={50} color="#000" /></div>
+      ) : (
+        <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
+          Login with Google 🚀
+        </button>
+      )}
+      <div className="z-30 modal-local">
         <div className="modal-local-content">
           <div className="modal-local-header">
             <h4 className="modal-local-title text-center font-bold text-xl">
@@ -129,7 +137,7 @@ function InstructorLoginModal(props) {
             <h1 className="text-center font-semibold text-lg">OR</h1>
 
             <GoogleOAuthProvider clientId="635264642318-284aift53keao63nan68r055p302hmjv.apps.googleusercontent.com">
-              <GoogleInstructorAuth close={props.close} />
+              <GoogleInstructorAuth close={props.close} loading={loading} setLoading={setLoading} />
             </GoogleOAuthProvider>
           </div>
           <div className="modal-local-footer">

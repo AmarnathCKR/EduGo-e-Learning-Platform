@@ -87,7 +87,7 @@ function ModalRegister(props) {
   return (
     <>
     <ToastContainer />
-    <div className="z-40 modal-local">
+    <div className="z-30 modal-local">
       <div className="modal-local-content">
         <div className="modal-local-header">
           <h4 className="modal-local-title text-center font-bold text-xl">

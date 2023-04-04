@@ -15,7 +15,7 @@ import {
 function GoogleInstructorAuth(props) {
   const dispatch = useDispatch();
   const [error, setError] = useState("");
-  const [loading, setLoading] = useState(false);
+  
 
   const showToast = (data) => {
     toast.success("welcome back " + data);
@@ -23,7 +23,7 @@ function GoogleInstructorAuth(props) {
 
   const login = useGoogleLogin({
     onSuccess: (codeResponse) => {
-      setLoading(true);
+      props.setLoading(true);
       axios
         .get(
           `https://www.googleapis.com/oauth2/v1/userinfo?access_token=${codeResponse.access_token}`,
@@ -55,20 +55,21 @@ function GoogleInstructorAuth(props) {
                 "teacherData",
                 JSON.stringify(res.data.data.content.data)
               );
-
-              setLoading(false);
+              props.setLoading(false);
+           
               props.close();
+              
               showToast(res.data.data.content.data.name);
             })
             .catch((err) => setError(err.response.data.data.errors[0].message));
-          setLoading(false);
+          props.setLoading(false);
         })
         .catch((err) => setError(err));
-      setLoading(false);
+      props.setLoading(false);
     },
     onError: (error) => {
       setError("Login Failed:" + error);
-      setLoading(false);
+      props.setLoading(false);
     },
   });
 
@@ -77,8 +78,8 @@ function GoogleInstructorAuth(props) {
       <ToastContainer />
       <h1 className="text-warning text-lg text-center">{error}</h1>
 
-      {loading ? (
-        <CircleSpinner size={40} color="#000" loading={loading} />
+      {props.loading ? (
+       <div className="z-40  p-64 loader-local "> <CircleSpinner size={50} color="#000" loading={props.loading} /></div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
           Login with Google 🚀

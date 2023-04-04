@@ -94,7 +94,7 @@ function HomeInstructor() {
         <div className="grid grid-cols-3 gap-3 text-center mt-5">
           <div className="col-span-3 flex items-center flex-col mx-auto md:col-span-1 align-middle justify-center">
             <img width="40%" height="40%" src={teachIcon} alt="img" />
-            <h1 className="text-xl font-bold font-serif">Teach your way</h1>
+            <h1 className="text-xl text-black font-bold font-serif">Teach your way</h1>
             <p>
               Publish the course you want, in the way you want, and always have
               control of your own content.
@@ -102,16 +102,16 @@ function HomeInstructor() {
           </div>
           <div className="col-span-3 flex items-center flex-col mx-auto md:col-span-1 align-middle justify-center">
             <img width="40%" height="40%" src={inspireIcon} alt="img" />
-            <h1 className="text-xl font-bold font-serif">Inspire learners</h1>
-            <p>
+            <h1 className="text-xl text-black font-bold font-serif">Inspire learners</h1>
+            <p className="text-black">
               Publish the course you want, in the way you want, and always have
               control of your own content.
             </p>
           </div>
           <div className="col-span-3 flex items-center flex-col mx-auto md:col-span-1 align-middle justify-center">
             <img width="40%" height="40%" src={rewardIcon} alt="img" />
-            <h1 className="text-xl font-bold font-serif">Get rewarded</h1>
-            <p>
+            <h1 className="text-xl text-black font-bold font-serif">Get rewarded</h1>
+            <p className="text-black">
               Publish the course you want, in the way you want, and always have
               control of your own content.
             </p>
@@ -119,19 +119,19 @@ function HomeInstructor() {
         </div>
       </div>
 
-      <div className="mt-20 bg-primary p-10">
-        <div className="grid grid-cols-6 md:grid-cols-5 gap-4">
-          <div className="text-center p-3 col-span-2 md:col-span-1 text-white">
-            <h1 className="font-bold text-5xl">57M</h1>
-            <p className="font-medium">Students</p>
+      <div className="mt-20 bg-primary p-10 text-black">
+        <div className="grid grid-cols-6 text-black md:grid-cols-5 gap-4">
+          <div className="text-center p-3 text-black col-span-2 md:col-span-1 text-white">
+            <h1 className="font-bold text-black text-5xl">57M</h1>
+            <p className="font-medium text-black">Students</p>
           </div>
-          <div className="text-center p-3 col-span-2 md:col-span-1 text-white">
-            <h1 className="font-bold text-5xl">75+</h1>
-            <p className="font-medium">Languages</p>
+          <div className="text-center text-black p-3 col-span-2 md:col-span-1 text-white">
+            <h1 className="font-bold text-black text-5xl">75+</h1>
+            <p className="font-medium text-black">Languages</p>
           </div>
-          <div className="text-center p-3 col-span-2 md:col-span-1 text-white">
-            <h1 className="font-bold text-5xl">773M</h1>
-            <p className="font-medium">Enrollments</p>
+          <div className="text-center text-black p-3 col-span-2 md:col-span-1 text-white">
+            <h1 className="font-bold text-black text-5xl">773M</h1>
+            <p className="font-medium text-black">Enrollments</p>
           </div>
           <div className="text-center p-3 text-white col-span-3 md:col-span-1">
             <h1 className="font-bold text-5xl">180+</h1>

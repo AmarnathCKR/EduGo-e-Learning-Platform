@@ -315,7 +315,7 @@ function CourseForm(props) {
       </div>
       <div className="flex justify-center border items-center shadow my-3">
         {loading ? (
-          <CircleSpinner size={40} color="#000 " loading={loading} />
+          <div className="z-40  p-64 loader-local bg-secondary"><CircleSpinner size={40} color="#000 " loading={loading} /></div>
         ) : (
           <button onClick={submitData} className="p-2 px-16  bg-black text-white">
             Create Course

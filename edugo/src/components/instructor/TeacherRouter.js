@@ -1,26 +1,33 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import CoursePage from "./pages/CoursePage";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useEffect, useState } from "react";
-import { subscribeCourse, subscribeTeacher, subscribeToken } from "../../store/store";
+import {
+  subscribeCourse,
+  subscribeTeacher,
+  subscribeToken,
+} from "../../store/store";
 import InstructorProfile from "./pages/InstructorProfile";
 import InstructorProfileView from "./pages/InstructorProfileView";
 import NewCourse from "./pages/NewCourse";
+import axios from "axios";
 
 function TeacherRouter() {
   const [token, setToken] = useState(null);
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+  const course = useSelector((state) => state.course);
 
   useEffect(() => {
     const localToken = localStorage.getItem("teacherToken");
-    const localCourse = JSON.parse(localStorage.getItem("courses"));
+
     const localTeacher = JSON.parse(localStorage.getItem("teacherData"));
 
     if (localToken) {
       dispatch(subscribeTeacher(localTeacher));
       dispatch(subscribeToken(localToken));
-      dispatch(subscribeCourse(localCourse))
+
       setToken(true);
     } else {
       setToken(false);
@@ -50,9 +57,7 @@ function TeacherRouter() {
       />
       <Route
         path="/new-course"
-        element={
-          token ? <NewCourse /> : <Navigate to="/instructor" />
-        }
+        element={token ? <NewCourse /> : <Navigate to="/instructor" />}
       />
     </Routes>
   );

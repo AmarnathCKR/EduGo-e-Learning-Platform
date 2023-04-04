@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from "react";
-// import { AiOutlineMenu } from "react-icons/ai";
-// import { Link } from "react-router-dom";
-import { googleLogout } from "@react-oauth/google";
-import logo from "../../../Assets/logo.png";
-import { Icon } from "@iconify/react";
 import { unsuscribeTeacher, unsuscribeToken } from "../../../store/store";
+import { googleLogout } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { Icon } from "@iconify/react";
+import logo from "../../../Assets/logo.png"
 
-function Header(props) {
+function HeaderLanding(props) {
   const [menuToggler, setToggle] = useState(false);
   const [menuResponsive, setMenu] = useState(false);
   const [isOpen, setIsOpen] = useState({});
@@ -18,15 +16,13 @@ function Header(props) {
     setMenu(!menuResponsive);
   };
   const handleLogout = () => {
-    
-      localStorage.removeItem("teacherToken");
-      dispatch(unsuscribeToken());
-      localStorage.removeItem("teacherData");
-      dispatch(unsuscribeTeacher());
-      navigate("/instructor");
-      googleLogout()
-      toggleDropdown()
-  
+    localStorage.removeItem("teacherToken");
+    dispatch(unsuscribeToken());
+    localStorage.removeItem("teacherData");
+    dispatch(unsuscribeTeacher());
+    navigate("/instructor");
+    googleLogout();
+    toggleDropdown();
   };
   const handleLogout2 = () => {
     localStorage.removeItem("teacherToken");
@@ -34,8 +30,8 @@ function Header(props) {
     localStorage.removeItem("teacherData");
     dispatch(unsuscribeTeacher());
     navigate("/instructor");
-    googleLogout()
-    toggleDropdown()
+    googleLogout();
+    toggleDropdown();
   };
 
   useEffect(() => {
@@ -55,16 +51,15 @@ function Header(props) {
       book: dropdown === "book" ? !isOpen.book : false,
     });
   };
- 
-  const handleLink = ()=>{
-    navigate("/instructor")
-  }
 
+  const handleLink = () => {
+    navigate("/instructor");
+  };
   return (
     <>
       <div className="z-20  grid grid-cols-6  border w-full mx-auto fixed shadow bg-[#fff]">
         <div className="flex w-[130px] h-[76px]  p-2 align-middle">
-          <img src={logo} alt="logo" onClick={handleLink}/>
+          <img src={logo} alt="logo" onClick={handleLink} />
           {menuToggler ? (
             <span className="my-1 mt-5 ml-4 mr-1 font-medium">Explore</span>
           ) : (
@@ -128,19 +123,22 @@ function Header(props) {
                         {isOpen.book && (
                           <div className="absolute z-50 right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl">
                             <Link to="/instructor/view-profile">
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Profile
-                            </span>
+                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                                Profile
+                              </span>
                             </Link>
                             <Link to="/instructor/course-page">
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Manage Course 
-                            </span>
+                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                                Manage Course
+                              </span>
                             </Link>
                             <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                               Payments
                             </span>
-                            <span onClick={handleLogout} className="block px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">
+                            <span
+                              onClick={handleLogout}
+                              className="block px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer"
+                            >
                               Logout
                             </span>
                           </div>
@@ -259,4 +257,4 @@ function Header(props) {
   );
 }
 
-export default Header;
+export default HeaderLanding;
