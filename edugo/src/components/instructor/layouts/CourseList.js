@@ -8,7 +8,7 @@ function CourseList(props) {
   const list = props.course.map((data) => {
     return (
      
-        <div className=" flex-col justify-center items-center mx-10 cursor-pointer p-5 rounded bg-neutral-100">
+        <div className="md:col-span-1 col-span-4 flex-col justify-center items-center md:m-10 mx-auto my-8 cursor-pointer p-5 rounded bg-neutral-100">
         <img style={imageContainer} src={data.image} alt="course" />
         <h1 className="text-center text-3xl">{data.name}</h1>
         <h1 className="text-center text-lg">Price : {data.price}</h1>
@@ -18,7 +18,7 @@ function CourseList(props) {
     );
   });
 
-  return <div className="w-full flex items-center ">
+  return <div className="w-full grid grid-cols-4  ">
     {list}
   </div>;
 }

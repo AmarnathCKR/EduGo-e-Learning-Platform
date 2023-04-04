@@ -11,10 +11,12 @@ import {
   unsuscribeTeacher,
   subscribeCourse,
 } from "./store/store";
+import { CircleSpinner } from "react-spinners-kit";
 
 function Google(props) {
   const dispatch = useDispatch();
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const showToast = () => {
     toast.success("Registration Sussesfull");
@@ -33,6 +35,7 @@ function Google(props) {
           }
         )
         .then((res) => {
+          setLoading(true)
           let data = {
             name: res.data.name,
             email: res.data.email,
@@ -42,6 +45,7 @@ function Google(props) {
           axios
             .post(`http://localhost:5000/instructor/signup`, data)
             .then((res) => {
+              setLoading(false)
               
               dispatch(subscribeToken(res.data.data.content.meta.access_token));
               localStorage.setItem(
@@ -57,10 +61,13 @@ function Google(props) {
               props.close();
               showToast();
             })
+            setLoading(false)
             .catch((err) => setError(err.response.data.data.errors[0].message));
         })
+        setLoading(false)
         .catch((err) => setError(err));
     },
+    
     onError: (error) => setError("Login Failed:" + error),
   });
 
@@ -73,9 +80,14 @@ function Google(props) {
     <div>
       <ToastContainer />
       <h1 className="text-warning text-lg text-center">{error}</h1>
-      <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
+      
+      {loading ? (
+        <CircleSpinner size={40} color="#000" loading={loading} />
+      ) : (
+        <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
         Sign up with Google 🚀
       </button>
+      )}
     </div>
   );
 }

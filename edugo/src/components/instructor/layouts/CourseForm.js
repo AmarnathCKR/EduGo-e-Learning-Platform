@@ -2,9 +2,14 @@ import React, { useState } from "react";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { subscribeCourse, subscribeTeacher, unsuscribeTeacher } from "../../../store/store";
+import {
+  subscribeCourse,
+  subscribeTeacher,
+  unsuscribeTeacher,
+} from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { CircleSpinner } from "react-spinners-kit";
 
 function CourseForm(props) {
   const [error, setError] = useState("");
@@ -12,13 +17,14 @@ function CourseForm(props) {
     name: "",
     headline: "",
     description: "",
-    experience : "Beginner",
+    experience: "Beginner",
     field: "",
     price: "",
     total: "",
     image: "",
     imageRaw: null,
   });
+  const [loading, setLoading] = useState(false);
 
   const [topics, setTopics] = useState([
     { name: "", description: "", time: "" },
@@ -46,53 +52,54 @@ function CourseForm(props) {
       !course.total ||
       !course.field ||
       !course.experience ||
-      !course.image || 
+      !course.image ||
       !course.imageRaw
     ) {
       setError("Please fill all the fields required");
     } else {
-      
-        const file = course.imageRaw;
+      setLoading(true)
+      const file = course.imageRaw;
 
-        const formData = new FormData();
-        formData.append("file", file);
-        formData.append("upload_preset", "n0d0jino");
+      const formData = new FormData();
+      formData.append("file", file);
+      formData.append("upload_preset", "n0d0jino");
 
-        try {
-          if (formData) {
-            const response = await axios.post(
-              "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
-              formData
-            );
+      try {
+        if (formData) {
+          const response = await axios.post(
+            "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
+            formData
+          );
 
-            const imageUrl = response.data.secure_url;
+          const imageUrl = response.data.secure_url;
 
-            const data = { ...course, image: imageUrl, topics : topics};
+          const data = { ...course, image: imageUrl, topics: topics };
 
-            const url = "http://localhost:5000/instructor/update-course";
-            axios
-              .post(url, data, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${props.token}`,
-                },
-              })
-              .then((res) => {
-                
-               dispatch(subscribeCourse(res.data.data.content.data))
-                navigate("/instructor/course-page");
-                showToastSuccess();
-
-              })
-              .catch((err) => {
-                setError(err.response.data.data.errors[0].message);
-              });
-          }
-        } catch (error) {
-          console.error(error);
+          const url = "http://localhost:5000/instructor/update-course";
+          axios
+            .post(url, data, {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${props.token}`,
+              },
+            })
+            .then((res) => {
+              setLoading(false)
+              dispatch(subscribeCourse(res.data.data.content.data));
+              localStorage.setItem("courses",JSON.stringify(res.data.data.content.data))
+              navigate("/instructor/course-page");
+              showToastSuccess();
+            })
+            .catch((err) => {
+              setLoading(false)
+              setError(err.response.data.data.errors[0].message);
+            });
         }
+      } catch (error) {
+        setLoading(false)
+        console.error(error);
       }
-    
+    }
   };
 
   const handleTopicNameChange = (index, event) => {
@@ -303,15 +310,17 @@ function CourseForm(props) {
             type="file"
             required
             onChange={fileBrowseHandler}
-            
           />
-
         </div>
       </div>
-      <div className="grid grid-cols-1 justify-center border shadow my-3">
-        <button onClick={submitData} className="p-2   bg-black text-white">
-          Create Course
-        </button>
+      <div className="flex justify-center border items-center shadow my-3">
+        {loading ? (
+          <CircleSpinner size={40} color="#000 " loading={loading} />
+        ) : (
+          <button onClick={submitData} className="p-2 px-16  bg-black text-white">
+            Create Course
+          </button>
+        )}
       </div>
     </>
   );

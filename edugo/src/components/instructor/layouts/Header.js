@@ -25,6 +25,7 @@ function Header(props) {
       dispatch(unsuscribeTeacher());
       navigate("/instructor");
       googleLogout()
+      toggleDropdown()
   
   };
   const handleLogout2 = () => {
@@ -34,6 +35,7 @@ function Header(props) {
     dispatch(unsuscribeTeacher());
     navigate("/instructor");
     googleLogout()
+    toggleDropdown()
   };
 
   useEffect(() => {

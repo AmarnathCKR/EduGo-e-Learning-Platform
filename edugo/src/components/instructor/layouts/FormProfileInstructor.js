@@ -5,6 +5,7 @@ import { useDispatch } from "react-redux";
 import { subscribeTeacher, unsuscribeTeacher } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
+import { CircleSpinner } from "react-spinners-kit";
 
 function FormProfileInstructor(props) {
   const [country, setCountry] = React.useState("");
@@ -23,6 +24,7 @@ function FormProfileInstructor(props) {
     image: props.instructor.image,
     imageRaw: null,
   });
+  const [loading, setLoading] = useState(false);
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -48,9 +50,11 @@ function FormProfileInstructor(props) {
       !profile.twitter ||
       !profile.image
     ) {
+      setLoading(false)
       setError("Please fill all the fields required");
     } else {
       if (!profile.imageRaw) {
+        setLoading(true)
         const imageUrl = profile.image;
 
         const data = { ...profile, image: imageUrl };
@@ -64,7 +68,7 @@ function FormProfileInstructor(props) {
             },
           })
           .then((res) => {
-            
+            setLoading(false)
 
             dispatch(unsuscribeTeacher());
             localStorage.setItem(
@@ -76,11 +80,12 @@ function FormProfileInstructor(props) {
             showToastSuccess();
           })
           .catch((err) => {
+            setLoading(false)
             setError(err.response.data.data.errors[0].message);
           });
       } else {
         const file = profile.imageRaw;
-
+        setLoading(true)
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "n0d0jino");
@@ -105,7 +110,7 @@ function FormProfileInstructor(props) {
                 },
               })
               .then((res) => {
-                
+                setLoading(false)
 
                 dispatch(unsuscribeTeacher());
                 localStorage.setItem(
@@ -117,6 +122,7 @@ function FormProfileInstructor(props) {
                 showToastSuccess();
               })
               .catch((err) => {
+                setLoading(false)
                 setError(err.response.data.data.errors[0].message);
               });
           }
@@ -264,10 +270,15 @@ function FormProfileInstructor(props) {
           />
         </div>
       </div>
-      <div className="grid grid-cols-1 justify-center border shadow my-3">
-        <button onClick={submitData} className="p-2 bg-black text-white">
+      <div className="flex justify-center items-middle border shadow my-3">
+        
+        {loading ? (
+        <CircleSpinner size={40} color="#000" loading={loading} />
+      ) : (
+        <button onClick={submitData} className="px-8 py-2 bg-black text-white">
           Update Profile
         </button>
+      )}
       </div>
     </>
   );

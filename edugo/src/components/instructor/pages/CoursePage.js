@@ -21,13 +21,13 @@ function CoursePage() {
     <>
       <Header Instructor={Instructor} token={token} />
       {!course[0] ? (
-        <h1 className="mt-20 my-4 pt-10 text-2xl  text-center">
+        <h1 className="mt-20 my-4 pt-10 text-2xl border-b text-center">
           You have not created any Courses
         </h1>
       ) : (
-        <div className="flex justify-between align-middle mt-24 my-4"><h1 className="  text-2xl ml-10 text-start">Your courses</h1><Link to="/instructor/new-course"> <button className="bg-black text-white p-2 border rounded mx-4">Create Course</button></Link></div>
+        <div className="flex justify-between align-middle mt-24 my-4 border-b"><h1 className="  text-2xl ml-10 text-start">Your courses</h1><Link to="/instructor/new-course"> <button className="bg-black text-white p-2 border rounded mx-4">Create Course</button></Link></div>
       )}
-      <div className=" py-5  flex justify-center border-b">
+      <div className=" pt-2  flex justify-center border-b">
         {!course[0] ? <CreateCourse /> : <CourseList course={course} />}
       </div>
       <div className="flex justify-center mt-10 text-center">

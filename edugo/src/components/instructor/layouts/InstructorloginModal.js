@@ -24,7 +24,7 @@ function InstructorLoginModal(props) {
   const [hide, setHide] = useState(false);
 
   const [error, setError] = useState("");
- 
+  const [loading, setLoading] = useState(false);
 
   const showToastSuccess = (data) => {
     toast.success("Welcome back " + data);
@@ -62,6 +62,7 @@ function InstructorLoginModal(props) {
             "teacherData",
             JSON.stringify(res.data.data.content.data)
           );
+          localStorage.setItem("courses",JSON.stringify(res.data.data.content.courses))
           props.close();
           dispatch(subscribeCourse(res.data.data.content.courses))
           setError("");

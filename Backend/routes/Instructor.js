@@ -276,13 +276,7 @@ router.post("/login", async (req, res) => {
         const success = {
           status: true,
           content: {
-            data: {
-              id: users._id,
-              name: users.name,
-              email: users.email,
-              image: users.image,
-              created_at: users.createdAt,
-            },
+            data: users,
 
             courses: courseData,
             meta: {
@@ -329,14 +323,7 @@ router.post("/login", async (req, res) => {
             const success = {
               status: true,
               content: {
-                data: {
-                  id: users._id,
-                  name: users.name,
-                  email: users.email,
-                  image: users.image,
-                  courses: courseData,
-                  created_at: users.createdAt,
-                },
+                data: users,
                 meta: {
                   access_token: token,
                 },

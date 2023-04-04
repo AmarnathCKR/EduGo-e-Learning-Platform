@@ -3,7 +3,7 @@ import { Navigate, Route, Routes } from "react-router-dom";
 import CoursePage from "./pages/CoursePage";
 import { useDispatch } from "react-redux";
 import { useEffect, useState } from "react";
-import { subscribeTeacher, subscribeToken } from "../../store/store";
+import { subscribeCourse, subscribeTeacher, subscribeToken } from "../../store/store";
 import InstructorProfile from "./pages/InstructorProfile";
 import InstructorProfileView from "./pages/InstructorProfileView";
 import NewCourse from "./pages/NewCourse";
@@ -14,12 +14,13 @@ function TeacherRouter() {
 
   useEffect(() => {
     const localToken = localStorage.getItem("teacherToken");
-
+    const localCourse = JSON.parse(localStorage.getItem("courses"));
     const localTeacher = JSON.parse(localStorage.getItem("teacherData"));
 
     if (localToken) {
       dispatch(subscribeTeacher(localTeacher));
       dispatch(subscribeToken(localToken));
+      dispatch(subscribeCourse(localCourse))
       setToken(true);
     } else {
       setToken(false);
