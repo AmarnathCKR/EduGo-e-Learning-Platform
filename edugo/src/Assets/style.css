@@ -1,54 +1,69 @@
-body{
-    
-    background: #fff;
+body {
+  background: #fff;
 }
 
-.hero-header{
-    min-height: max-content;
-    width: auto;
+.hero-header {
+  min-height: max-content;
+  width: auto;
 }
-
 
 .modal-local {
-    position : fixed;
-    left :0;
-    top : 0;
-    right : 0;
-    bottom : 0;
-    background-color: rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .loader-local {
-    position : fixed;
-    left :0;
-    top : 0;
-    right : 0;
-    bottom : 0;
-    background-color: white;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background-color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-local-content {
-    width: 500px;
-    width: 500px;
-    background-color: #fff;
+  width: 500px;
+  width: 500px;
+  background-color: #fff;
 }
 
-.modal-local-header, .modal-local-footer {
-    padding: 10px;
+.modal-local-header,
+.modal-local-footer {
+  padding: 10px;
 }
 
 .modal-local-title {
-    margin: 0;
+  margin: 0;
 }
 
-.modal-local-body{
-    padding : 10px;
-    border-top: 1px solid #eee;
-    border-bottom: 1px solid #eee;
+.modal-local-body {
+  padding: 10px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
 }
+
+.local-wrapper {
+  display: grid;
+  /* height: 100vh; */
+
+  place-items: center;
+}
+
+.scroll-x {
+    overflow-x: auto;
+    
+}
+
+.scroll-x::-webkit-scrollbar{
+    display: none;
+  }

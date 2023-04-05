@@ -61,11 +61,11 @@ function GoogleInstructorAuth(props) {
               
               showToast(res.data.data.content.data.name);
             })
-            .catch((err) => setError(err.response.data.data.errors[0].message));
-          props.setLoading(false);
+            .catch((err) => {setError(err.response.data.data.errors[0].message);props.setLoading(false);});
+          
         })
-        .catch((err) => setError(err));
-      props.setLoading(false);
+        .catch((err) => {setError(err);props.setLoading(false);});
+      
     },
     onError: (error) => {
       setError("Login Failed:" + error);

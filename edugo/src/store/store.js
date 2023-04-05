@@ -42,33 +42,48 @@ const courseSlice = createSlice({
     }
 })
 
-const adminSlice = createSlice({
-    name : "admin-token",
-    initialState : "",
+const AllCourseSlice = createSlice({
+    name : "AllCourse",
+    initialState : [],
     reducers : {
         
-        subscribeAdminToken : (state, actions) => {
+        subscribeAllCourse : (state, actions) => {
             return state = actions.payload
         },
-        unsuscribeAdminToken : (state, actions) => {
+        unsuscribeAllCourse : (state, actions) => {
             return state = ''
         },
     }
 })
 
-const allDataSlice = createSlice({
+const studentTokenSlice = createSlice({
     name : "allData",
     initialState : "",
     reducers : {
         
-        subscribeAllData : (state, actions) => {
+        subscribeStudentToken : (state, actions) => {
             return state = actions.payload
         },
-        unsuscribeAllData : (state, actions) => {
+        unsuscribeStudentToken : (state, actions) => {
             return state = ''
         },
     }
 })
+
+const studentDataSlice = createSlice({
+    name : "allData",
+    initialState : "",
+    reducers : {
+        
+        subscribeStudentData : (state, actions) => {
+            return state = actions.payload
+        },
+        unsuscribeStudentData : (state, actions) => {
+            return state = ''
+        },
+    }
+})
+
 
 
 
@@ -77,8 +92,9 @@ const store = configureStore({
         token : tokenSlice.reducer,
         InstructorProfile : InstructorProfileSlice.reducer,
         course : courseSlice.reducer,
-        adminToken : adminSlice.reducer,
-        allData : allDataSlice.reducer,
+        AllCourse : AllCourseSlice.reducer,
+        studentToken : studentTokenSlice.reducer,
+        studentData : studentDataSlice.reducer
     }
 
 })
@@ -90,6 +106,7 @@ export default store
 export const {subscribeToken, unsuscribeToken} = tokenSlice.actions
 export const {subscribeTeacher, unsuscribeTeacher} = InstructorProfileSlice.actions
 export const {subscribeCourse, unsuscribeCourse} = courseSlice.actions
-export const {subscribeAdminToken, unsuscribeAdminToken} =adminSlice.actions
-export const {subscribeAllData, unsuscribeAllData} = allDataSlice.actions
+export const {subscribeAllCourse, unsuscribeAllCourse} =AllCourseSlice.actions
+export const {subscribeStudentToken, unsuscribeStudentToken} = studentTokenSlice.actions
+export const {subscribeStudentData, unsuscribeStudentData} = studentDataSlice.actions
 

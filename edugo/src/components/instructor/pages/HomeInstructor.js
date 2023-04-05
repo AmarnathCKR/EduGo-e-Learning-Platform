@@ -119,19 +119,19 @@ function HomeInstructor() {
         </div>
       </div>
 
-      <div className="mt-20 bg-primary p-10 text-black">
-        <div className="grid grid-cols-6 text-black md:grid-cols-5 gap-4">
-          <div className="text-center p-3 text-black col-span-2 md:col-span-1 text-white">
-            <h1 className="font-bold text-black text-5xl">57M</h1>
-            <p className="font-medium text-black">Students</p>
+      <div className="mt-20 bg-primary p-10 ">
+        <div className="grid grid-cols-6  md:grid-cols-5 gap-4">
+          <div className="text-center p-3  col-span-2 md:col-span-1 text-white">
+            <h1 className="font-bold  text-5xl">57M</h1>
+            <p className="font-medium ">Students</p>
           </div>
-          <div className="text-center text-black p-3 col-span-2 md:col-span-1 text-white">
-            <h1 className="font-bold text-black text-5xl">75+</h1>
-            <p className="font-medium text-black">Languages</p>
+          <div className="text-center  p-3 col-span-2 md:col-span-1 text-white">
+            <h1 className="font-bold  text-5xl">75+</h1>
+            <p className="font-medium ">Languages</p>
           </div>
-          <div className="text-center text-black p-3 col-span-2 md:col-span-1 text-white">
-            <h1 className="font-bold text-black text-5xl">773M</h1>
-            <p className="font-medium text-black">Enrollments</p>
+          <div className="text-center  p-3 col-span-2 md:col-span-1 text-white">
+            <h1 className="font-bold  text-5xl">773M</h1>
+            <p className="font-medium ">Enrollments</p>
           </div>
           <div className="text-center p-3 text-white col-span-3 md:col-span-1">
             <h1 className="font-bold text-5xl">180+</h1>

@@ -1,14 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { unsuscribeTeacher, unsuscribeToken } from "../../../store/store";
+import {
+  unsuscribeStudentData,
+  unsuscribeStudentToken,
+} from "../../../store/store";
 import { googleLogout } from "@react-oauth/google";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
-import logo from "../../../Assets/logo.png"
+import logo from "../../../Assets/logo.png";
+import axios from "axios";
+import { debounce } from "lodash";
 
 function HeaderLanding(props) {
   const [menuToggler, setToggle] = useState(false);
   const [menuResponsive, setMenu] = useState(false);
+
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+  const [searchKeyword, setSearchKeyword] = useState("");
+
   const [isOpen, setIsOpen] = useState({});
   const navigate = useNavigate();
   const dispatch = useDispatch();
@@ -16,20 +25,20 @@ function HeaderLanding(props) {
     setMenu(!menuResponsive);
   };
   const handleLogout = () => {
-    localStorage.removeItem("teacherToken");
-    dispatch(unsuscribeToken());
-    localStorage.removeItem("teacherData");
-    dispatch(unsuscribeTeacher());
-    navigate("/instructor");
+    localStorage.removeItem("StudentToken");
+    dispatch(unsuscribeStudentToken());
+    localStorage.removeItem("StudentData");
+    dispatch(unsuscribeStudentData());
+    navigate("/");
     googleLogout();
     toggleDropdown();
   };
   const handleLogout2 = () => {
-    localStorage.removeItem("teacherToken");
-    dispatch(unsuscribeToken());
-    localStorage.removeItem("teacherData");
-    dispatch(unsuscribeTeacher());
-    navigate("/instructor");
+    localStorage.removeItem("StudentToken");
+    dispatch(unsuscribeStudentToken());
+    localStorage.removeItem("StudentData");
+    dispatch(unsuscribeStudentData());
+    navigate("/");
     googleLogout();
     toggleDropdown();
   };
@@ -53,15 +62,40 @@ function HeaderLanding(props) {
   };
 
   const handleLink = () => {
-    navigate("/instructor");
+    navigate("/");
   };
+
+  // Searching
+
+  const handleSearch = debounce((value) => {
+    setSearchKeyword(value);
+    axios
+      .get(`http://localhost:5000/search?search=${value}`)
+      .then((res) => {
+        setSearchSuggestions(res.data.data.content.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data.data.errors[0].message);
+      });
+  }, 200);
+
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    handleSearch(value);
+  };
+
+  const handleSelectSuggestion = (suggestion) => {
+    setSearchKeyword(suggestion);
+    setSearchSuggestions([]);
+  };
+
   return (
     <>
       <div className="z-20  grid grid-cols-6  border w-full mx-auto fixed shadow bg-[#fff]">
         <div className="flex w-[130px] h-[76px]  p-2 align-middle">
           <img src={logo} alt="logo" onClick={handleLink} />
           {menuToggler ? (
-            <span className="my-1 mt-5 ml-4 mr-1 font-medium">Explore</span>
+            <span className="my-1 mt-5 ml-4 mr-1 font-medium">Browse</span>
           ) : (
             ""
           )}
@@ -75,10 +109,27 @@ function HeaderLanding(props) {
                 </div>
                 <div className="grow">
                   <input
+                    value={searchKeyword}
+                    onChange={handleInputChange}
                     className="w-full border-none bg-white rounded py-1 text-gray-700bg-white focus:outline-none items-center"
                     type="text"
                     placeholder="Search anything"
                   />
+                  {searchSuggestions.length > 0 && (
+                    <ul className="bg-white w-1/2 p-2 border shadow absolute">
+                      {searchSuggestions.map((suggestion) => (
+                        <li
+                          className="bg-white hover:bg-neutral-50 cursor-pointer"
+                          key={suggestion.id}
+                          onClick={() =>
+                            handleSelectSuggestion(suggestion.name)
+                          }
+                        >
+                          {suggestion.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <div />
               </div>
@@ -88,11 +139,11 @@ function HeaderLanding(props) {
                 <>
                   <div className="mx-2 bg-white flex   rounded text-md ml-3 p-2 text-neutral-900 ">
                     <div className="grid grid-cols-4 items-center justify-center">
-                      {props.Instructor.image ? (
+                      {props.student.image ? (
                         <img
                           width="70%"
                           height="70%"
-                          src={props.Instructor.image}
+                          src={props.student.image}
                           alt="profile"
                         />
                       ) : (
@@ -110,7 +161,7 @@ function HeaderLanding(props) {
                           className="  font-semibold py-3 px-4  inline-flex items-center"
                         >
                           <span className="block mt-4 lg:inline-block lg:mt-0 text-xs hover:text-gray-400 mr-4">
-                            {props.Instructor.name}
+                            {props.student.name}
                           </span>
                           <svg
                             className="fill-current h-4 w-4"
@@ -122,18 +173,18 @@ function HeaderLanding(props) {
                         </button>
                         {isOpen.book && (
                           <div className="absolute z-50 right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl">
-                            <Link to="/instructor/view-profile">
+                            <Link to="/view-profile">
                               <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                                 Profile
                               </span>
                             </Link>
-                            <Link to="/instructor/course-page">
-                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                                Manage Course
-                              </span>
-                            </Link>
+
                             <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Payments
+                              Purchased Courses
+                            </span>
+
+                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                              Browse Courses
                             </span>
                             <span
                               onClick={handleLogout}
@@ -192,13 +243,18 @@ function HeaderLanding(props) {
         <>
           <div className="z-20 grid grid-row-5 border p-2 w-full mx-auto fixed shadow mt-20 bg-neutral-200">
             <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
-              Explore
+              Browse courses
             </div>
 
             {props.token ? (
               <>
+                <Link to="/view-profile">
+                  <div className="row-span-12 text-center border p-2 hover:bg-accent-focus flex justify-center">
+                    Profile
+                  </div>
+                </Link>
                 <div className="row-span-12 text-center border p-2 hover:bg-accent-focus flex justify-center">
-                  Profile
+                  Purchased Courses
                 </div>
               </>
             ) : (

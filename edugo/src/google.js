@@ -61,14 +61,14 @@ function Google(props) {
               props.close();
               showToast();
             })
-            setLoading(false)
-            .catch((err) => setError(err.response.data.data.errors[0].message));
+            
+            .catch((err) => {setError(err.response.data.data.errors[0].message);setLoading(false) });
         })
-        setLoading(false)
-        .catch((err) => setError(err));
+        
+        .catch((err) => {console.log(err);setLoading(false)});
     },
     
-    onError: (error) => setError("Login Failed:" + error),
+    onError: (error) => console.log("Login Failed:" + error),
   });
 
   // log out function to log the user out of google and set the profile array to null
@@ -82,7 +82,7 @@ function Google(props) {
       <h1 className="text-warning text-lg text-center">{error}</h1>
       
       {loading ? (
-        <CircleSpinner size={40} color="#000" loading={loading} />
+        <div className="z-40  p-64 loader-local "> <CircleSpinner size={40} color="#000" loading={loading} /></div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
         Sign up with Google 🚀
