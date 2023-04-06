@@ -469,7 +469,7 @@ router.get("/search",async (req,res)=>{
       {
         $or: [
           { name: { $regex: "^" + search + ".*", $options: "i" } },
-          { headline: { $regex: "^" + search + ".*", $options: "i" } },
+          
         ],
       }, ).sort({datefield: -1})
       

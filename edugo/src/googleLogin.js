@@ -42,12 +42,13 @@ function GoogleInstructorAuth(props) {
           axios
             .post(`http://localhost:5000/instructor/login`, data)
             .then((res) => {
+              props.setLoading(false);
               dispatch(subscribeToken(res.data.data.content.meta.access_token));
               localStorage.setItem(
                 "teacherToken",
                 res.data.data.content.meta.access_token
               );
-              console.log(res.data.data.content.courses);
+              
               dispatch(subscribeTeacher(res.data.data.content.data));
               dispatch(subscribeCourse(res.data.data.content.courses));
               localStorage.setItem("courses",JSON.stringify(res.data.data.content.courses))

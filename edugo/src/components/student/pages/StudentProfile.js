@@ -46,94 +46,50 @@ function StudentProfile() {
                   <div className="grid grid-cols-2 w-full">
                     <div className="col-span-2 md:col-span-1 w-full">
                       <h1 className="w-full border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3  block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Name : {Instructor.name}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Email : {Instructor.email}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Headline : {Instructor.headline}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Description : {Instructor.description}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Country : {Instructor.country}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Region : {Instructor.region}
                       </h1>
                     </div>
                     <div className="col-span-2 md:col-span-1 w-full">
                       <h1 className="border-t tex-center text-xl border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">Socials</h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Git : {Instructor.git}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Twitter : {Instructor.twitter}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Facebook : {Instructor.facebook}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Git : {Instructor.git}
                       </h1>
                       <h1 className=" border-t border-gray-100 text-gray-600 py-4 pl-6 pr-3 w-full block hover:bg-gray-100 transition duration-150">
-                        <img
-                          src="https://avatars0.githubusercontent.com/u/35900628?v=4"
-                          alt=""
-                          className="rounded-full h-6 shadow-md inline-block mr-2"
-                        />
+                        
                         Linkedin : {Instructor.linkedin}
                       </h1>
                     </div>

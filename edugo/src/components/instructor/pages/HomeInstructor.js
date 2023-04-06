@@ -4,17 +4,17 @@ import teachIcon from "../../../Assets/teachYoWay.jpg";
 import inspireIcon from "../../../Assets/Inspire.jpg";
 import rewardIcon from "../../../Assets/rewarded.jpg";
 import { useEffect, useState } from "react";
-import Curiculum from "../layouts/curriculum";
-import Video from "../layouts/video";
-import Course from "../layouts/course";
-import FinalContent from "../layouts/finalContent";
+import Video from "../layouts/Video";
+import Course from "../layouts/Course";
 import Footer from "../layouts/Footer";
-import ModalRegister from "../layouts/modalRegister";
 import Header from "../layouts/Header";
 import { useDispatch, useSelector } from "react-redux";
 import { subscribeToken, subscribeTeacher } from "../../../store/store";
 import InstructorLoginModal from "../layouts/InstructorloginModal";
 import { ToastContainer } from "react-toastify";
+import ModalRegister from "../layouts/ModalRegister";
+import FinalContent from "../layouts/FinalContent";
+import Curiculum from "../layouts/Curriculum";
 
 function HomeInstructor() {
   const dispatch = useDispatch();
@@ -94,7 +94,9 @@ function HomeInstructor() {
         <div className="grid grid-cols-3 gap-3 text-center mt-5">
           <div className="col-span-3 flex items-center flex-col mx-auto md:col-span-1 align-middle justify-center">
             <img width="40%" height="40%" src={teachIcon} alt="img" />
-            <h1 className="text-xl text-black font-bold font-serif">Teach your way</h1>
+            <h1 className="text-xl text-black font-bold font-serif">
+              Teach your way
+            </h1>
             <p>
               Publish the course you want, in the way you want, and always have
               control of your own content.
@@ -102,7 +104,9 @@ function HomeInstructor() {
           </div>
           <div className="col-span-3 flex items-center flex-col mx-auto md:col-span-1 align-middle justify-center">
             <img width="40%" height="40%" src={inspireIcon} alt="img" />
-            <h1 className="text-xl text-black font-bold font-serif">Inspire learners</h1>
+            <h1 className="text-xl text-black font-bold font-serif">
+              Inspire learners
+            </h1>
             <p className="text-black">
               Publish the course you want, in the way you want, and always have
               control of your own content.
@@ -110,7 +114,9 @@ function HomeInstructor() {
           </div>
           <div className="col-span-3 flex items-center flex-col mx-auto md:col-span-1 align-middle justify-center">
             <img width="40%" height="40%" src={rewardIcon} alt="img" />
-            <h1 className="text-xl text-black font-bold font-serif">Get rewarded</h1>
+            <h1 className="text-xl text-black font-bold font-serif">
+              Get rewarded
+            </h1>
             <p className="text-black">
               Publish the course you want, in the way you want, and always have
               control of your own content.
