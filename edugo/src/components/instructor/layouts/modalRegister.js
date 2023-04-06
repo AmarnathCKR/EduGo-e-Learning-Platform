@@ -76,7 +76,7 @@ function ModalRegister(props) {
                 "teacherData",
                 JSON.stringify(res.data.data.content.data)
               );
-          
+              setOTP(false)
           setError("")
           showToastSuccess()
           props.close()

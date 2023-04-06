@@ -82,6 +82,7 @@ function StudentRegisterModal(props) {
           "StudentData",
           JSON.stringify(res.data.data.content.data)
         );
+        setOTP(false)
 
         setError("");
         showToastSuccess();
