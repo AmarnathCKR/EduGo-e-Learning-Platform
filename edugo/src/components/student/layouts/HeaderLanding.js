@@ -116,7 +116,7 @@ function HeaderLanding(props) {
                     placeholder="Search anything"
                   />
                   {searchSuggestions.length > 0 && (
-                    <ul className="bg-white w-1/2 p-2 border shadow absolute">
+                    <ul className="bg-white md:w-1/2 p-2 border shadow absolute">
                       {searchSuggestions.map((suggestion) => (
                         <li
                           className="bg-white hover:bg-neutral-50 cursor-pointer"

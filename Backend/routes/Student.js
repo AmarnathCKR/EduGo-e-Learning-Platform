@@ -277,7 +277,7 @@ router.post("/verify", async (req, res) => {
 });
 
 router.post("/login", async (req, res) => {
-  console.log("i was herer")
+  console.log("i was herer");
   const { email, password, google } = req.body;
   if (req.body) {
     if (google) {
@@ -461,29 +461,22 @@ router.post("/update-profile", async (req, res) => {
   });
 });
 
-router.get("/search",async (req,res)=>{
-  if(req.query.search){
-    const {search} = req.query
-    console.log(search)
-    const data =await Course.find(
-      {
-        $or: [
-          { name: { $regex: "^" + search + ".*", $options: "i" } },
-          
-        ],
-      }, ).sort({datefield: -1})
-      
-        const success = {
-          status: true,
-          content: {
-            data: data,
-            
-          },
-        };
-        res.status(200).send({ data: success });
-      
-   
-  }else{
+router.get("/search", async (req, res) => {
+  if (req.query.search) {
+    const { search } = req.query;
+    console.log(search);
+    const data = await Course.find({
+      $or: [{ name: { $regex: "^" + search + ".*", $options: "i" } }],
+    }).sort({ datefield: -1 });
+
+    const success = {
+      status: true,
+      content: {
+        data: data,
+      },
+    };
+    res.status(200).send({ data: success });
+  } else {
     const emailError = {
       status: false,
       errors: [
@@ -496,6 +489,6 @@ router.get("/search",async (req,res)=>{
     };
     res.status(409).send({ data: emailError });
   }
-})
+});
 
 module.exports = router;
