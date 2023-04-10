@@ -9,7 +9,7 @@ import Course from "../layouts/Course";
 import Footer from "../layouts/Footer";
 import Header from "../layouts/Header";
 import { useDispatch, useSelector } from "react-redux";
-import { subscribeToken, subscribeTeacher } from "../../../store/store";
+import { subscribeToken } from "../../../store/store";
 import InstructorLoginModal from "../layouts/InstructorloginModal";
 import { ToastContainer } from "react-toastify";
 import ModalRegister from "../layouts/ModalRegister";
@@ -21,18 +21,12 @@ function HomeInstructor() {
 
   useEffect(() => {
     const localToken = localStorage.getItem("teacherToken");
-
-    const localTeacher = JSON.parse(localStorage.getItem("teacherData"));
-
     if (localToken) {
-      dispatch(subscribeTeacher(localTeacher));
       dispatch(subscribeToken(localToken));
     }
   }, []);
 
-  const Instructor = useSelector((state) => state.InstructorProfile);
-
-  const token = useSelector((state) => state.token);
+ 
 
   const [dropdown, setDrop] = useState("curriculum");
   const [show, setShow] = useState(false);
@@ -53,6 +47,9 @@ function HomeInstructor() {
   const handleOpen1 = () => {
     setShow1(true);
   };
+  const Instructor = useSelector((state) => state.InstructorProfile);
+
+  const token = useSelector((state) => state.token);
   return (
     <>
       <ToastContainer />

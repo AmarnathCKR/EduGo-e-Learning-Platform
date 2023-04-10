@@ -9,6 +9,7 @@ const {
   updateProfile,
   updateInstructorCourse,
   fetchInstructorCourse,
+  fetchInstructor,
 } = require("../controllers/instructor/instructorActions");
 const instructorAuth = require("../middlewares/instructor/instructorAuth");
 
@@ -27,5 +28,7 @@ router.post("/update-profile", instructorAuth, updateProfile);
 router.post("/update-course", instructorAuth, updateInstructorCourse);
 
 router.get("/fetch-course", instructorAuth, fetchInstructorCourse);
+
+router.get("/fetch-user",instructorAuth, fetchInstructor)
 
 module.exports = router;

@@ -122,3 +122,15 @@ exports.fetchInstructorCourse = async (req, res) => {
   };
   res.status(200).send({ data: success });
 };
+
+exports.fetchInstructor = async (req,res) =>{
+  const {id} = req.params;
+  const inData = await Instructor.findOne({_id : id});
+  const success = {
+    status: true,
+    content: {
+      data: inData,
+    },
+  };
+  res.status(200).send({ data: success });
+}

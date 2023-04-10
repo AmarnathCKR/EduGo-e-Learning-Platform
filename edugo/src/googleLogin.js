@@ -51,11 +51,7 @@ function GoogleInstructorAuth(props) {
               
               dispatch(subscribeTeacher(res.data.data.content.data));
               dispatch(subscribeCourse(res.data.data.content.courses));
-              localStorage.setItem("courses",JSON.stringify(res.data.data.content.courses))
-              localStorage.setItem(
-                "teacherData",
-                JSON.stringify(res.data.data.content.data)
-              );
+             
               props.setLoading(false);
            
               props.close();

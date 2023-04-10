@@ -59,11 +59,7 @@ function InstructorLoginModal(props) {
           );
           dispatch(subscribeTeacher(res.data.data.content.data));
 
-          localStorage.setItem(
-            "teacherData",
-            JSON.stringify(res.data.data.content.data)
-          );
-          localStorage.setItem("courses",JSON.stringify(res.data.data.content.courses))
+          
           props.close();
           dispatch(subscribeCourse(res.data.data.content.courses))
           setError("");

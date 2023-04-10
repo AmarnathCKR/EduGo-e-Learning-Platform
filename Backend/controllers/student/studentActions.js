@@ -109,3 +109,15 @@ exports.fetchAllCourse = async (req, res) => {
   };
   res.status(200).send({ data: success });
 };
+
+exports.fetchStudent = async (req,res) =>{
+  const {id} = req.params;
+  const studentData = await Student.findOne({_id : id});
+  const success = {
+    status: true,
+    content: {
+      data: studentData,
+    },
+  };
+  res.status(200).send({ data: success });
+}

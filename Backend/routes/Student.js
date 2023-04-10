@@ -4,6 +4,7 @@ const {
   studentSearch,
   updateStudentProfile,
   fetchAllCourse,
+  fetchStudent,
 } = require("../controllers/student/studentActions");
 const {
   studentLogin,
@@ -25,5 +26,7 @@ router.post("/login", studentLogin);
 router.post("/update-profile", studentAuth, updateStudentProfile);
 
 router.get("/search", studentSearch);
+
+router.get("/fetch-student",studentAuth, fetchStudent);
 
 module.exports = router;
