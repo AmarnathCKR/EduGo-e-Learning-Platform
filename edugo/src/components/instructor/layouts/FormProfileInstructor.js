@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import axios from "axios";
 import { useDispatch } from "react-redux";
-import { subscribeTeacher, unsuscribeTeacher } from "../../../store/store";
+import { subscribeTeacher, unsuscribeTeacher, unsuscribeToken } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { CircleSpinner } from "react-spinners-kit";
+import { googleLogout } from "@react-oauth/google";
 
 function FormProfileInstructor(props) {
   const [country, setCountry] = React.useState("");
@@ -50,11 +51,11 @@ function FormProfileInstructor(props) {
       !profile.twitter ||
       !profile.image
     ) {
-      setLoading(false)
+      setLoading(false);
       setError("Please fill all the fields required");
     } else {
       if (!profile.imageRaw) {
-        setLoading(true)
+        setLoading(true);
         const imageUrl = profile.image;
 
         const data = { ...profile, image: imageUrl };
@@ -68,7 +69,7 @@ function FormProfileInstructor(props) {
             },
           })
           .then((res) => {
-            setLoading(false)
+            setLoading(false);
 
             dispatch(unsuscribeTeacher());
             localStorage.setItem(
@@ -80,12 +81,20 @@ function FormProfileInstructor(props) {
             showToastSuccess();
           })
           .catch((err) => {
-            setLoading(false)
+            setLoading(false);
             setError(err.response.data.data.errors[0].message);
+            if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+              localStorage.removeItem("teacherToken");
+              dispatch(unsuscribeToken());
+              localStorage.removeItem("teacherData");
+              dispatch(unsuscribeTeacher());
+              navigate("/instructor");
+              googleLogout();
+             }
           });
       } else {
         const file = profile.imageRaw;
-        setLoading(true)
+        setLoading(true);
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "n0d0jino");
@@ -110,7 +119,7 @@ function FormProfileInstructor(props) {
                 },
               })
               .then((res) => {
-                setLoading(false)
+                setLoading(false);
 
                 dispatch(unsuscribeTeacher());
                 localStorage.setItem(
@@ -122,8 +131,16 @@ function FormProfileInstructor(props) {
                 showToastSuccess();
               })
               .catch((err) => {
-                setLoading(false)
+                setLoading(false);
                 setError(err.response.data.data.errors[0].message);
+                if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                  localStorage.removeItem("teacherToken");
+                  dispatch(unsuscribeToken());
+                  localStorage.removeItem("teacherData");
+                  dispatch(unsuscribeTeacher());
+                  navigate("/instructor");
+                  googleLogout();
+                 }
               });
           }
         } catch (error) {
@@ -271,14 +288,16 @@ function FormProfileInstructor(props) {
         </div>
       </div>
       <div className="flex justify-center items-middle border shadow my-3">
-        
         {loading ? (
-        <CircleSpinner size={40} color="#000" loading={loading} />
-      ) : (
-        <button onClick={submitData} className="px-8 py-2 bg-black text-white">
-          Update Profile
-        </button>
-      )}
+          <CircleSpinner size={40} color="#000" loading={loading} />
+        ) : (
+          <button
+            onClick={submitData}
+            className="px-8 py-2 bg-black text-white"
+          >
+            Update Profile
+          </button>
+        )}
       </div>
     </>
   );

@@ -12,7 +12,7 @@ function StudentProfile() {
       <HeaderLanding token={auth} student={Instructor} />
       <div className="container mx-auto mt-32  shadow">
         <div>
-          <div className="bg-neutral-50 relative mb-20 shadow rounded-lg w-90 md:w-90   mx-auto">
+          <div className="bg-white border relative mb-20 shadow rounded-lg w-90 md:w-90   mx-auto">
             <div className="flex justify-center">
               <img
                 width="20%"

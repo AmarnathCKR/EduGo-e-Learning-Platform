@@ -104,7 +104,7 @@ function StudentRegisterModal(props) {
           <div className="modal-local-body text-center">
             {otp ? (
               <>
-                <h2 className="py-3 text-lg font-medium">
+                <h2 className="py-3 text-lg font-medium text-red-500">
                   {error ? error : "Please Enter the OTP"}
                 </h2>
                 <div className="flex flex-col my-4 mx-2">

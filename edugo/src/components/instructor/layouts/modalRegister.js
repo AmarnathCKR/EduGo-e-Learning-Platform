@@ -3,12 +3,12 @@ import "../../../Assets/style.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Google from "../../../google";
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch,  } from "react-redux";
 import {
   subscribeToken,
-  unsuscribeToken,
+  
   subscribeTeacher,
-  unsuscribeTeacher,
+  
 } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
@@ -97,7 +97,7 @@ function ModalRegister(props) {
         <div className="modal-local-body text-center">
           {otp ? (
             <>
-              <h2 className="py-3 text-lg font-medium">
+              <h2 className="py-3 text-lg font-medium text-red-500">
               {error ? error : "Please Enter the OTP"}
               </h2>
               <div className="flex flex-col my-4 mx-2">

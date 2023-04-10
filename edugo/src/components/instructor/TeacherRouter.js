@@ -12,6 +12,9 @@ import InstructorProfile from "./pages/InstructorProfile";
 import InstructorProfileView from "./pages/InstructorProfileView";
 import NewCourse from "./pages/NewCourse";
 import axios from "axios";
+import TestMode from "./test/TestMode";
+import UploadVideo from "./test/TestMode";
+import VideoUploader from "./test/TestMode";
 
 function TeacherRouter() {
   const [token, setToken] = useState(null);
@@ -58,6 +61,11 @@ function TeacherRouter() {
       <Route
         path="/new-course"
         element={token ? <NewCourse /> : <Navigate to="/instructor" />}
+      />
+
+      <Route
+        path="/test"
+        element={<VideoUploader />}
       />
     </Routes>
   );

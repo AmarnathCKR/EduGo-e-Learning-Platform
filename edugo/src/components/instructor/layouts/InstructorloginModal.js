@@ -1,14 +1,14 @@
 import React, { useState } from "react";
 import "../../../Assets/style.css";
-import { GoogleLogin, GoogleOAuthProvider } from "@react-oauth/google";
+import {  GoogleOAuthProvider } from "@react-oauth/google";
 
 import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch, } from "react-redux";
 import {
   subscribeToken,
-  unsuscribeToken,
+
   subscribeTeacher,
-  unsuscribeTeacher,
+ 
   subscribeCourse,
 } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
@@ -91,7 +91,7 @@ function InstructorLoginModal(props) {
             </h4>
           </div>
           <div className="modal-local-body text-center">
-            <h2 className="py-3 text-lg font-medium">
+            <h2 className="py-3 text-lg font-medium text-red-500">
               {error ? error : "Please Enter your credentials"}
             </h2>
 

@@ -95,7 +95,7 @@ function StudentLoginModal(props) {
             </h4>
           </div>
           <div className="modal-local-body text-center">
-            <h2 className="py-3 text-lg font-medium">
+            <h2 className="py-3 text-lg font-medium text-red-500">
               {error ? error : "Please Enter your credentials"}
             </h2>
 

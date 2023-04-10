@@ -59,7 +59,7 @@ function AllCourse(props) {
   });
 
   return (
-    <div className="relative border shadow py-5 bg-neutral-50">
+    <div className="relative border shadow py-5 bg-white">
       <h1 className="mx-9 text-start font-serif font-semibold text-3xl">
         Check out our courses{" "}
       </h1>

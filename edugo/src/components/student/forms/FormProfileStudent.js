@@ -2,10 +2,11 @@ import React, { useState } from "react";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import { CircleSpinner } from "react-spinners-kit";
 import { ToastContainer, toast } from "react-toastify";
-import { subscribeStudentData, unsuscribeStudentData } from "../../../store/store";
+import { subscribeStudentData, unsuscribeStudentData, unsuscribeStudentToken } from "../../../store/store";
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { googleLogout } from "@react-oauth/google";
 
 function FormProfileStudent(props) {
   const [country, setCountry] = useState("");
@@ -82,6 +83,15 @@ function FormProfileStudent(props) {
           .catch((err) => {
             setLoading(false);
             setError(err.response.data.data.errors[0].message);
+            if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+              localStorage.removeItem("StudentToken");
+              dispatch(unsuscribeStudentToken());
+              localStorage.removeItem("StudentData");
+              
+              dispatch(unsuscribeStudentData());
+              navigate("/instructor");
+              googleLogout();
+            }
           });
       } else {
         const file = profile.imageRaw;
@@ -124,6 +134,15 @@ function FormProfileStudent(props) {
               .catch((err) => {
                 setLoading(false);
                 setError(err.response.data.data.errors[0].message);
+                if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                  localStorage.removeItem("StudentToken");
+                  dispatch(unsuscribeStudentToken());
+                  localStorage.removeItem("StudentData");
+                 
+                  dispatch(unsuscribeStudentData());
+                  navigate("/instructor");
+                  googleLogout();
+                }
               });
           }
         } catch (error) {
@@ -140,7 +159,7 @@ function FormProfileStudent(props) {
       <div className="grid grid-cols-2 justify-center ">
         <div className="col-span-2 md:col-span-1 border-2 shadow mx-4 my-3 py-3">
           <input
-            className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             placeholder="Name"
             value={profile.name}
@@ -150,7 +169,7 @@ function FormProfileStudent(props) {
             required
           />
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             placeholder="Headline"
             required
@@ -164,7 +183,7 @@ function FormProfileStudent(props) {
           />
           <textarea
             maxLength={500}
-            className="w-full my-2  px-2 pb-32 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2  px-2 pb-32 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Description"
@@ -177,7 +196,7 @@ function FormProfileStudent(props) {
             }}
           />
           <CountryDropdown
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             value={country}
             required
             onChange={(val) => {
@@ -186,7 +205,7 @@ function FormProfileStudent(props) {
             }}
           />
           <RegionDropdown
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             country={country}
             value={region}
             required
@@ -201,7 +220,7 @@ function FormProfileStudent(props) {
         <div className="col-span-2 md:col-span-1  border-2 shadow mx-4 my-3 py-3">
           <label className="mx-3">Social Links</label>
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Git Hub"
@@ -211,7 +230,7 @@ function FormProfileStudent(props) {
             }}
           />
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Linkedin"
@@ -224,7 +243,7 @@ function FormProfileStudent(props) {
             }}
           />
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Facebook"
@@ -237,7 +256,7 @@ function FormProfileStudent(props) {
             }}
           />
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Twitter"
@@ -262,7 +281,7 @@ function FormProfileStudent(props) {
             alt="profilePicture"
           />
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="file"
             required
             onChange={fileBrowseHandler}

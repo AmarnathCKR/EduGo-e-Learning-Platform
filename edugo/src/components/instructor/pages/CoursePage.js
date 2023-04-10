@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 // import Footer from "../layouts/Footer";
 
 import { useEffect, useState } from "react";
@@ -12,8 +13,9 @@ import Footer from "../layouts/Footer";
 import CourseList from "../layouts/CourseList";
 import { Link, useNavigate } from "react-router-dom";
 import axios from "axios";
-import { subscribeCourse } from "../../../store/store";
+import { subscribeCourse, unsuscribeTeacher, unsuscribeToken } from "../../../store/store";
 import { RotateSpinner } from "react-spinners-kit";
+import { googleLogout } from "@react-oauth/google";
 
 function CoursePage() {
   const [state,setState] = useState(false)
@@ -44,7 +46,14 @@ function CoursePage() {
         .catch((err) => {
           setLoading(false)
           navigate("/instructor");
-          console.log(err.response.data.data.errors[0].message);
+          if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+            localStorage.removeItem("teacherToken");
+            dispatch(unsuscribeToken());
+            localStorage.removeItem("teacherData");
+            dispatch(unsuscribeTeacher());
+            navigate("/instructor");
+            googleLogout();
+           }
           // setState(true)
         });
     }

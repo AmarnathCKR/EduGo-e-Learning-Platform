@@ -1,15 +1,17 @@
 import React, { useState } from "react";
-import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
+
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import {
   subscribeCourse,
-  subscribeTeacher,
+ 
   unsuscribeTeacher,
+  unsuscribeToken,
 } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { CircleSpinner } from "react-spinners-kit";
+import { googleLogout } from "@react-oauth/google";
 
 function CourseForm(props) {
   const [error, setError] = useState("");
@@ -93,6 +95,14 @@ function CourseForm(props) {
             .catch((err) => {
               setLoading(false)
               setError(err.response.data.data.errors[0].message);
+              if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                localStorage.removeItem("teacherToken");
+                dispatch(unsuscribeToken());
+                localStorage.removeItem("teacherData");
+                dispatch(unsuscribeTeacher());
+                navigate("/instructor");
+                googleLogout();
+               }
             });
         }
       } catch (error) {

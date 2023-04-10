@@ -20,6 +20,7 @@ const InstructorSchema = new mongoose.Schema(
     twitter: String,
     password: String,
     google: Boolean,
+    status : Boolean,
   },
   { timestamps: true }
 );
