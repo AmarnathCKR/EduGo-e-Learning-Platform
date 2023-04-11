@@ -1,10 +1,18 @@
 import React from "react";
-import AdminSidebar from "./layouts/AdminSidebar";
+
+
+import { Route, Routes } from "react-router-dom";
+
+import FieldManage from "./pages/FieldManage";
 
 function AdminRouter() {
   return (
     <>
-      <AdminSidebar />
+      <Routes>
+        <Route>
+          <Route path="/field" element={<FieldManage />} />
+        </Route>
+      </Routes>
     </>
   );
 }

@@ -61,7 +61,7 @@ function MainRouter() {
       <Route path="/instructor" element={<HomeInstructor />} />
       <Route path="/instructor/*" element={<TeacherRouter />} />
       <Route path="/admin/*" element={<AdminRouter />} />
-      <Route path="*" element={<h1>Stufffff</h1>} />
+      <Route path="*" element={<h1>Error 404</h1>} />
     </Routes>
   );
 }

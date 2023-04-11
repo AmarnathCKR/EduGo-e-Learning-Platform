@@ -22,14 +22,13 @@ function AllCourse(props) {
   const allCourse = props.courses.map((data) => {
     return (
       <>
-        <div class="local-wrapper mx-4 p-5 shadow antialiased text-gray-900">
-          <div >
+        <div class="local-wrapper mx-2 p-3 ">
+          <div>
             <img
-              className="w-100 h-100"
               style={style}
               src={data.image}
               alt=" random imgee"
-              class="w-full object-cover object-center rounded-lg shadow-md"
+              className="w-full object-cover object-center rounded-lg shadow-md"
             />
 
             <div class="relative  -mt-22  ">
@@ -59,24 +58,24 @@ function AllCourse(props) {
   });
 
   return (
-    <div className="relative border shadow py-5 bg-white">
-      <h1 className="mx-9 text-start font-serif font-semibold text-3xl">
-        Check out our courses{" "}
+    <div className="relative border py-5 bg-white">
+      <h1 className="mx-9 text-center md:text-5xl text-4xl font-semibold my-1">
+        Check out our courses
       </h1>
-      <div id="scroll-container" className="text-center flex scroll-x p-12 ">
+      <div id="scroll-container" className="text-center flex scroll-x p-10 ">
         {allCourse}
       </div>
       <button
         id="left-button"
         className="absolute top-1/2 left-2 transform -translate-y-1/2 md:flex hidden"
       >
-        <Icon className="w-20 h-auto" icon="material-symbols:arrow-left" />
+        <Icon className="w-16 h-auto" icon="material-symbols:chevron-left" />
       </button>
       <button
         id="right-button"
         className="absolute top-1/2 right-2 transform -translate-y-1/2 md:flex hidden"
       >
-        <Icon className="w-20 h-auto" icon="material-symbols:arrow-right" />
+        <Icon className="w-16 h-auto" icon="material-symbols:chevron-right" />
       </button>
     </div>
   );
