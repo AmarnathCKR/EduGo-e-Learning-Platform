@@ -4,10 +4,12 @@ const app = express();
 const path = require("path");
 const Instructor = require("./routes/Instructor");
 const Student = require("./routes/Student")
+const Admin = require("./routes/Admin")
 
 const cors = require("cors");
 const session = require("express-session");
 const cookieParser = require("cookie-parser");
+const { Course } = require("./database/Course");
 
 app.use(cookieParser());
 app.use(
@@ -34,6 +36,9 @@ app.use(
   })
 );
 
+
+
+app.use("/admin", Admin);
 app.use("/instructor", Instructor);
 app.use("/", Student);
 

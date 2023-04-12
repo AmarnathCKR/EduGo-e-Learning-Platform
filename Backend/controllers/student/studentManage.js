@@ -9,6 +9,7 @@ const createToken = (_id) => {
 };
 
 exports.studentLogin = async (req, res) => {
+  
   const { email, password, google } = req.body;
   if (req.body) {
     if (google) {

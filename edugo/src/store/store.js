@@ -14,6 +14,20 @@ const tokenSlice = createSlice({
     }
 })
 
+const adminTokenSlice = createSlice({
+    name : "JWT AUTH",
+    initialState : "",
+    reducers : {
+        
+        subscribeAdminToken : (state, actions) => {
+            return state = actions.payload
+        },
+        unsuscribeAdminToken : (state, actions) => {
+            return state = ''
+        },
+    }
+})
+
 const InstructorProfileSlice = createSlice({
     name : "InstructorProfile",
     initialState : "",
@@ -94,7 +108,8 @@ const store = configureStore({
         course : courseSlice.reducer,
         AllCourse : AllCourseSlice.reducer,
         studentToken : studentTokenSlice.reducer,
-        studentData : studentDataSlice.reducer
+        studentData : studentDataSlice.reducer,
+        adminToken : adminTokenSlice.reducer
     }
 
 })
@@ -109,4 +124,5 @@ export const {subscribeCourse, unsuscribeCourse} = courseSlice.actions
 export const {subscribeAllCourse, unsuscribeAllCourse} =AllCourseSlice.actions
 export const {subscribeStudentToken, unsuscribeStudentToken} = studentTokenSlice.actions
 export const {subscribeStudentData, unsuscribeStudentData} = studentDataSlice.actions
+export const {subscribeAdminToken, unsuscribeAdminToken} = adminTokenSlice.actions
 
