@@ -15,7 +15,7 @@ exports.adminLogin = async (req,res) => {
     if(req.body){
         const {email, password}=req.body;
         const admin = await Admin.findOne({email : email})
-        console.log('body here')
+        
         if(admin){
             console.log('admin')
             const match = await bcrypt.compare(password, admin.password);

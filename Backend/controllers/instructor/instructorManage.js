@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const { Instructor } = require("../../database/Instructor");
 const { Course } = require("../../database/Course");
+const { FieldCategory } = require("../../database/FieldCategory");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -399,3 +400,17 @@ exports.instructorLogin = async (req, res) => {
     res.status(409).send({ data: emailError });
   }
 };
+
+
+exports.allCategory = async (req,res) => {
+  FieldCategory.find({}).then((result)=>{
+    const success = {
+      status: true,
+      content: {
+        data: result,
+        
+      },
+    };
+    res.status(200).send({ data: success });
+  })
+}

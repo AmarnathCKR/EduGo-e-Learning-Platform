@@ -3,10 +3,10 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
 import { BiEdit, BiTrash } from "react-icons/bi";
-import AddFieldModal from "./modals/AddFieldModal";
+import CourseViewModal from "../modals/CourseViewModal";
 
 
-function DataTable(props) {
+function CourseDataTable(props) {
   const [data, setData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -34,9 +34,9 @@ function DataTable(props) {
 
   }
 
-  const handleEdit = (id) => {
+  const handleView = (id) => {
     
-    axios.get(`http://localhost:5000/admin/get-field?id=${id}`,
+    axios.get(`http://localhost:5000/admin/get-course?id=${id}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -55,13 +55,15 @@ function DataTable(props) {
     {
       field: "image",
       headerName: "Image",
-      width: 200,
-      renderCell: (params) => <img width="20" src={params.value} alt="icon" />,
+      width: 100,
+      renderCell: (params) => <img width="50" src={params.value} alt="icon" />,
     },
-    { field: "name", headerName: "Name", width: 300 },
-    { field: "tag", headerName: "Tag", width: 300 },
-    {field: "ref", headerName : "Edit", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleEdit(params.value)}}><BiEdit size="20px" /></button></div>,},
-    {field: "id", headerName : "Delete", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleDelete(params.value)}}><BiTrash size="20px" /></button></div>,}
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "headline", headerName: "Headline", width: 300 },
+    { field: "instructor", headerName: "Intructor", width: 200 },
+    {field: "status", headerName : "Status", width : 200, renderCell: (params) => <div className="flex justify-center"><h1 className={`${params.value === "pending" && "text-center flex justify-center text-warning"} ${params.value === "reject" && "text-center flex justify-center text-red-500"} ${params.value === "active" && "text-center flex justify-center text-success"} `} >{params.value}</h1></div>,},
+    {field: "id", headerName : "view", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleView(params.value)}}><BiEdit size="20px" /></button></div>,},
+    
   ];
   const token = useSelector((state) => state.adminToken);
 
@@ -69,7 +71,7 @@ function DataTable(props) {
     setLoading(true);
     axios
       .get(
-        `http://localhost:5000/admin/fetch-field?page=${page}&pageSize=${pageSize}&sortField=${
+        `http://localhost:5000/admin/fetch-course?page=${page}&pageSize=${pageSize}&sortField=${
           sortModel.length > 0 ? sortModel[0].field : ""
         }&sortOrder=${
           sortModel.length > 0 ? sortModel[0].sort : ""
@@ -130,7 +132,7 @@ function DataTable(props) {
 
   return (
     <div style={{ height: 400, width: "100%" }}>
-      <AddFieldModal show={show} toggle={setStat} click={handleClick} data={item} link="edit-field" />
+        <CourseViewModal show={show} data={item} />
       <DataGrid
         rows={data}
         sx={{
@@ -195,4 +197,4 @@ function DataTable(props) {
   );
 }
 
-export default DataTable;
+export default CourseDataTable;

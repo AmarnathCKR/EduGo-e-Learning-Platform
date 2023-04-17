@@ -1,20 +1,27 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CircleSpinner } from "react-spinners-kit";
 import { ToastContainer, toast } from "react-toastify";
 import { unsuscribeAdminToken } from "../../../store/store";
 import { googleLogout } from "@react-oauth/google";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 function AddFieldModal(props) {
   const [error, setError] = useState(false);
-  const [input, setInput] = useState({
-    name: "",
-    tag: "",
-    image: null,
-    imageRaw: null,
-  });
+  const [input, setInput] = useState();
+
+  useEffect(() => {
+    setInput({
+      name: props?.data?.name || "",
+      tag: props?.data?.tag || "",
+      image: props?.data?.image || null,
+      imageRaw: null,
+      
+    });
+  }, [props.data]);
+
+  // console.log(props.data)
 
   const [loading, setLoading] = useState(false);
   const token = useSelector((state) => state.adminToken);
@@ -25,63 +32,125 @@ function AddFieldModal(props) {
     setInput((state) => ({ ...state, image: value }));
   };
   const showToastSuccess = () => {
-    toast.success("Field Category Created");
+    if(props.data){
+      toast.success("Field Category Updated");
+    }else{
+      toast.success("Field Category Created");
+    }
+    
   };
-  const dispatch = useDispatch()
+  const dispatch = useDispatch();
 
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const create = async () => {
-    if (!input.name || !input.tag || !input.imageRaw) {
-      setLoading(false);
-      setError("Please fill all the fields required");
+    if (input.imageRaw === null) {
+      if (!input.name || !input.tag) {
+        setLoading(false);
+        setError("Please fill all the fields required");
+      } else {
+        
+        setLoading(true);
+
+        const url = `http://localhost:5000/admin/${props.link}?id=${props?.data?._id}`;
+        axios
+          .post(url, input, {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          })
+          .then((res) => {
+            setLoading(false);
+            console.log(res.data.data.content.data);
+            setInput({
+              name: "",
+              tag: "",
+              image: null,
+              imageRaw: null,
+            });
+            showToastSuccess();
+            
+            props.click();
+            if(props.data){
+              props.toggle()
+            }
+          })
+          .catch((err) => {
+            setLoading(false);
+            setError(err.response.data.data.errors[0].message);
+            if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+              localStorage.removeItem("adminToken");
+
+              dispatch(unsuscribeAdminToken());
+              navigate("/admin");
+              googleLogout();
+            }
+          });
+      }
     } else {
-      const file = input.imageRaw;
-      setLoading(true);
-      const formData = new FormData();
-      formData.append("file", file);
-      formData.append("upload_preset", "n0d0jino");
+      if (!input.name || !input.tag || !input.imageRaw) {
+        setLoading(false);
+        setError("Please fill all the fields required");
+      } else {
+        const file = input.imageRaw;
+        setLoading(true);
+        const formData = new FormData();
+        formData.append("file", file);
+        formData.append("upload_preset", "n0d0jino");
 
-      try {
-        if (formData) {
-          const response = await axios.post(
-            "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
-            formData
-          );
+        try {
+          if (formData) {
+            const response = await axios.post(
+              "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
+              formData
+            );
 
-          const imageUrl = response.data.secure_url;
+            const imageUrl = response.data.secure_url;
 
-          const data = { ...input, image: imageUrl };
+            const data = { ...input, image: imageUrl };
 
-          const url = "http://localhost:5000/admin/create-field";
-          axios
-            .post(url, data, {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${token}`,
-              },
-            })
-            .then((res) => {
-              setLoading(false);
-              console.log(res.data.data.content.data);
-              
-              showToastSuccess();
-              props.click()
-            })
-            .catch((err) => {
-              setLoading(false);
-              setError(err.response.data.data.errors[0].message);
-              if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+            const url = `http://localhost:5000/admin/${props.link}?id=${props?.data?._id}`;
+            axios
+              .post(url, data, {
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: `Bearer ${token}`,
+                },
+              })
+              .then((res) => {
+                setLoading(false);
+                console.log(res.data.data.content.data);
+                setInput({
+                  name: "",
+                  tag: "",
+                  image: null,
+                  imageRaw: null,
+                });
+                showToastSuccess();
+                props.click();
+                
+                
+                if(props.data){
+                  props.toggle()
+                }
+
+              })
+              .catch((err) => {
+                setLoading(false);
+                setError(err.response.data.data.errors[0].message);
+                if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
                   localStorage.removeItem("adminToken");
-         
+
                   dispatch(unsuscribeAdminToken());
                   navigate("/admin");
                   googleLogout();
-              }
-            });
+                }
+              });
+          }
+        } catch (error) {
+          console.error(error);
         }
-      } catch (error) {
-        console.error(error);
       }
     }
   };
@@ -94,11 +163,17 @@ function AddFieldModal(props) {
             <div className="modal-local-content rounded">
               <div className="modal-local-header">
                 <h4 className="modal-local-title text-center font-bold text-xl">
-                  Add new Field Category
+                  {props.data
+                    ? "Edit Field Category"
+                    : "Add new Field Category"}
                 </h4>
               </div>
               <div className="modal-local-body text-center">
-                <h2 className={`py-3 text-lg font-medium ${error ? "text-red-500":"text-black"}`}>
+                <h2
+                  className={`py-3 text-lg font-medium ${
+                    error ? "text-red-500" : "text-black"
+                  }`}
+                >
                   {error ? error : "Enter Field category details"}
                 </h2>
 
@@ -157,7 +232,7 @@ function AddFieldModal(props) {
                       onClick={create}
                       className="border bg-neutral-900 text-white p-2"
                     >
-                      Create
+                      {props.data ? "Edit" : "Create"}
                     </button>
                   )}
                 </div>

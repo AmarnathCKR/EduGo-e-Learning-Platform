@@ -14,8 +14,12 @@ const CourseSchema = new mongoose.Schema(
     price: String,
     experience: String,
     total: String,
+    video : String,
     topics: [],
-    instructor : mongoose.Types.ObjectId
+    instructor :{
+      type: mongoose.Types.ObjectId,
+      ref: 'Instructor'
+  }
   },
   { timestamps: true }
 );

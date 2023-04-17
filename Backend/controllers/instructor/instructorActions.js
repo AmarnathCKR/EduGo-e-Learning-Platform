@@ -79,6 +79,7 @@ exports.updateInstructorCourse = async (req, res) => {
     total,
     experience,
     price,
+    video
   } = req.body;
 
   Instructor.findOne({ _id: id }).then(async (user) => {
@@ -87,12 +88,13 @@ exports.updateInstructorCourse = async (req, res) => {
       headline: headline,
       description: description,
       image: image,
-      status: "active",
+      status: "pending",
       field: field,
       price: price,
       experience: experience,
       total: total,
       topics: topics,
+      video : video,
       instructor: user._id,
     }).save();
 

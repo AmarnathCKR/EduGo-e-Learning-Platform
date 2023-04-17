@@ -1,10 +1,9 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import axios from "axios";
 import { useDispatch } from "react-redux";
 import {
   subscribeCourse,
- 
   unsuscribeTeacher,
   unsuscribeToken,
 } from "../../../store/store";
@@ -12,8 +11,33 @@ import { ToastContainer, toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { CircleSpinner } from "react-spinners-kit";
 import { googleLogout } from "@react-oauth/google";
+import { initializeApp } from "firebase/app";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+} from "firebase/storage";
+
+import { Player, ControlBar } from "video-react";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyASd_nl36pkPP-68OtSzhwacsQxtQ88ZwY",
+  authDomain: "edugo-e-lerning.firebaseapp.com",
+  projectId: "edugo-e-lerning",
+  storageBucket: "edugo-e-lerning.appspot.com",
+  messagingSenderId: "110356446945",
+  appId: "1:110356446945:web:49cfe86d61dc2aedf341a0",
+  measurementId: "G-6NZZ398W04",
+};
+
+const app = initializeApp(firebaseConfig);
+const storage = getStorage(app);
 
 function CourseForm(props) {
+  
+  const [progress, setProgress] = useState(0);
+
   const [error, setError] = useState("");
   const [course, setcourse] = useState({
     name: "",
@@ -25,12 +49,22 @@ function CourseForm(props) {
     total: "",
     image: "",
     imageRaw: null,
+    video: "",
+    videoRaw: null,
   });
   const [loading, setLoading] = useState(false);
+  const [select, setSelect] = useState([]);
 
   const [topics, setTopics] = useState([
     { name: "", description: "", time: "" },
   ]);
+
+  const handleVideoRender = async (event) => {
+    
+    let value = URL.createObjectURL(event.target.files[0]);
+    setcourse((state) => ({ ...state, videoRaw: event.target.files[0] }));
+    setcourse((state) => ({ ...state, video: value }));
+  };
 
   const dispatch = useDispatch();
   const navigate = useNavigate();
@@ -46,6 +80,7 @@ function CourseForm(props) {
   };
 
   const submitData = async () => {
+    console.log(course)
     if (
       !course.name ||
       !course.headline ||
@@ -55,11 +90,12 @@ function CourseForm(props) {
       !course.field ||
       !course.experience ||
       !course.image ||
-      !course.imageRaw
+      !course.imageRaw ||
+      !course.videoRaw
     ) {
       setError("Please fill all the fields required");
     } else {
-      setLoading(true)
+      setLoading(true);
       const file = course.imageRaw;
 
       const formData = new FormData();
@@ -68,45 +104,71 @@ function CourseForm(props) {
 
       try {
         if (formData) {
-          const response = await axios.post(
-            "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
-            formData
+          const file2 = course.videoRaw;
+          const storageRef = ref(storage, `videos/${file2.name}`);
+          const uploadTask = uploadBytesResumable(storageRef, file2);
+
+          await uploadTask.on(
+            "state_changed",
+            (snapshot) => {
+              // Handle progress
+              const progresss =
+                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+              setProgress(+progresss);
+            },
+            (error) => {
+              // Handle error
+              console.error(error);
+              setProgress(error);
+            },
+            async () => {
+              const url = await getDownloadURL(uploadTask.snapshot.ref);
+              setcourse((state) => ({ ...state, video: url }));
+              const response = await axios.post(
+                "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
+                formData
+              );
+    
+              const imageUrl = response.data.secure_url;
+    
+              const data = { ...course, image: imageUrl, topics: topics, video : url };
+    
+              const url1 = "http://localhost:5000/instructor/update-course";
+              axios
+                .post(url1, data, {
+                  headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${props.token}`,
+                  },
+                })
+                .then((res) => {
+                  setLoading(false);
+                  dispatch(subscribeCourse(res.data.data.content.data));
+                  localStorage.setItem(
+                    "courses",
+                    JSON.stringify(res.data.data.content.data)
+                  );
+                  navigate("/instructor/course-page");
+                  showToastSuccess();
+                })
+                .catch((err) => {
+                  setLoading(false);
+                  setError(err.response.data.data.errors[0].message);
+                  if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                    localStorage.removeItem("teacherToken");
+                    dispatch(unsuscribeToken());
+                    localStorage.removeItem("teacherData");
+                    dispatch(unsuscribeTeacher());
+                    navigate("/instructor");
+                    googleLogout();
+                  }
+                });
+            }
           );
-
-          const imageUrl = response.data.secure_url;
-
-          const data = { ...course, image: imageUrl, topics: topics };
-
-          const url = "http://localhost:5000/instructor/update-course";
-          axios
-            .post(url, data, {
-              headers: {
-                "Content-Type": "application/json",
-                Authorization: `Bearer ${props.token}`,
-              },
-            })
-            .then((res) => {
-              setLoading(false)
-              dispatch(subscribeCourse(res.data.data.content.data));
-              localStorage.setItem("courses",JSON.stringify(res.data.data.content.data))
-              navigate("/instructor/course-page");
-              showToastSuccess();
-            })
-            .catch((err) => {
-              setLoading(false)
-              setError(err.response.data.data.errors[0].message);
-              if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
-                localStorage.removeItem("teacherToken");
-                dispatch(unsuscribeToken());
-                localStorage.removeItem("teacherData");
-                dispatch(unsuscribeTeacher());
-                navigate("/instructor");
-                googleLogout();
-               }
-            });
+          
         }
       } catch (error) {
-        setLoading(false)
+        setLoading(false);
         console.error(error);
       }
     }
@@ -140,6 +202,18 @@ function CourseForm(props) {
     newTopics[index].time = event.target.value;
     setTopics(newTopics);
   };
+
+  const dropDown = select.map((item) => {
+    return (
+      <option
+      key={item._id}
+        className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+        value={item._id}
+      >
+        {item.name}
+      </option>
+    );
+  });
 
   const topic = topics.map((topic, index) => (
     <div className="my-5 bg-neutral-200 border" key={index}>
@@ -181,10 +255,16 @@ function CourseForm(props) {
     </div>
   ));
 
+  useEffect(() => {
+    axios.get("http://localhost:5000/instructor/get-field").then((res) => {
+      setSelect(res.data.data.content.data);
+    });
+  }, []);
+
   return (
     <>
       <ToastContainer />
-      <div className="w-full mt-20 px-20">
+      <div className="w-full mt-20 md:px-20 px-2">
         <h1 className="text-3xl text-center my-8">Create a new course</h1>
         <h1 className="text-red-600 text-center">{error}</h1>
 
@@ -227,7 +307,7 @@ function CourseForm(props) {
             }}
           />
 
-          <input
+          <select
             className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
             type="text"
             placeholder="Field of Study"
@@ -239,7 +319,9 @@ function CourseForm(props) {
                 field: event.target.value,
               }));
             }}
-          />
+          >
+            {dropDown}
+          </select>
           <select
             onChange={(event) => {
               setcourse((state) => ({
@@ -303,7 +385,7 @@ function CourseForm(props) {
               }));
             }}
           />
-          <label className="mx-3">Course Image</label>
+          <label className="mx-3 font-semibold text-lg">Course Image</label>
           <img
             className="my-3 mx-4"
             width="20%"
@@ -321,13 +403,48 @@ function CourseForm(props) {
             required
             onChange={fileBrowseHandler}
           />
+          <label className="mx-3  font-semibold text-lg">
+            Course Overview Video
+          </label>
+          <h1 className="mx-3 py-3">
+            You need to make a video about your course and explain what your
+            going teach. Please include all the topics. The admin will review
+            this video.
+          </h1>
+          {course.video && (
+            <div className="md:px-20 px-3">
+              <Player
+                className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
+                autoPlay
+                src={course.video}
+              >
+                <ControlBar autoHide={false} className="my-class" />
+              </Player>
+            </div>
+          )}
+          {progress !== 0 && progress !== 100 && progress ? (
+            progress
+          ) : (
+            <input
+              className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+              type="file"
+              accept="video/*"
+              onChange={handleVideoRender}
+            />
+          )}
         </div>
       </div>
+
       <div className="flex justify-center border items-center shadow my-3">
         {loading ? (
-          <div className="z-40  p-64 loader-local bg-secondary"><CircleSpinner size={40} color="#000 " loading={loading} /></div>
+          <div className="z-40  p-64 loader-local bg-secondary">
+            <CircleSpinner size={40} color="#000 " loading={loading} />
+          </div>
         ) : (
-          <button onClick={submitData} className="p-2 px-16  bg-black text-white">
+          <button
+            onClick={submitData}
+            className="p-2 px-16  bg-black text-white"
+          >
             Create Course
           </button>
         )}

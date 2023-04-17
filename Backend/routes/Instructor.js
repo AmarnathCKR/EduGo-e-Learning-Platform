@@ -4,6 +4,7 @@ const {
   verifyInstructor,
   createInstructor,
   instructorLogin,
+  allCategory,
 } = require("../controllers/instructor/instructorManage");
 const {
   updateProfile,
@@ -30,5 +31,7 @@ router.post("/update-course", instructorAuth, updateInstructorCourse);
 router.get("/fetch-course", instructorAuth, fetchInstructorCourse);
 
 router.get("/fetch-user",instructorAuth, fetchInstructor)
+
+router.get("/get-field",allCategory)
 
 module.exports = router;

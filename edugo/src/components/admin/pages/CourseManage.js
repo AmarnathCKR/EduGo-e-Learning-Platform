@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import Layout from "../layouts/Layout";
-import DataTable from "../DataTable";
-import AddFieldModal from "../modals/AddFieldModal";
-import { ToastContainer } from "react-toastify";
 
-function FieldManage() {
+import { ToastContainer } from "react-toastify";
+import CourseDataTable from "../datatable/CourseDataTable";
+
+function CourseManage() {
   const [show , setShow] = useState(false)
   const handleClick = () => {
     setShow(!show)
@@ -18,15 +18,15 @@ function FieldManage() {
   return (
     <>
     <ToastContainer />
-      <Layout pageTitle="Field Of Study Management">
+      <Layout pageTitle="Course Management">
         <div className="ml-0 md:ml-[250px] h-screen" style={style}>
-          <AddFieldModal show={show} click={handleClick} link="create-field" />
+          
           <h1 className="text-center text-white bg-black md:mt-0 mt-14 text-2xl py-5 font-bold ">
-            Field of Study Management
+            Course Management
           </h1>
-         <div className="flex justify-center "><button onClick={handleClick} className="my-2 mx-auto px-10 py-3 rounded hover:translate-y-1 bg-black text-white border border-white">Create New Field Category</button></div> 
+         
           <div className="p-5">
-            <DataTable show={show}/>
+            <CourseDataTable show={show}/>
           </div>
         </div>
       </Layout>
@@ -34,4 +34,4 @@ function FieldManage() {
   );
 }
 
-export default FieldManage;
+export default CourseManage;
