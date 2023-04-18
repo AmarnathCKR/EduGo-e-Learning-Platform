@@ -10,16 +10,19 @@ const CourseSchema = new mongoose.Schema(
     description: String,
     image: String,
     status: String,
-    field: String,
+    field: {
+      type: mongoose.Types.ObjectId,
+      ref: "FieldCategory",
+    },
     price: String,
     experience: String,
     total: String,
-    video : String,
+    video: String,
     topics: [],
-    instructor :{
+    instructor: {
       type: mongoose.Types.ObjectId,
-      ref: 'Instructor'
-  }
+      ref: "Instructor",
+    },
   },
   { timestamps: true }
 );

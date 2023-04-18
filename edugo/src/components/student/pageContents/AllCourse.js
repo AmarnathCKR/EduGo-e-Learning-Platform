@@ -3,7 +3,7 @@ import React, { useEffect } from "react";
 
 function AllCourse(props) {
   const style = {
-    width: "250px",
+    width: "240px",
     height: "150px",
   };
 

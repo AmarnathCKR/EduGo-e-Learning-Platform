@@ -129,7 +129,7 @@ function DataTable(props) {
 
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
+    <div style={{ height: 530, width: "100%" }}>
       <AddFieldModal show={show} toggle={setStat} click={handleClick} data={item} link="edit-field" />
       <DataGrid
         rows={data}

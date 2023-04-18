@@ -65,6 +65,9 @@ function CourseDataTable(props) {
     {field: "id", headerName : "view", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleView(params.value)}}><BiEdit size="20px" /></button></div>,},
     
   ];
+  const handleStat = () =>{
+    setStat(!stat)
+  }
   const token = useSelector((state) => state.adminToken);
 
   const fetchCategory = (page, pageSize, sortModel, searchText) => {
@@ -131,8 +134,8 @@ function CourseDataTable(props) {
 
 
   return (
-    <div style={{ height: 400, width: "100%" }}>
-        <CourseViewModal show={show} data={item} />
+    <div style={{ height: 530, width: "100%" }}>
+        <CourseViewModal stat={handleStat} show={show} click={handleClick} data={item} />
       <DataGrid
         rows={data}
         sx={{

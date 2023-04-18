@@ -26,7 +26,7 @@ function CourseManage() {
           </h1>
          
           <div className="p-5">
-            <CourseDataTable show={show}/>
+            <CourseDataTable show={show} click={handleClick}/>
           </div>
         </div>
       </Layout>

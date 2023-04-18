@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 
 import FieldManage from "./pages/FieldManage";
+import AdminLogin from "./pages/AdminLogin"
 import AdminDashboard from "./pages/AdminDashboard";
 import { subscribeAdminToken } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
@@ -35,7 +36,8 @@ function AdminRouter() {
     <>
       <Routes>
         <Route>
-          <Route path="/field" element={auth ? <FieldManage /> : <Navigate to="/admin" />} /> 
+        <Route path="/" element={!auth ? <AdminLogin /> : <Navigate to="/admin/dashboard" />} />
+        <Route path="/field" element={auth ? <FieldManage /> : <Navigate to="/admin" />} /> 
         <Route path="/dashboard" element={auth ?<AdminDashboard />: <Navigate to="/admin" />} />
         <Route path="/course" element={auth ?<CourseManage />: <Navigate to="/admin" />} /> 
         </Route>

@@ -185,8 +185,9 @@ exports.getAllCourse = async (req,res) => {
 exports.getCourseData = async (req,res) => {
   const {id} = req.query;
   
-  const data = await Course.findOne({_id : id}).populate("instructor")
+  const data = await Course.findOne({_id : id}).populate("instructor").populate("field")
   if(data){
+    console.log(data)
     const success = {
       status: true,
       content: {
@@ -208,4 +209,32 @@ exports.getCourseData = async (req,res) => {
     res.status(409).send({ data: emailError });
   }
 
+}
+
+exports.changeCourse = async (req, res)=>{
+  const {id, status}= req.body;
+  await Course.findByIdAndUpdate(id,{
+    status : status
+  }).then((response)=>{
+    
+    const success = {
+      status: true,
+      content: {
+        data: response,
+      },
+    };
+    res.status(200).send({ data: success });
+  }).catch((err)=>{
+    const emailError = {
+      status: false,
+      errors: [
+        {
+          param: "Invalid id",
+          message: err,
+          code: "INVALID_INPUTS",
+        },
+      ],
+    };
+    res.status(409).send({ data: emailError });
+  })
 }

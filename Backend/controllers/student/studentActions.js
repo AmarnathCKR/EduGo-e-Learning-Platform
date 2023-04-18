@@ -100,7 +100,7 @@ exports.updateStudentProfile = async (req, res) => {
 };
 
 exports.fetchAllCourse = async (req, res) => {
-  const allCourse = await Course.find();
+  const allCourse = await Course.find({status : "active"});
   const success = {
     status: true,
     content: {

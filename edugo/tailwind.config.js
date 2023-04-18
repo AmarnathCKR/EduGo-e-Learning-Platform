@@ -5,6 +5,9 @@ module.exports = {
     colors: {
       bgColor: "#fff",
     },
+    extend : {
+      visibility : ["group-hover"]
+    }
   },
   plugins: [require("daisyui")],
 };

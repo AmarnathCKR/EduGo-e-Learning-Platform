@@ -67,3 +67,8 @@ body {
 .scroll-x::-webkit-scrollbar{
     display: none;
 }
+
+.modal-local-content-111 {
+  height: 600px;
+  background-color: #fff;
+}
