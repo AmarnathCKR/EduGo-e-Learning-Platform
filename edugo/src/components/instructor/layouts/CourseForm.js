@@ -17,6 +17,7 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
+  deleteObject,
 } from "firebase/storage";
 
 import { Player, ControlBar } from "video-react";
@@ -35,7 +36,6 @@ const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
 function CourseForm(props) {
-  
   const [progress, setProgress] = useState(0);
 
   const [error, setError] = useState("");
@@ -56,11 +56,10 @@ function CourseForm(props) {
   const [select, setSelect] = useState([]);
 
   const [topics, setTopics] = useState([
-    { name: "", description: "", time: "" },
+    { name: "", description: "", time: "", video: "", progress: 0, ref: {} },
   ]);
 
   const handleVideoRender = async (event) => {
-    
     let value = URL.createObjectURL(event.target.files[0]);
     setcourse((state) => ({ ...state, videoRaw: event.target.files[0] }));
     setcourse((state) => ({ ...state, video: value }));
@@ -80,7 +79,7 @@ function CourseForm(props) {
   };
 
   const submitData = async () => {
-    console.log(course)
+    console.log(course);
     if (
       !course.name ||
       !course.headline ||
@@ -128,11 +127,16 @@ function CourseForm(props) {
                 "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
                 formData
               );
-    
+
               const imageUrl = response.data.secure_url;
-    
-              const data = { ...course, image: imageUrl, topics: topics, video : url };
-    
+
+              const data = {
+                ...course,
+                image: imageUrl,
+                topics: topics,
+                video: url,
+              };
+
               const url1 = "http://localhost:5000/instructor/update-course";
               axios
                 .post(url1, data, {
@@ -154,7 +158,9 @@ function CourseForm(props) {
                 .catch((err) => {
                   setLoading(false);
                   setError(err.response.data.data.errors[0].message);
-                  if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                  if (
+                    err.response.data.data.errors[0].code === "USER_BLOCKED"
+                  ) {
                     localStorage.removeItem("teacherToken");
                     dispatch(unsuscribeToken());
                     localStorage.removeItem("teacherData");
@@ -165,7 +171,6 @@ function CourseForm(props) {
                 });
             }
           );
-          
         }
       } catch (error) {
         setLoading(false);
@@ -206,7 +211,7 @@ function CourseForm(props) {
   const dropDown = select.map((item) => {
     return (
       <option
-      key={item._id}
+        key={item._id}
         className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
         value={item._id}
       >
@@ -245,15 +250,103 @@ function CourseForm(props) {
         required
       />
       <input
-        className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700bg-white focus:outline-none items-center"
+        className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
         type="number"
         placeholder="Time required (Minutes)"
         value={topic.time}
         onChange={(event) => handleTopicTimeChange(index, event)}
         required
       />
+
+      {topic.video && (
+        <div className="md:px-20 px-3">
+          <Player
+            className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
+            autoPlay
+            src={topic.video}
+          >
+            <ControlBar autoHide={false} className="my-class" />
+          </Player>
+        </div>
+      )}
+      {topic.progress !== 0 && topic.progress !== 100 && topic.progress ? (
+        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
+          <div
+            class="bg-blue-600 h-2.5 rounded-full"
+            style={{width : `${topic.progress}%`}}
+          ></div>
+        </div>
+      ) : (
+        <>
+          {topic.progress === 100 && (
+            <button
+              className="text-red-500"
+              onClick={(event) => handleDeleteVideo(index, event)}
+            >
+              Delete
+            </button>
+          )}
+          <input
+            className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
+            type="file"
+            accept="video/*"
+            onChange={(event) => handleTopicVideoChange(index, event)}
+          />
+        </>
+      )}
     </div>
   ));
+
+  const showVideoRemoval = () => {
+    toast.success("Video Removed Successfully");
+  };
+
+  const handleDeleteVideo = async (index, event) => {
+    const fileRef = ref(storage, `videos/${topics[index].ref.name}`);
+    //2.
+    deleteObject(fileRef)
+      .then(() => {
+        showVideoRemoval();
+        const newTopics = [...topics];
+        newTopics[index].video = "";
+        newTopics[index].progress = 0;
+        setTopics(newTopics);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+
+  const handleTopicVideoChange = async (index, event) => {
+    const file2 = event.target.files[0];
+
+    const storageRef = ref(storage, `videos/${file2.name}`);
+    const uploadTask = uploadBytesResumable(storageRef, file2);
+
+    await uploadTask.on(
+      "state_changed",
+      (snapshot) => {
+        // Handle progress
+        const progresss =
+          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+        const newTopics = [...topics];
+        newTopics[index].progress = +progresss;
+        newTopics[index].ref = file2;
+
+        setTopics(newTopics);
+      },
+      (error) => {
+        // Handle error
+        console.error(error);
+      }
+    );
+
+    const url = await getDownloadURL(uploadTask.snapshot.ref);
+
+    const newTopics = [...topics];
+    newTopics[index].video = url;
+    setTopics(newTopics);
+  };
 
   useEffect(() => {
     axios.get("http://localhost:5000/instructor/get-field").then((res) => {

@@ -395,7 +395,7 @@ exports.studentCreate = async (req, res) => {
 };
 
 exports.displayCourses = async (req, res) => {
-  const pageSize = 10;
+  const pageSize = 12;
   const currentPage = parseInt(req.query.page) || 1;
   const searchQuery = req.query.search || "";
   const sortOrder = req.query.sort || "";

@@ -14,9 +14,9 @@ function AllCoursesBrowse() {
 
   return <div>
     <HeaderLanding student={Instructor} search={search} token={token} />
-    <div className="mt-36">
+    <div className="mt-36 ">
         {search && (
-            <h1>Search : {search}</h1>
+            <h1 className="text-center text-2xl font-medium">Search : {search}</h1>
             
         )}
         <CourseDisplayCards search={search} />
