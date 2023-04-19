@@ -12,6 +12,7 @@ import StudentProfile from "./pages/StudentProfile";
 import EditProfile from "./pages/EditProfile";
 import axios from "axios";
 import { googleLogout } from "@react-oauth/google";
+import AllCoursesBrowse from "./pages/AllCoursesBrowse";
 
 function StudentRouter() {
   const [token, setToken] = useState(null);
@@ -72,8 +73,12 @@ function StudentRouter() {
           path="/edit-profile"
           element={auth ? <EditProfile /> : <Navigate to="/" />}
         />
+        <Route
+          path="/courses"
+          element={auth ? <AllCoursesBrowse /> : <Navigate to="/" />}
+        />
       </Route>
-      <Route path="/*" element={<h1>Stufffff</h1>} />
+      <Route path="/*" element={<h1>Error 404</h1>} />
     </Routes>
   );
 }

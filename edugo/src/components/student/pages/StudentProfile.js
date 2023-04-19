@@ -7,9 +7,10 @@ import FooterLanding from "../layouts/FooterLanding";
 function StudentProfile() {
   const auth = useSelector((state) => state.studentToken);
   const Instructor = useSelector((state) => state.studentData);
+  const search = useSelector((state) => state.studentSearch);
   return (
     <>
-      <HeaderLanding token={auth} student={Instructor} />
+      <HeaderLanding token={auth} student={Instructor} search={search} />
       <div className="container mx-auto mt-32  shadow">
         <div>
           <div className="bg-white border relative mb-20 shadow rounded-lg w-90 md:w-90   mx-auto">

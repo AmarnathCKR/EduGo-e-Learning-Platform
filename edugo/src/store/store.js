@@ -99,6 +99,20 @@ const studentDataSlice = createSlice({
 })
 
 
+const studentSearchSlice = createSlice({
+    name : "studentSearch",
+    initialState : "",
+    reducers : {
+        
+        subscribeStudentSearch : (state, actions) => {
+            return state = actions.payload
+        },
+        unsuscribeStudentSearch : (state, actions) => {
+            return state = ''
+        },
+    }
+})
+
 
 
 const store = configureStore({
@@ -109,7 +123,8 @@ const store = configureStore({
         AllCourse : AllCourseSlice.reducer,
         studentToken : studentTokenSlice.reducer,
         studentData : studentDataSlice.reducer,
-        adminToken : adminTokenSlice.reducer
+        adminToken : adminTokenSlice.reducer,
+        studentSearch : studentSearchSlice.reducer
     }
 
 })
@@ -124,5 +139,6 @@ export const {subscribeCourse, unsuscribeCourse} = courseSlice.actions
 export const {subscribeAllCourse, unsuscribeAllCourse} =AllCourseSlice.actions
 export const {subscribeStudentToken, unsuscribeStudentToken} = studentTokenSlice.actions
 export const {subscribeStudentData, unsuscribeStudentData} = studentDataSlice.actions
+export const {subscribeStudentSearch, unsuscribeStudentSearch} = studentSearchSlice.actions
 export const {subscribeAdminToken, unsuscribeAdminToken} = adminTokenSlice.actions
 

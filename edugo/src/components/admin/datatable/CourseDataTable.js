@@ -11,7 +11,7 @@ function CourseDataTable(props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(100);
   const [totalCount, setTotalCount] = useState(0);
   const [sortModel, setSortModel] = useState([{ field: "name", sort: "asc" }]);
   const [searchText, setSearchText] = useState("");
@@ -70,35 +70,33 @@ function CourseDataTable(props) {
   }
   const token = useSelector((state) => state.adminToken);
 
-  const fetchCategory = (page, pageSize, sortModel, searchText) => {
-    setLoading(true);
-    axios
-      .get(
-        `http://localhost:5000/admin/fetch-course?page=${page}&pageSize=${pageSize}&sortField=${
-          sortModel.length > 0 ? sortModel[0].field : ""
-        }&sortOrder=${
-          sortModel.length > 0 ? sortModel[0].sort : ""
-        }&searchText=${searchText}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
-      .then((response) => {
-        setData(response.data.items);
-        setTotalCount(response.data.totalCount);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error);
-        setLoading(false);
-      });
-  };
+
 
   useEffect(
-    () => fetchCategory(page, pageSize, sortModel, searchText),
+    () => {setLoading(true);
+      axios
+        .get(
+          `http://localhost:5000/admin/fetch-course?page=${page}&pageSize=${pageSize}&sortField=${
+            sortModel.length > 0 ? sortModel[0].field : ""
+          }&sortOrder=${
+            sortModel.length > 0 ? sortModel[0].sort : ""
+          }&searchText=${searchText}`,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+          }
+        )
+        .then((response) => {
+          setData(response.data.items);
+          setTotalCount(response.data.totalCount);
+          setLoading(false);
+        })
+        .catch((error) => {
+          setError(error);
+          setLoading(false);
+        });},
     // eslint-disable-next-line
     [page, pageSize, sortModel, searchText,props.show, stat]
   );

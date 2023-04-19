@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  subscribeStudentSearch,
   unsuscribeStudentData,
   unsuscribeStudentToken,
 } from "../../../store/store";
@@ -16,7 +17,8 @@ function HeaderLanding(props) {
   const [menuResponsive, setMenu] = useState(false);
 
   const [searchSuggestions, setSearchSuggestions] = useState([]);
-  const [searchKeyword, setSearchKeyword] = useState("");
+
+  const [searchKeyword, setSearchKeyword] = useState(props.search);
 
   const [isOpen, setIsOpen] = useState({});
   const navigate = useNavigate();
@@ -69,6 +71,7 @@ function HeaderLanding(props) {
 
   const handleSearch = debounce((value) => {
     setSearchKeyword(value);
+    
     axios
       .get(`http://localhost:5000/search?search=${value}`)
       .then((res) => {
@@ -82,11 +85,37 @@ function HeaderLanding(props) {
   const handleInputChange = (event) => {
     const value = event.target.value;
     handleSearch(value);
+    dispatch(subscribeStudentSearch(value));
+    if (event.key === "ArrowDown" && searchSuggestions.length > 0) {
+      // move focus to first suggestion
+      document.getElementById("suggestion-0").focus();
+    }
   };
 
   const handleSelectSuggestion = (suggestion) => {
     setSearchKeyword(suggestion);
+    dispatch(subscribeStudentSearch(suggestion));
+    navigate("/courses");
     setSearchSuggestions([]);
+  };
+
+  const handleKeyDown = (event, index) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSelectSuggestion(searchSuggestions[index]?.name || searchKeyword);
+      navigate("/courses");
+    } else if (event.key === "ArrowUp" && index > 0) {
+      // move focus to previous suggestion
+      event.preventDefault();
+      document.getElementById(`suggestion-${index - 1}`).focus();
+    } else if (
+      event.key === "ArrowDown" &&
+      index < searchSuggestions.length - 1
+    ) {
+      event.preventDefault();
+      // move focus to next suggestion
+      document.getElementById(`suggestion-${index + 1}`).focus();
+    }
   };
 
   return (
@@ -95,7 +124,14 @@ function HeaderLanding(props) {
         <div className="flex w-[130px] h-[76px]  p-2 align-middle">
           <img src={logo} alt="logo" onClick={handleLink} />
           {menuToggler ? (
-            <span className="my-1 mt-5 ml-4 mr-1 font-medium">Browse</span>
+            <span
+              onClick={() => {
+                navigate("/courses");
+              }}
+              className="cursor-pointer my-1 mt-5 ml-4 mr-1 font-medium"
+            >
+              Browse
+            </span>
           ) : (
             ""
           )}
@@ -109,21 +145,26 @@ function HeaderLanding(props) {
                 </div>
                 <div className="grow">
                   <input
+                    id="search-input"
                     value={searchKeyword}
                     onChange={handleInputChange}
+                    onKeyDown={(event) => handleKeyDown(event, -1)}
                     className="w-full border-none bg-white rounded py-1 text-gray-700bg-white focus:outline-none items-center"
                     type="text"
                     placeholder="Search anything"
                   />
                   {searchSuggestions.length > 0 && (
                     <ul className="bg-white md:w-1/2 p-2 border shadow absolute">
-                      {searchSuggestions.map((suggestion) => (
+                      {searchSuggestions.map((suggestion, index) => (
                         <li
                           className="bg-white hover:bg-neutral-50 cursor-pointer"
                           key={suggestion.id}
+                          id={`suggestion-${index}`}
                           onClick={() =>
                             handleSelectSuggestion(suggestion.name)
                           }
+                          onKeyDown={(event) => handleKeyDown(event, index)}
+                          tabIndex="0"
                         >
                           {suggestion.name}
                         </li>

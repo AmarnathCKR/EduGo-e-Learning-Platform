@@ -5,11 +5,13 @@ const {
   updateStudentProfile,
   fetchAllCourse,
   fetchStudent,
+  fetchAllFields,
 } = require("../controllers/student/studentActions");
 const {
   studentLogin,
   studentsVerify,
   studentCreate,
+  displayCourses,
 } = require("../controllers/student/studentManage");
 const studentAuth = require("../middlewares/student/studentAuth");
 
@@ -28,5 +30,9 @@ router.post("/update-profile", studentAuth, updateStudentProfile);
 router.get("/search", studentSearch);
 
 router.get("/fetch-student",studentAuth, fetchStudent);
+
+router.get("/display-courses", displayCourses);
+
+router.get("/fetch-fields", fetchAllFields)
 
 module.exports = router;

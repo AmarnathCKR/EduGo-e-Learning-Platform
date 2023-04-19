@@ -48,7 +48,7 @@ exports.createFields = async (req, res) => {
 exports.fetchAllFields = async (req, res) => {
   
   const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  const pageSize = parseInt(req.query.pageSize) || 100;
   const sortField = req.query.sortField || "name";
   const sortOrder = req.query.sortOrder === "desc" ? -1 : 1;
   const searchText = req.query.searchText || "";
@@ -66,7 +66,10 @@ exports.fetchAllFields = async (req, res) => {
     .skip(skip)
     .limit(pageSize)
     .exec();
-  const result = data.map((item) => {
+
+    console.log(data.length)
+
+  const result = await data.map((item) => {
     return { id: item._id, image: item.image, name: item.name, tag: item.tag ,ref : item._id};
   });
 
@@ -152,7 +155,7 @@ exports.editField = async (req,res) => {
 
 exports.getAllCourse = async (req,res) => {
   const page = parseInt(req.query.page) || 1;
-  const pageSize = parseInt(req.query.pageSize) || 10;
+  const pageSize = parseInt(req.query.pageSize) || 100;
   const sortField = req.query.sortField || "name";
   const sortOrder = req.query.sortOrder === "desc" ? -1 : 1;
   const searchText = req.query.searchText || "";
@@ -170,8 +173,11 @@ exports.getAllCourse = async (req,res) => {
     .skip(skip)
     .limit(pageSize)
     .exec();
-  const result = data.map((item) => {
-    console.log(item.instructor)
+
+    console.log(data.length)
+    
+  const result = await data.map((item) => {
+    
     return { image: item.image, name: item.name, instructor: item.instructor.name, headline: item.headline ,id : item._id, status : item.status};
   });
 

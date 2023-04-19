@@ -1,0 +1,29 @@
+import React from "react";
+import { useSelector } from "react-redux";
+import HeaderLanding from "../layouts/HeaderLanding";
+import FooterLanding from "../layouts/FooterLanding";
+import CourseDisplayCards from "../courses contents/CourseDisplayCards";
+
+function AllCoursesBrowse() {
+  const Instructor = useSelector((state) => state.studentData);
+
+  const token = useSelector((state) => state.studentToken);
+  const search = useSelector((state) => state.studentSearch);
+
+
+
+  return <div>
+    <HeaderLanding student={Instructor} search={search} token={token} />
+    <div className="mt-36">
+        {search && (
+            <h1>Search : {search}</h1>
+            
+        )}
+        <CourseDisplayCards search={search} />
+        
+    </div>
+    <FooterLanding />
+  </div>;
+}
+
+export default AllCoursesBrowse;

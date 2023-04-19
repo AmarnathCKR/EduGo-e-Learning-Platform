@@ -78,7 +78,7 @@ function CourseViewModal(props) {
                   <h1 className=" text-center font-semibold text-2xl py-6">
                     {props.data.name}
                   </h1>
-                  <div className="grid grid-cols-2  justify-center">
+                  <div className="grid grid-cols-2  justify-center w-full">
                     <div className="md:col-span-1 col-span-2 flex justify-center items-center">
                       <img width={150} src={props.data.image} alt="img" />
                     </div>
@@ -113,7 +113,7 @@ function CourseViewModal(props) {
                     </div>
                   </div>
 
-                  <div className="flex flex-col items-start justify-start">
+                  <div className="flex flex-col items-start justify-start w-full">
                     <h1 className=" text-start text-lg  py-2">
                       <span className="  font-semibold">Headline : </span>
                       {props.data.headline}

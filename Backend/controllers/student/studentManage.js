@@ -9,7 +9,6 @@ const createToken = (_id) => {
 };
 
 exports.studentLogin = async (req, res) => {
-  
   const { email, password, google } = req.body;
   if (req.body) {
     if (google) {
@@ -73,7 +72,7 @@ exports.studentLogin = async (req, res) => {
         } else {
           const match = await bcrypt.compare(password, users.password);
           if (match) {
-            if(!users.status){
+            if (!users.status) {
               const emailError = {
                 status: false,
                 errors: [
@@ -85,7 +84,7 @@ exports.studentLogin = async (req, res) => {
                 ],
               };
               res.status(409).send({ data: emailError });
-            }else{
+            } else {
               const token = await createToken(users._id);
 
               const success = {
@@ -99,7 +98,6 @@ exports.studentLogin = async (req, res) => {
               };
               res.status(200).send({ data: success });
             }
-            
           } else {
             const emailError = {
               status: false,
@@ -394,4 +392,51 @@ exports.studentCreate = async (req, res) => {
       }
     }
   }
+};
+
+exports.displayCourses = async (req, res) => {
+  const pageSize = 10;
+  const currentPage = parseInt(req.query.page) || 1;
+  const searchQuery = req.query.search || "";
+  const sortOrder = req.query.sort || "";
+  const fieldOfStudyFilter = req.query.fieldOfStudy || "";
+  const experienceFilter = req.query.experience || "";
+
+  const searchObject = searchQuery
+    ? { $or: [{ name: { $regex: searchQuery, $options: "i" } }] }
+    : {};
+  const fieldOfStudyFilterObject = fieldOfStudyFilter
+    ? { field: fieldOfStudyFilter }
+    : {};
+  const experienceFilterObject = experienceFilter
+    ? { experience: experienceFilter }
+    : {};
+  const status = { status: "active" };
+  const sortObject = {};
+  if (sortOrder) {
+    sortObject[sortOrder] = 1;
+  }
+
+  const count = await Course.countDocuments({
+    ...status,
+    ...searchObject,
+    ...fieldOfStudyFilterObject,
+    ...experienceFilterObject,
+  });
+  const totalPages = Math.ceil(count / pageSize);
+
+  const courses = await Course.find({
+    ...status,
+    ...searchObject,
+    ...fieldOfStudyFilterObject,
+    ...experienceFilterObject,
+  })
+    .sort(sortObject)
+    .skip((currentPage - 1) * pageSize)
+    .limit(pageSize);
+
+  res.json({
+    courses,
+    totalPages,
+  });
 };

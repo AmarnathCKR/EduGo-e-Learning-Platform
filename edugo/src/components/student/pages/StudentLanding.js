@@ -53,7 +53,7 @@ function StudentLanding() {
   const allCourse = useSelector((state) => state.AllCourse);
   const token = useSelector((state) => state.studentToken);
   const student = useSelector((state) => state.studentData);
-
+  const search = useSelector((state) => state.studentSearch);
   return (
     <>
     <ToastContainer />
@@ -76,6 +76,7 @@ function StudentLanding() {
               open1={handleOpen1}
               student={student}
               token={token}
+              search={search}
             />
             <MainContent show={handleOpen} />
             <AllCourse courses={allCourse} />

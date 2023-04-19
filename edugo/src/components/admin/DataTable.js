@@ -11,7 +11,7 @@ function DataTable(props) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(100);
   const [totalCount, setTotalCount] = useState(0);
   const [sortModel, setSortModel] = useState([{ field: "name", sort: "asc" }]);
   const [searchText, setSearchText] = useState("");

@@ -1,5 +1,6 @@
 const { Course } = require("../../database/Course");
 const { Student } = require("../../database/Student");
+const { FieldCategory } = require("../../database/FieldCategory");
 const jwt = require("jsonwebtoken");
 const Joi = require("joi");
 const bcrypt = require("bcrypt");
@@ -13,7 +14,7 @@ exports.studentSearch = async (req, res) => {
     const { search } = req.query;
     console.log(search);
     const data = await Course.find({
-      $or: [{ name: { $regex: "^" + search + ".*", $options: "i" } }],
+      $or: [{ name: { $regex: search, $options: "i" }  }],
     }).sort({ datefield: -1 });
 
     const success = {
@@ -120,4 +121,16 @@ exports.fetchStudent = async (req,res) =>{
     },
   };
   res.status(200).send({ data: success });
+}
+
+exports.fetchAllFields = async (req,res)=>{
+  FieldCategory.find().then((result)=>{
+    const success = {
+      status: true,
+      content: {
+        data: result,
+      },
+    };
+    res.status(200).send({ data: success });
+  })
 }

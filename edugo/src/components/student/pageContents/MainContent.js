@@ -1,10 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React from "react";
-import { Link } from "react-router-dom";
-
+import { useSelector } from "react-redux";
+import { Link, useNavigate } from "react-router-dom";
 
 function MainContent(props) {
+  const navigate = useNavigate()
+  const token = useSelector((state) => state.studentToken);
+  const handleNav = () =>{
+    navigate("/courses")
+  }
   return (
     <>
       <div className="grid grid-cols-6 gap-3 mt-20 w-full p-8 pr-16">
@@ -19,14 +24,28 @@ function MainContent(props) {
               universities and companies.
             </p>
             <div className="flex justify-start">
-              <button onClick={props.show} class="bg-black text-white text-xl md:py-3 py-2 px-5 rounded hover:-translate-y-1 md:mr-4 md:my-2">
-                Get Started
-              </button>
-              <Link to="/instructor">
-                <button class="bg-primary text-xl text-white hover:-translate-y-1 md:py-3 py-2 px-5 rounded  md:mx-4 mx-2 md:my-2">
-                  Teach on Edugo
+              {token ? (
+                <button
+                  onClick={handleNav}
+                  class="bg-black text-white text-xl md:py-3 py-2 px-5 rounded hover:-translate-y-1 md:mr-4 md:my-2"
+                >
+                  Browse Courses
                 </button>
-              </Link>
+              ) : (
+                <>
+                  <button
+                    onClick={props.show}
+                    class="bg-black text-white text-xl md:py-3 py-2 px-5 rounded hover:-translate-y-1 md:mr-4 md:my-2"
+                  >
+                    Get Started
+                  </button>
+                  <Link to="/instructor">
+                    <button class="bg-primary text-xl text-white hover:-translate-y-1 md:py-3 py-2 px-5 rounded  md:mx-4 mx-2 md:my-2">
+                      Teach on Edugo
+                    </button>
+                  </Link>
+                </>
+              )}
             </div>
           </div>
         </div>
