@@ -401,16 +401,14 @@ exports.instructorLogin = async (req, res) => {
   }
 };
 
-
-exports.allCategory = async (req,res) => {
-  FieldCategory.find({}).then((result)=>{
+exports.allCategory = async (req, res) => {
+  FieldCategory.find({ status: true }).then((result) => {
     const success = {
       status: true,
       content: {
         data: result,
-        
       },
     };
     res.status(200).send({ data: success });
-  })
-}
+  });
+};

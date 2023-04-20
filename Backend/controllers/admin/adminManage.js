@@ -19,6 +19,7 @@ exports.createFields = async (req, res) => {
       name: name,
       tag: tag,
       image: image,
+      status : true
     })
       .save()
       .then((result) => {
@@ -70,7 +71,7 @@ exports.fetchAllFields = async (req, res) => {
     console.log(data.length)
 
   const result = await data.map((item) => {
-    return { id: item._id, image: item.image, name: item.name, tag: item.tag ,ref : item._id};
+    return { id: item._id, image: item.image, name: item.name, tag: item.tag ,ref : item._id, status : item.status};
   });
 
   res.json({
@@ -79,9 +80,17 @@ exports.fetchAllFields = async (req, res) => {
   });
 };
 
-exports.deleteField = async (req,res) =>{
-  const {id} = req.query;
-  await FieldCategory.findByIdAndDelete(id).then((result)=>{
+exports.blockField = async (req,res) =>{
+  let {id, status} = req.query;
+  const data = await FieldCategory.findOne({_id : id})
+  if(data.status == false){
+    status = true
+  }
+
+  if(data.status == true){
+    status = false
+  }
+  await FieldCategory.findByIdAndUpdate(id,{status : status}).then((result)=>{
     const success = {
       status: true,
       content: {

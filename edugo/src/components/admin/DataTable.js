@@ -2,7 +2,7 @@ import { DataGrid, } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
 import axios from "axios";
 import { useSelector } from "react-redux";
-import { BiEdit, BiTrash } from "react-icons/bi";
+import { BiArrowToRight, BiBlock, BiEdit, BiTrash } from "react-icons/bi";
 import AddFieldModal from "./modals/AddFieldModal";
 
 
@@ -21,7 +21,7 @@ function DataTable(props) {
   const [ show,setShow]= useState(false)
   const handleDelete = (id) => {
     
-    axios.delete(`http://localhost:5000/admin/delete-field?id=${id}`,
+    axios.delete(`http://localhost:5000/admin/delete-field?id=${id}&status=${true}`,
     {
       headers: {
         "Content-Type": "application/json",
@@ -58,10 +58,11 @@ function DataTable(props) {
       width: 200,
       renderCell: (params) => <img width="20" src={params.value} alt="icon" />,
     },
-    { field: "name", headerName: "Name", width: 300 },
-    { field: "tag", headerName: "Tag", width: 300 },
+    { field: "name", headerName: "Name", width: 200 },
+    { field: "tag", headerName: "Tag", width: 200 },
+    { field: "status", headerName: "Status", width: 200 ,renderCell: (params) => <>{params.value===true ? "Active" : "Blocked"}</>,},
     {field: "ref", headerName : "Edit", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleEdit(params.value)}}><BiEdit size="20px" /></button></div>,},
-    {field: "id", headerName : "Delete", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleDelete(params.value)}}><BiTrash size="20px" /></button></div>,}
+    {field: "id", headerName : "Control", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleDelete(params.value)}}>Block/Unblock </button></div>,}
   ];
   const token = useSelector((state) => state.adminToken);
 
@@ -82,6 +83,7 @@ function DataTable(props) {
         }
       )
       .then((response) => {
+        console.log(response.data.items)
         setData(response.data.items);
         setTotalCount(response.data.totalCount);
         setLoading(false);

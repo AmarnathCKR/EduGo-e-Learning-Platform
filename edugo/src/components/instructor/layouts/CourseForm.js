@@ -21,6 +21,7 @@ import {
 } from "firebase/storage";
 
 import { Player, ControlBar } from "video-react";
+import { BiTrash } from "react-icons/bi";
 
 const firebaseConfig = {
   apiKey: "AIzaSyASd_nl36pkPP-68OtSzhwacsQxtQ88ZwY",
@@ -221,7 +222,10 @@ function CourseForm(props) {
   });
 
   const topic = topics.map((topic, index) => (
-    <div className="my-5 bg-neutral-200 border" key={index}>
+    <div
+      className="mb-10 justify-center items-center bg-neutral-200 border"
+      key={index}
+    >
       <div className="flex justify-between">
         <label>Module : {index + 1}</label>
         {index > 0 && (
@@ -259,7 +263,7 @@ function CourseForm(props) {
       />
 
       {topic.video && (
-        <div className="md:px-20 px-3">
+        <div className="md:px-20 px-3 w-full">
           <Player
             className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
             autoPlay
@@ -267,32 +271,43 @@ function CourseForm(props) {
           >
             <ControlBar autoHide={false} className="my-class" />
           </Player>
-        </div>
-      )}
-      {topic.progress !== 0 && topic.progress !== 100 && topic.progress ? (
-        <div class="w-full bg-gray-200 rounded-full h-2.5 dark:bg-gray-700">
-          <div
-            class="bg-blue-600 h-2.5 rounded-full"
-            style={{width : `${topic.progress}%`}}
-          ></div>
-        </div>
-      ) : (
-        <>
-          {topic.progress === 100 && (
+          <div className="flex justify-center items-center my-4 w-full">
             <button
-              className="text-red-500"
+              className="text-red-500 p-2 bg-black border flex rounded align-middle items-center"
               onClick={(event) => handleDeleteVideo(index, event)}
             >
-              Delete
+              <BiTrash color="white" size="35px" /> Remove this video
             </button>
-          )}
-          <input
-            className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
-            type="file"
-            accept="video/*"
-            onChange={(event) => handleTopicVideoChange(index, event)}
-          />
-        </>
+          </div>
+        </div>
+      )}
+      {topic.progress !== 0 && topic.progress !== 100 && topic.progress && (
+        <div className="flex justify-center items-center w-full ">
+          <div class="w-1/2 bg-gray-200 flex-col text-center text-lg rounded-full dark:bg-gray-700">
+            Uploading Please wait
+            <div class="bg-white text-xs font-medium text-blue-100 text-center h-4 my-2 p-0.5 leading-none w-full rounded-full relative">
+              <span
+                className={`z-30 absolute ${
+                  topic.progress >= 50 ? "text-white" : "text-neutral-500"
+                }`}
+              >
+                {Math.floor(topic.progress)}%
+              </span>
+              <div
+                class="bg-blue-600 z-10 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full h-full absolute top-0"
+                style={{ width: `${Math.floor(topic.progress)}%` }}
+              ></div>
+            </div>
+          </div>
+        </div>
+      )}
+      {!topic.video && !topic.progress && (
+        <input
+          className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
+          type="file"
+          accept="video/*"
+          onChange={(event) => handleTopicVideoChange(index, event)}
+        />
       )}
     </div>
   ));
@@ -323,12 +338,13 @@ function CourseForm(props) {
     const storageRef = ref(storage, `videos/${file2.name}`);
     const uploadTask = uploadBytesResumable(storageRef, file2);
 
-    await uploadTask.on(
+    uploadTask.on(
       "state_changed",
-      (snapshot) => {
+      async (snapshot) => {
         // Handle progress
         const progresss =
           (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+
         const newTopics = [...topics];
         newTopics[index].progress = +progresss;
         newTopics[index].ref = file2;
@@ -337,15 +353,17 @@ function CourseForm(props) {
       },
       (error) => {
         // Handle error
+        console.log("hererer");
         console.error(error);
+      },
+      async () => {
+        const url = await getDownloadURL(uploadTask.snapshot.ref);
+
+        const newTopics = [...topics];
+        newTopics[index].video = url;
+        setTopics(newTopics);
       }
     );
-
-    const url = await getDownloadURL(uploadTask.snapshot.ref);
-
-    const newTopics = [...topics];
-    newTopics[index].video = url;
-    setTopics(newTopics);
   };
 
   useEffect(() => {
@@ -356,7 +374,6 @@ function CourseForm(props) {
 
   return (
     <>
-      <ToastContainer />
       <div className="w-full mt-20 md:px-20 px-2">
         <h1 className="text-3xl text-center my-8">Create a new course</h1>
         <h1 className="text-red-600 text-center">{error}</h1>

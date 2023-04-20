@@ -8,7 +8,7 @@ const FieldCategorySchema = new mongoose.Schema(
     name: { type: String },
     tag: { type: String },
     image : String,
-    
+    status : Boolean
   },
   { timestamps: true }
 );
