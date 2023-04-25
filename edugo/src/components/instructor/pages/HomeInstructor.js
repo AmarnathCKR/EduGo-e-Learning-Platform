@@ -50,6 +50,8 @@ function HomeInstructor() {
   const Instructor = useSelector((state) => state.InstructorProfile);
 
   const token = useSelector((state) => state.token);
+
+  const search = useSelector((state) => state.instructorSearch);
   return (
     <>
       <ToastContainer />
@@ -62,6 +64,7 @@ function HomeInstructor() {
         close1={handleClose1}
         Instructor={Instructor}
         token={token}
+        search={search}
       />
       <div
         className=" z-10 w-100% h-screen bg-no-repeat bg-cover mt-20  saturate-150 flex md:justify-start justify-center bg-center items-center"
@@ -122,8 +125,8 @@ function HomeInstructor() {
         </div>
       </div>
 
-      <div className="mt-20 bg-primary p-10 ">
-        <div className="grid grid-cols-6  md:grid-cols-5 gap-4">
+      <div className="mt-20 bg-primary p-10">
+        <div className="grid grid-cols-2  md:grid-cols-5 gap-4">
           <div className="text-center p-3  col-span-2 md:col-span-1 text-white">
             <h1 className="font-bold  text-5xl">57M</h1>
             <p className="font-medium ">Students</p>
@@ -150,7 +153,7 @@ function HomeInstructor() {
         How to begin?
       </h1>
 
-      <div className="flex justify-center mt-10 text-center">
+      <div className="flex justify-center mt-10 p-5 text-center">
         <div className="max-w-6xl grid grid-cols-3 gap-5 text-base md:text-3xl font-bold text-center border-b">
           <div
             onClick={() => {
@@ -190,8 +193,8 @@ function HomeInstructor() {
           </div>
         </div>
       </div>
-      <div className="flex justify-center text-center">
-        <div className="mt-2 max-w-4xl">
+      <div className="flex justify-center p-5 text-center">
+        <div className="mt-2 p-5 max-w-4xl">
           {dropdown === "curriculum" ? <Curiculum /> : ""}
           {dropdown === "video" ? <Video /> : ""}
           {dropdown === "course" ? <Course /> : ""}

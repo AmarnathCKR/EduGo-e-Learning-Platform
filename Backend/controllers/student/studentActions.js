@@ -12,7 +12,7 @@ const createToken = (_id) => {
 exports.studentSearch = async (req, res) => {
   if (req.query.search) {
     const { search } = req.query;
-    console.log(search);
+    
     const data = await Course.find({
       $or: [{ name: { $regex: search, $options: "i" }  }],
     }).sort({ datefield: -1 });

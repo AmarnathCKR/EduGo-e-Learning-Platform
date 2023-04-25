@@ -5,7 +5,6 @@ const nodemailer = require("nodemailer");
 const { Instructor } = require("../../database/Instructor");
 const { Course } = require("../../database/Course");
 
-
 exports.updateProfile = async (req, res) => {
   const { id } = req.params;
 
@@ -79,7 +78,7 @@ exports.updateInstructorCourse = async (req, res) => {
     total,
     experience,
     price,
-    video
+    video,
   } = req.body;
 
   Instructor.findOne({ _id: id }).then(async (user) => {
@@ -94,7 +93,7 @@ exports.updateInstructorCourse = async (req, res) => {
       experience: experience,
       total: total,
       topics: topics,
-      video : video,
+      video: video,
       instructor: user._id,
     }).save();
 
@@ -125,9 +124,9 @@ exports.fetchInstructorCourse = async (req, res) => {
   res.status(200).send({ data: success });
 };
 
-exports.fetchInstructor = async (req,res) =>{
-  const {id} = req.params;
-  const inData = await Instructor.findOne({_id : id});
+exports.fetchInstructor = async (req, res) => {
+  const { id } = req.params;
+  const inData = await Instructor.findOne({ _id: id });
   const success = {
     status: true,
     content: {
@@ -135,4 +134,59 @@ exports.fetchInstructor = async (req,res) =>{
     },
   };
   res.status(200).send({ data: success });
+};
+
+exports.searchCourse = async (req, res) => {
+  const { id, search } = req.query;
+  if (search) {
+    const data = await Course.find({instructor : id,
+      $or: [{ name: { $regex: search, $options: "i" } }],
+    }).sort({ datefield: -1 });
+
+    const success = {
+      status: true,
+      content: {
+        data: data,
+      },
+    };
+    res.status(200).send({ data: success });
+  } else {
+    const emailError = {
+      status: false,
+      errors: [
+        {
+          param: "Input error",
+          message: "No input received",
+          code: "INPUT_ERROR",
+        },
+      ],
+    };
+    res.status(409).send({ data: emailError });
+  }
+};
+
+exports.findCourseByID = async (req,res) =>{
+  const {course} = req.query
+  if(course){
+    const data = await Course.findOne({_id : course}).populate("field")
+    const success = {
+      status: true,
+      content: {
+        data: data,
+      },
+    };
+    res.status(200).send({ data: success });
+  }else{
+    const emailError = {
+      status: false,
+      errors: [
+        {
+          param: "Input error",
+          message: "No input received",
+          code: "INPUT_ERROR",
+        },
+      ],
+    };
+    res.status(409).send({ data: emailError });
+  }
 }

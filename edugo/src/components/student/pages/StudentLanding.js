@@ -2,7 +2,7 @@
 import HeaderLanding from "../layouts/HeaderLanding";
 import FooterLanding from "../layouts/FooterLanding";
 import MainContent from "../pageContents/MainContent";
-import axios from "axios";
+
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
 import { subscribeAllCourse } from "../../../store/store";
@@ -13,6 +13,7 @@ import LandingConclude from "../pageContents/LandingConclude";
 import StudentRegisterModal from "../register/StudentRegisterModal";
 import StudentLoginModal from "../loginAuth/StudentLoginModal";
 import { ToastContainer } from "react-toastify";
+import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
 function StudentLanding() {
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
@@ -22,7 +23,7 @@ function StudentLanding() {
   const handleOpen = () => {
     setShow(true);
   };
-  
+
   const handleOpen1 = () => {
     setShow1(true);
   };
@@ -37,9 +38,8 @@ function StudentLanding() {
   useEffect(() => {
     setLoading(true);
     setState(true);
-    const url = "http://localhost:5000/fetch-allCourse";
-    axios
-      .get(url)
+
+    getAnyDataWithoutAuthStudentApi("fetch-allCourse")
       .then((res) => {
         setLoading(false);
         dispatch(subscribeAllCourse(res.data.data.content.data));
@@ -56,7 +56,7 @@ function StudentLanding() {
   const search = useSelector((state) => state.studentSearch);
   return (
     <>
-    <ToastContainer />
+      <ToastContainer />
       {state && (
         <>
           {loading ? (

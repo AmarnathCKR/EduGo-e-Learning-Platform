@@ -6,6 +6,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { useDispatch } from "react-redux";
 import { subscribeToken, subscribeTeacher } from "./store/store";
 import { CircleSpinner } from "react-spinners-kit";
+import { postWithoutAuthApi } from "./api/instructorAPI";
 
 function Google(props) {
   const dispatch = useDispatch();
@@ -36,8 +37,8 @@ function Google(props) {
             image: res.data.picture,
             google: true,
           };
-          axios
-            .post(`http://localhost:5000/instructor/signup`, data)
+          
+            postWithoutAuthApi("signup",data)
             .then((res) => {
               setLoading(false);
 

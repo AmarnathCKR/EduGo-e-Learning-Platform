@@ -10,9 +10,10 @@ import {
 } from "../../store/store";
 import StudentProfile from "./pages/StudentProfile";
 import EditProfile from "./pages/EditProfile";
-import axios from "axios";
+
 import { googleLogout } from "@react-oauth/google";
 import AllCoursesBrowse from "./pages/AllCoursesBrowse";
+import { getAnyDataStudentAPI } from "../../api/studentAPI";
 
 function StudentRouter() {
   const [token, setToken] = useState(null);
@@ -23,14 +24,7 @@ function StudentRouter() {
     const localToken = localStorage.getItem("StudentToken");
 
     if (localToken) {
-      const url = "http://localhost:5000/fetch-student";
-      axios
-        .get(url, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localToken}`,
-          },
-        })
+      getAnyDataStudentAPI("fetch-student", localToken)
         .then((res) => {
           dispatch(subscribeStudentData(res.data.data.content.data));
         })

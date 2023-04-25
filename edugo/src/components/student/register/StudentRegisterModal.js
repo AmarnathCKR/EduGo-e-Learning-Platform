@@ -3,16 +3,15 @@ import { useState } from "react";
 import "../../../Assets/style.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import {
-  
   subscribeStudentToken,
   subscribeStudentData,
 } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import StudentGoogleAuth from "./StudentGoogleAuth";
+import { postWithoutAuthStudentApi } from "../../../api/studentAPI";
 
 function StudentRegisterModal(props) {
   const [input, setInput] = useState({
@@ -49,8 +48,7 @@ function StudentRegisterModal(props) {
     if (input.name === "" || input.email === "" || input.password === "") {
       setError("Please fill all fields");
     } else {
-      axios
-        .post(`http://localhost:5000/signup`, data)
+      postWithoutAuthStudentApi("signup", data)
         .then((res) => {
           setData(res.data.data.content.data.token);
           setOTP(true);
@@ -62,12 +60,13 @@ function StudentRegisterModal(props) {
   };
 
   const verifyOTP = () => {
-    axios
-      .post(`http://localhost:5000/verify`, {
-        otp: inputOTP,
-        token: newData,
-        user: data,
-      })
+    const item = {
+      otp: inputOTP,
+      token: newData,
+      user: data,
+    };
+
+    postWithoutAuthStudentApi("verify", item)
       .then((res) => {
         dispatch(
           subscribeStudentToken(res.data.data.content.meta.access_token)
@@ -82,7 +81,7 @@ function StudentRegisterModal(props) {
           "StudentData",
           JSON.stringify(res.data.data.content.data)
         );
-        setOTP(false)
+        setOTP(false);
 
         setError("");
         showToastSuccess();
@@ -184,7 +183,9 @@ function StudentRegisterModal(props) {
 
                 <h1 className="text-center font-semibold text-lg">OR</h1>
 
-                <GoogleOAuthProvider clientId="635264642318-284aift53keao63nan68r055p302hmjv.apps.googleusercontent.com">
+                <GoogleOAuthProvider
+                  clientId={process.env.REACT_APP_GOOGLE_OAUTH}
+                >
                   <StudentGoogleAuth close={props.close} />
                 </GoogleOAuthProvider>
               </>

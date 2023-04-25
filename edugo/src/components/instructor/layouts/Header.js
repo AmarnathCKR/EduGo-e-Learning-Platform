@@ -4,14 +4,21 @@ import React, { useEffect, useState } from "react";
 import { googleLogout } from "@react-oauth/google";
 import logo from "../../../Assets/logo.png";
 import { Icon } from "@iconify/react";
-import { unsuscribeTeacher, unsuscribeToken } from "../../../store/store";
+import { subscribeInstructorSearch, unsuscribeTeacher, unsuscribeToken } from "../../../store/store";
 import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
+import { getAnyData } from "../../../api/instructorAPI";
+import { debounce } from "lodash";
 
 function Header(props) {
   const [menuToggler, setToggle] = useState(false);
   const [menuResponsive, setMenu] = useState(false);
   const [isOpen, setIsOpen] = useState({});
+  const [searchSuggestions, setSearchSuggestions] = useState([]);
+
+  const [searchKeyword, setSearchKeyword] = useState(props.search);
+
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const handleToggle = () => {
@@ -59,6 +66,53 @@ function Header(props) {
   const handleLink = ()=>{
     navigate("/instructor")
   }
+  const handleSearch = debounce((value) => {
+    setSearchKeyword(value);
+
+    getAnyData(`search?id=${props.Instructor._id}&search=${value}`)
+      .then((res) => {
+        setSearchSuggestions(res.data.data.content.data);
+      })
+      .catch((err) => {
+        console.log(err.response.data.data.errors[0].message);
+      });
+  }, 200);
+
+  const handleInputChange = (event) => {
+    const value = event.target.value;
+    handleSearch(value);
+    dispatch(subscribeInstructorSearch(value));
+    if (event.key === "ArrowDown" && searchSuggestions.length > 0) {
+      // move focus to first suggestion
+      document.getElementById("suggestion-0").focus();
+    }
+  };
+
+  const handleSelectSuggestion = (suggestion) => {
+    setSearchKeyword(suggestion);
+    dispatch(subscribeInstructorSearch(suggestion));
+    navigate("/instructor/course-page");
+    setSearchSuggestions([]);
+  };
+
+  const handleKeyDown = (event, index) => {
+    if (event.key === "Enter") {
+      event.preventDefault();
+      handleSelectSuggestion(searchSuggestions[index]?.name || searchKeyword);
+      navigate("/courses");
+    } else if (event.key === "ArrowUp" && index > 0) {
+      // move focus to previous suggestion
+      event.preventDefault();
+      document.getElementById(`suggestion-${index - 1}`).focus();
+    } else if (
+      event.key === "ArrowDown" &&
+      index < searchSuggestions.length - 1
+    ) {
+      event.preventDefault();
+      // move focus to next suggestion
+      document.getElementById(`suggestion-${index + 1}`).focus();
+    }
+  };
 
   return (
     <>
@@ -79,11 +133,33 @@ function Header(props) {
                   <Icon icon="material-symbols:search" />
                 </div>
                 <div className="grow">
-                  <input
+                <input
+                    id="search-input"
+                    value={searchKeyword}
+                    onChange={handleInputChange}
+                    onKeyDown={(event) => handleKeyDown(event, -1)}
                     className="w-full border-none bg-white rounded py-1 text-gray-700bg-white focus:outline-none items-center"
                     type="text"
                     placeholder="Search anything"
                   />
+                  {searchSuggestions.length > 0 && (
+                    <ul className="bg-white md:w-1/2 p-2 border shadow absolute">
+                      {searchSuggestions.map((suggestion, index) => (
+                        <li
+                          className="bg-white hover:bg-neutral-50 cursor-pointer"
+                          key={suggestion.id}
+                          id={`suggestion-${index}`}
+                          onClick={() =>
+                            handleSelectSuggestion(suggestion.name)
+                          }
+                          onKeyDown={(event) => handleKeyDown(event, index)}
+                          tabIndex="0"
+                        >
+                          {suggestion.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <div />
               </div>

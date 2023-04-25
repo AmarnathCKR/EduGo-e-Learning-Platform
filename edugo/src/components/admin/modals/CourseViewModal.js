@@ -1,13 +1,14 @@
 import { IoIosArrowDropdown } from "react-icons/io";
 import React from "react";
 import { ControlBar, Player } from "video-react";
-import axios from "axios";
+
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
+import { handleAnyPatch } from "../../../api/adminAPI";
 
 function CourseViewModal(props) {
   const modules = props.data?.topics.map((item, index) => (
-    <div className="w-full group relative">
+    <div key={item.name} className="w-full group relative">
       <div className="grid grid-cols-3 py-3 w-full">
         <span className="text-start flex align-middle items-center col-span-2">
           <span className="font-medium flex items-center align-middle">
@@ -19,7 +20,7 @@ function CourseViewModal(props) {
           {item.time} min
         </span>
       </div>
-      <p className="hidden group-hover:block px-4 m-2 rounded border-t text-left">
+      <div className="hidden group-hover:block px-4 m-2 rounded border-t text-left">
         <span className="font-semibold">Description: </span>
         <br />
         {item.description}
@@ -30,7 +31,7 @@ function CourseViewModal(props) {
         >
           <ControlBar autoHide={false} className="my-class" />
         </Player>
-      </p>
+      </div>
     </div>
   ));
 
@@ -48,13 +49,8 @@ function CourseViewModal(props) {
       id: id,
       status: status,
     };
-    axios
-      .patch("http://localhost:5000/admin/course-status", data, {
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${token}`,
-        },
-      })
+
+    handleAnyPatch("course-status", data, token)
       .then((res) => {
         props.click();
         props.stat();

@@ -11,8 +11,11 @@ const {
   updateInstructorCourse,
   fetchInstructorCourse,
   fetchInstructor,
+  searchCourse,
+  findCourseByID,
 } = require("../controllers/instructor/instructorActions");
 const instructorAuth = require("../middlewares/instructor/instructorAuth");
+const instructorProfileValidator = require("../middlewares/instructor/instructorProfileValidator");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -24,7 +27,7 @@ router.post("/verify", verifyInstructor);
 
 router.post("/login", instructorLogin);
 
-router.post("/update-profile", instructorAuth, updateProfile);
+router.post("/update-profile", instructorAuth, instructorProfileValidator, updateProfile);
 
 router.post("/update-course", instructorAuth, updateInstructorCourse);
 
@@ -34,4 +37,7 @@ router.get("/fetch-user",instructorAuth, fetchInstructor)
 
 router.get("/get-field",allCategory)
 
+router.get("/search",searchCourse)
+
+router.get("/get-course",instructorAuth, findCourseByID)
 module.exports = router;

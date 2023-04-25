@@ -1,4 +1,3 @@
-import axios from "axios";
 import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { CircleSpinner } from "react-spinners-kit";
@@ -6,6 +5,8 @@ import { ToastContainer, toast } from "react-toastify";
 import { unsuscribeAdminToken } from "../../../store/store";
 import { googleLogout } from "@react-oauth/google";
 import { useNavigate } from "react-router-dom";
+import { uploadImage } from "../../../api/imageUploadAPI";
+import { createAny } from "../../../api/adminAPI";
 
 function AddFieldModal(props) {
   const [error, setError] = useState(false);
@@ -17,7 +18,6 @@ function AddFieldModal(props) {
       tag: props?.data?.tag || "",
       image: props?.data?.image || null,
       imageRaw: null,
-      
     });
   }, [props.data]);
 
@@ -32,12 +32,11 @@ function AddFieldModal(props) {
     setInput((state) => ({ ...state, image: value }));
   };
   const showToastSuccess = () => {
-    if(props.data){
+    if (props.data) {
       toast.success("Field Category Updated");
-    }else{
+    } else {
       toast.success("Field Category Created");
     }
-    
   };
   const dispatch = useDispatch();
 
@@ -49,17 +48,11 @@ function AddFieldModal(props) {
         setLoading(false);
         setError("Please fill all the fields required");
       } else {
-        
         setLoading(true);
 
-        const url = `http://localhost:5000/admin/${props.link}?id=${props?.data?._id}`;
-        axios
-          .post(url, input, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          })
+        const url = `${props.link}?id=${props?.data?._id}`;
+
+        createAny(url, input, token)
           .then((res) => {
             setLoading(false);
             console.log(res.data.data.content.data);
@@ -70,10 +63,10 @@ function AddFieldModal(props) {
               imageRaw: null,
             });
             showToastSuccess();
-            
+
             props.click();
-            if(props.data){
-              props.toggle()
+            if (props.data) {
+              props.toggle();
             }
           })
           .catch((err) => {
@@ -101,26 +94,17 @@ function AddFieldModal(props) {
 
         try {
           if (formData) {
-            const response = await axios.post(
-              "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
-              formData
-            );
+            const response = await uploadImage(formData);
 
             const imageUrl = response.data.secure_url;
 
             const data = { ...input, image: imageUrl };
 
-            const url = `http://localhost:5000/admin/${props.link}?id=${props?.data?._id}`;
-            axios
-              .post(url, data, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${token}`,
-                },
-              })
+            const url = `${props.link}?id=${props?.data?._id}`;
+            createAny(url, data, token)
               .then((res) => {
                 setLoading(false);
-                console.log(res.data.data.content.data);
+
                 setInput({
                   name: "",
                   tag: "",
@@ -129,12 +113,10 @@ function AddFieldModal(props) {
                 });
                 showToastSuccess();
                 props.click();
-                
-                
-                if(props.data){
-                  props.toggle()
-                }
 
+                if (props.data) {
+                  props.toggle();
+                }
               })
               .catch((err) => {
                 setLoading(false);

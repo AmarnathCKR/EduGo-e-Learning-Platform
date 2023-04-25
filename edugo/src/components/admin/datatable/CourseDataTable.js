@@ -1,10 +1,10 @@
-import { DataGrid, } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
-import { BiEdit, BiTrash } from "react-icons/bi";
-import CourseViewModal from "../modals/CourseViewModal";
 
+import { useSelector } from "react-redux";
+import { BiEdit } from "react-icons/bi";
+import CourseViewModal from "../modals/CourseViewModal";
+import { fetchAnyDetailsApi, getDataApi } from "../../../api/adminAPI";
 
 function CourseDataTable(props) {
   const [data, setData] = useState([]);
@@ -16,39 +16,17 @@ function CourseDataTable(props) {
   const [sortModel, setSortModel] = useState([{ field: "name", sort: "asc" }]);
   const [searchText, setSearchText] = useState("");
   const [tempSearch, setTemp] = useState("");
-  const [ stat,setStat] = useState(false)
-  const [item,setItem] = useState()
-  const [ show,setShow]= useState(false)
-  const handleDelete = (id) => {
-    
-    axios.delete(`http://localhost:5000/admin/delete-field?id=${id}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res)=>{
-      
-      setStat(!stat)
-    })
-
-  }
+  const [stat, setStat] = useState(false);
+  const [item, setItem] = useState();
+  const [show, setShow] = useState(false);
 
   const handleView = (id) => {
-    
-    axios.get(`http://localhost:5000/admin/get-course?id=${id}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res)=>{
+    getDataApi("get-course", id, token).then((res) => {
       // console.log(res.data.data.content.data)
-      setItem(res.data.data.content.data)
-      setShow(true)
-    })
-
-  }
+      setItem(res.data.data.content.data);
+      setShow(true);
+    });
+  };
 
   const columns = [
     // { field: "id", headerName: "ID", width: 100 },
@@ -61,33 +39,62 @@ function CourseDataTable(props) {
     { field: "name", headerName: "Name", width: 200 },
     { field: "headline", headerName: "Headline", width: 300 },
     { field: "instructor", headerName: "Intructor", width: 200 },
-    {field: "status", headerName : "Status", width : 200, renderCell: (params) => <div className="flex justify-center"><h1 className={`${params.value === "pending" && "text-center flex justify-center text-warning"} ${params.value === "reject" && "text-center flex justify-center text-red-500"} ${params.value === "active" && "text-center flex justify-center text-success"} `} >{params.value}</h1></div>,},
-    {field: "id", headerName : "view", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleView(params.value)}}><BiEdit size="20px" /></button></div>,},
-    
+    {
+      field: "status",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) => (
+        <div className="flex justify-center">
+          <h1
+            className={`${
+              params.value === "pending" &&
+              "text-center flex justify-center text-warning"
+            } ${
+              params.value === "reject" &&
+              "text-center flex justify-center text-red-500"
+            } ${
+              params.value === "active" &&
+              "text-center flex justify-center text-success"
+            } `}
+          >
+            {params.value}
+          </h1>
+        </div>
+      ),
+    },
+    {
+      field: "id",
+      headerName: "view",
+      width: 200,
+      renderCell: (params) => (
+        <div className="flex justify-center">
+          <button
+            className="text-center flex justify-center"
+            onClick={() => {
+              handleView(params.value);
+            }}
+          >
+            <BiEdit size="20px" />
+          </button>
+        </div>
+      ),
+    },
   ];
-  const handleStat = () =>{
-    setStat(!stat)
-  }
+  const handleStat = () => {
+    setStat(!stat);
+  };
   const token = useSelector((state) => state.adminToken);
 
-
-
   useEffect(
-    () => {setLoading(true);
-      axios
-        .get(
-          `http://localhost:5000/admin/fetch-course?page=${page}&pageSize=${pageSize}&sortField=${
-            sortModel.length > 0 ? sortModel[0].field : ""
-          }&sortOrder=${
-            sortModel.length > 0 ? sortModel[0].sort : ""
-          }&searchText=${searchText}`,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${token}`,
-            },
-          }
-        )
+    () => {
+      setLoading(true);
+      const queries = {
+        page: page,
+        pageSize: pageSize,
+        sortModel: sortModel,
+        searchText: searchText,
+      };
+      fetchAnyDetailsApi("fetch-course", queries, token)
         .then((response) => {
           setData(response.data.items);
           setTotalCount(response.data.totalCount);
@@ -96,9 +103,10 @@ function CourseDataTable(props) {
         .catch((error) => {
           setError(error);
           setLoading(false);
-        });},
+        });
+    },
     // eslint-disable-next-line
-    [page, pageSize, sortModel, searchText,props.show, stat]
+    [page, pageSize, sortModel, searchText, props.show, stat]
   );
 
   const handlePageChange = (params) => {
@@ -111,7 +119,7 @@ function CourseDataTable(props) {
   };
 
   const handleSearchChange = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     setTemp(event.target.value);
   };
 
@@ -123,17 +131,21 @@ function CourseDataTable(props) {
     return <p>Error: {error.message}</p>;
   }
 
-  const handleSubmit= ()=>{
-    setSearchText(tempSearch)
-  }
+  const handleSubmit = () => {
+    setSearchText(tempSearch);
+  };
   const handleClick = () => {
-    setShow(!show)
-  }
-
+    setShow(!show);
+  };
 
   return (
     <div style={{ height: 530, width: "100%" }}>
-        <CourseViewModal stat={handleStat} show={show} click={handleClick} data={item} />
+      <CourseViewModal
+        stat={handleStat}
+        show={show}
+        click={handleClick}
+        data={item}
+      />
       <DataGrid
         rows={data}
         sx={{
@@ -177,18 +189,23 @@ function CourseDataTable(props) {
         onSortModelChange={handleSortChange}
         components={{
           Toolbar: () => (
-            <div className="ml-10 mt-3 flex justify-center">
+            <div className="ml-10 mt-3 flex my-3 justify-center">
               <form onSubmit={handleSubmit}>
-              <input
-                className=" p-2 border rounded pr-10 focus:outline-none"
-                type="text"
-                placeholder="Search..."
-                variant="outlined"
-                autoFocus="autoFocus"
-                value={tempSearch}
-                onChange={handleSearchChange}
-              />
-              <button type="submit" className="bg-black border rounded text-white p-2">Search</button>
+                <input
+                  className=" p-2 border rounded pr-10 focus:outline-none"
+                  type="text"
+                  placeholder="Search..."
+                  variant="outlined"
+                  autoFocus="autoFocus"
+                  value={tempSearch}
+                  onChange={handleSearchChange}
+                />
+                <button
+                  type="submit"
+                  className="bg-black border rounded text-white p-2"
+                >
+                  Search
+                </button>
               </form>
             </div>
           ),

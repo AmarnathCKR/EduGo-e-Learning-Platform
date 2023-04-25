@@ -3,7 +3,7 @@
 function Curiculum (){
     return (
         <>
-            <div className="grid grid-cols-2 items-center">
+            <div className="grid grid-cols-2 p-5 items-center">
                 <div className="">
                     <h1 className="text-lg">You start with your passion and knowledge. Then choose a promising topic with the help of our Marketplace Insights tool.<br></br> The way that you teach — what you bring to it — is up to you.</h1>
                     <h2 className="text-2xl font-bold">How we help you</h2>

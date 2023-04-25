@@ -2,11 +2,12 @@ import React, { useState } from "react";
 import "../../../Assets/style.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 import Google from "../../../google";
-import axios from "axios";
+
 import { useDispatch } from "react-redux";
 import { subscribeToken, subscribeTeacher } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import { postWithoutAuthApi } from "../../../api/instructorAPI";
 
 function ModalRegister(props) {
   const [input, setInput] = useState({
@@ -43,8 +44,7 @@ function ModalRegister(props) {
     if (input.name === "" || input.email === "" || input.password === "") {
       setError("Please fill all fields");
     } else {
-      axios
-        .post(`http://localhost:5000/instructor/signup`, data)
+      postWithoutAuthApi("signup", data)
         .then((res) => {
           setData(res.data.data.content.data.token);
           setOTP(true);
@@ -56,12 +56,13 @@ function ModalRegister(props) {
   };
 
   const verifyOTP = () => {
-    axios
-      .post(`http://localhost:5000/instructor/verify`, {
-        otp: inputOTP,
-        token: newData,
-        user: data,
-      })
+    const inputData = {
+      otp: inputOTP,
+      token: newData,
+      user: data,
+    };
+
+    postWithoutAuthApi("verify", inputData)
       .then((res) => {
         dispatch(subscribeToken(res.data.data.content.meta.access_token));
         localStorage.setItem(
@@ -171,7 +172,7 @@ function ModalRegister(props) {
 
                 <h1 className="text-center font-semibold text-lg">OR</h1>
 
-                <GoogleOAuthProvider clientId="635264642318-284aift53keao63nan68r055p302hmjv.apps.googleusercontent.com">
+                <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_OAUTH}>
                   <Google close={props.close} />
                 </GoogleOAuthProvider>
               </>

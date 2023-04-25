@@ -1,11 +1,9 @@
 import React, { useState } from "react";
 import "../../../Assets/style.css";
-import {  GoogleOAuthProvider } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import {
- 
   subscribeStudentToken,
   subscribeStudentData,
 } from "../../../store/store";
@@ -15,6 +13,7 @@ import "react-toastify/dist/ReactToastify.css";
 import { CircleSpinner } from "react-spinners-kit";
 
 import StudentGoogleAuthLogin from "./StudentGoogleAuthLogin";
+import { postWithoutAuthStudentApi } from "../../../api/studentAPI";
 
 function StudentLoginModal(props) {
   const [input, setInput] = useState({
@@ -46,10 +45,8 @@ function StudentLoginModal(props) {
       setError("Please fill all fields");
     }
 
-    axios
-      .post(`http://localhost:5000/login`, data)
+    postWithoutAuthStudentApi("login", data)
       .then((res) => {
-
         dispatch(
           subscribeStudentToken(res.data.data.content.meta.access_token)
         );
@@ -140,7 +137,7 @@ function StudentLoginModal(props) {
 
             <h1 className="text-center font-semibold text-lg">OR</h1>
 
-            <GoogleOAuthProvider clientId="635264642318-284aift53keao63nan68r055p302hmjv.apps.googleusercontent.com">
+            <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_OAUTH}>
               <StudentGoogleAuthLogin
                 close={props.close}
                 loading={loading}

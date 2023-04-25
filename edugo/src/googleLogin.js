@@ -11,11 +11,11 @@ import {
   subscribeTeacher,
   subscribeCourse,
 } from "./store/store";
+import { postWithoutAuthApi } from "./api/instructorAPI";
 
 function GoogleInstructorAuth(props) {
   const dispatch = useDispatch();
   const [error, setError] = useState("");
-  
 
   const showToast = (data) => {
     toast.success("welcome back " + data);
@@ -39,8 +39,8 @@ function GoogleInstructorAuth(props) {
             email: res.data.email,
             google: true,
           };
-          axios
-            .post(`http://localhost:5000/instructor/login`, data)
+
+          postWithoutAuthApi("login", data)
             .then((res) => {
               props.setLoading(false);
               dispatch(subscribeToken(res.data.data.content.meta.access_token));
@@ -48,21 +48,25 @@ function GoogleInstructorAuth(props) {
                 "teacherToken",
                 res.data.data.content.meta.access_token
               );
-              
+
               dispatch(subscribeTeacher(res.data.data.content.data));
               dispatch(subscribeCourse(res.data.data.content.courses));
-             
+
               props.setLoading(false);
-           
+
               props.close();
-              
+
               showToast(res.data.data.content.data.name);
             })
-            .catch((err) => {setError(err.response.data.data.errors[0].message);props.setLoading(false);});
-          
+            .catch((err) => {
+              setError(err.response.data.data.errors[0].message);
+              props.setLoading(false);
+            });
         })
-        .catch((err) => {setError(err);props.setLoading(false);});
-      
+        .catch((err) => {
+          setError(err);
+          props.setLoading(false);
+        });
     },
     onError: (error) => {
       setError("Login Failed:" + error);
@@ -76,7 +80,10 @@ function GoogleInstructorAuth(props) {
       <h1 className="text-warning text-lg text-center">{error}</h1>
 
       {props.loading ? (
-       <div className="z-40  p-64 loader-local "> <CircleSpinner size={50} color="#000" loading={props.loading} /></div>
+        <div className="z-40  p-64 loader-local ">
+          {" "}
+          <CircleSpinner size={50} color="#000" loading={props.loading} />
+        </div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
           Login with Google 🚀

@@ -9,8 +9,9 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import logo from "../../../Assets/logo.png";
-import axios from "axios";
+
 import { debounce } from "lodash";
+import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
 
 function HeaderLanding(props) {
   const [menuToggler, setToggle] = useState(false);
@@ -71,9 +72,8 @@ function HeaderLanding(props) {
 
   const handleSearch = debounce((value) => {
     setSearchKeyword(value);
-    
-    axios
-      .get(`http://localhost:5000/search?search=${value}`)
+
+    getAnyDataWithoutAuthStudentApi(`search?search=${value}`)
       .then((res) => {
         setSearchSuggestions(res.data.data.content.data);
       })

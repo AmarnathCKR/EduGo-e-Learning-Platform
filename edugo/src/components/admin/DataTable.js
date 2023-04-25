@@ -1,10 +1,12 @@
-import { DataGrid, } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useSelector } from "react-redux";
-import { BiArrowToRight, BiBlock, BiEdit, BiTrash } from "react-icons/bi";
-import AddFieldModal from "./modals/AddFieldModal";
 
+import { useSelector } from "react-redux";
+
+import { BiEdit } from "react-icons/bi";
+
+import AddFieldModal from "./modals/AddFieldModal";
+import { blockFieldApi, fetchAnyDetailsApi, getDataApi } from "../../api/adminAPI";
 
 function DataTable(props) {
   const [data, setData] = useState([]);
@@ -16,39 +18,22 @@ function DataTable(props) {
   const [sortModel, setSortModel] = useState([{ field: "name", sort: "asc" }]);
   const [searchText, setSearchText] = useState("");
   const [tempSearch, setTemp] = useState("");
-  const [ stat,setStat] = useState(false)
-  const [item,setItem] = useState()
-  const [ show,setShow]= useState(false)
+  const [stat, setStat] = useState(false);
+  const [item, setItem] = useState();
+  const [show, setShow] = useState(false);
   const handleDelete = (id) => {
-    
-    axios.delete(`http://localhost:5000/admin/delete-field?id=${id}&status=${true}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res)=>{
-      
-      setStat(!stat)
-    })
-
-  }
+    blockFieldApi(id, token).then((res) => {
+      setStat(!stat);
+    });
+  };
 
   const handleEdit = (id) => {
-    
-    axios.get(`http://localhost:5000/admin/get-field?id=${id}`,
-    {
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token}`,
-      },
-    }).then((res)=>{
+    getDataApi("get-field",id, token).then((res) => {
       // console.log(res.data.data.content.data)
-      setItem(res.data.data.content.data)
-      setShow(true)
-    })
-
-  }
+      setItem(res.data.data.content.data);
+      setShow(true);
+    });
+  };
 
   const columns = [
     // { field: "id", headerName: "ID", width: 100 },
@@ -60,36 +45,70 @@ function DataTable(props) {
     },
     { field: "name", headerName: "Name", width: 200 },
     { field: "tag", headerName: "Tag", width: 200 },
-    { field: "status", headerName: "Status", width: 200 ,renderCell: (params) => <>{params.value===true ? "Active" : "Blocked"}</>,},
-    {field: "ref", headerName : "Edit", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleEdit(params.value)}}><BiEdit size="20px" /></button></div>,},
-    {field: "id", headerName : "Control", width : 200, renderCell: (params) => <div className="flex justify-center"><button className="text-center flex justify-center" onClick={()=>{handleDelete(params.value)}}>Block/Unblock </button></div>,}
+    {
+      field: "status",
+      headerName: "Status",
+      width: 200,
+      renderCell: (params) => (
+        <>{params.value === true ? "Active" : "Blocked"}</>
+      ),
+    },
+    {
+      field: "ref",
+      headerName: "Edit",
+      width: 200,
+      renderCell: (params) => (
+        <div className="flex justify-center">
+          <button
+            className="text-center flex justify-center"
+            onClick={() => {
+              handleEdit(params.value);
+            }}
+          >
+            <BiEdit size="20px" />
+          </button>
+        </div>
+      ),
+    },
+    {
+      field: "id",
+      headerName: "Control",
+      width: 200,
+      renderCell: (params) => (
+        <div className="flex justify-center">
+          <button
+            className="text-center flex justify-center"
+            onClick={() => {
+              handleDelete(params.value);
+            }}
+          >
+            Change Status{" "}
+          </button>
+        </div>
+      ),
+    },
   ];
   const token = useSelector((state) => state.adminToken);
 
   const fetchCategory = (page, pageSize, sortModel, searchText) => {
     setLoading(true);
-    axios
-      .get(
-        `http://localhost:5000/admin/fetch-field?page=${page}&pageSize=${pageSize}&sortField=${
-          sortModel.length > 0 ? sortModel[0].field : ""
-        }&sortOrder=${
-          sortModel.length > 0 ? sortModel[0].sort : ""
-        }&searchText=${searchText}`,
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+    const queries = {
+      page: page,
+      pageSize: pageSize,
+      sortModel: sortModel,
+      searchText: searchText,
+    };
+
+    fetchAnyDetailsApi("fetch-field",queries, token)
       .then((response) => {
-        console.log(response.data.items)
+        console.log(response.data.items);
         setData(response.data.items);
         setTotalCount(response.data.totalCount);
         setLoading(false);
       })
       .catch((error) => {
         setError(error);
+
         setLoading(false);
       });
   };
@@ -97,7 +116,7 @@ function DataTable(props) {
   useEffect(
     () => fetchCategory(page, pageSize, sortModel, searchText),
     // eslint-disable-next-line
-    [page, pageSize, sortModel, searchText,props.show, stat]
+    [page, pageSize, sortModel, searchText, props.show, stat]
   );
 
   const handlePageChange = (params) => {
@@ -110,7 +129,7 @@ function DataTable(props) {
   };
 
   const handleSearchChange = (event) => {
-    event.preventDefault()
+    event.preventDefault();
     setTemp(event.target.value);
   };
 
@@ -122,17 +141,22 @@ function DataTable(props) {
     return <p>Error: {error.message}</p>;
   }
 
-  const handleSubmit= ()=>{
-    setSearchText(tempSearch)
-  }
+  const handleSubmit = () => {
+    setSearchText(tempSearch);
+  };
   const handleClick = () => {
-    setShow(!show)
-  }
-
+    setShow(!show);
+  };
 
   return (
-    <div style={{ height: 530, width: "100%" }}>
-      <AddFieldModal show={show} toggle={setStat} click={handleClick} data={item} link="edit-field" />
+    <div style={{ height: 480, width: "100%" }}>
+      <AddFieldModal
+        show={show}
+        toggle={setStat}
+        click={handleClick}
+        data={item}
+        link="edit-field"
+      />
       <DataGrid
         rows={data}
         sx={{
@@ -176,18 +200,23 @@ function DataTable(props) {
         onSortModelChange={handleSortChange}
         components={{
           Toolbar: () => (
-            <div className="ml-10 mt-3 flex justify-center">
+            <div className="ml-10 mt-3 flex my-3 justify-center">
               <form onSubmit={handleSubmit}>
-              <input
-                className=" p-2 border rounded pr-10 focus:outline-none"
-                type="text"
-                placeholder="Search..."
-                variant="outlined"
-                autoFocus="autoFocus"
-                value={tempSearch}
-                onChange={handleSearchChange}
-              />
-              <button type="submit" className="bg-black border rounded text-white p-2">Search</button>
+                <input
+                  className=" p-2 border rounded pr-10 focus:outline-none"
+                  type="text"
+                  placeholder="Search..."
+                  variant="outlined"
+                  autoFocus="autoFocus"
+                  value={tempSearch}
+                  onChange={handleSearchChange}
+                />
+                <button
+                  type="submit"
+                  className="bg-black border rounded text-white p-2"
+                >
+                  Search
+                </button>
               </form>
             </div>
           ),

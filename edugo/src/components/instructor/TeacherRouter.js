@@ -6,11 +6,11 @@ import { useSelector } from "react-redux";
 import InstructorProfile from "./pages/InstructorProfile";
 import InstructorProfileView from "./pages/InstructorProfileView";
 import NewCourse from "./pages/NewCourse";
-
-import VideoUploader from "./test/TestMode";
+import SingleCourse from "./course/SingleCourse";
 
 function TeacherRouter() {
   const token = useSelector((state) => state.token);
+
   return (
     <Routes>
       <Route>
@@ -34,8 +34,10 @@ function TeacherRouter() {
           path="/new-course"
           element={token ? <NewCourse /> : <Navigate to="/instructor" />}
         />
-
-        <Route path="/test" element={<VideoUploader />} />
+        <Route
+          path="/coursePage/:id"
+          element={token ? <SingleCourse /> : <Navigate to="/instructor" />}
+        />
       </Route>
       <Route path="/*" element={<h1>Stufffff</h1>} />
     </Routes>

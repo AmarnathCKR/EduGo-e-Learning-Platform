@@ -1,13 +1,12 @@
 import React, { useEffect, useState } from "react";
 
-import axios from "axios";
 import { useDispatch } from "react-redux";
 import {
   subscribeCourse,
   unsuscribeTeacher,
   unsuscribeToken,
 } from "../../../store/store";
-import { ToastContainer, toast } from "react-toastify";
+import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { CircleSpinner } from "react-spinners-kit";
 import { googleLogout } from "@react-oauth/google";
@@ -22,6 +21,8 @@ import {
 
 import { Player, ControlBar } from "video-react";
 import { BiTrash } from "react-icons/bi";
+import { uploadImage } from "../../../api/imageUploadAPI";
+import { createAny, getAnyDataWithout } from "../../../api/instructorAPI";
 
 const firebaseConfig = {
   apiKey: "AIzaSyASd_nl36pkPP-68OtSzhwacsQxtQ88ZwY",
@@ -124,10 +125,7 @@ function CourseForm(props) {
             async () => {
               const url = await getDownloadURL(uploadTask.snapshot.ref);
               setcourse((state) => ({ ...state, video: url }));
-              const response = await axios.post(
-                "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
-                formData
-              );
+              const response = await uploadImage(formData);
 
               const imageUrl = response.data.secure_url;
 
@@ -138,14 +136,9 @@ function CourseForm(props) {
                 video: url,
               };
 
-              const url1 = "http://localhost:5000/instructor/update-course";
-              axios
-                .post(url1, data, {
-                  headers: {
-                    "Content-Type": "application/json",
-                    Authorization: `Bearer ${props.token}`,
-                  },
-                })
+              const url1 = "update-course";
+
+              createAny(url1, data, props.token)
                 .then((res) => {
                   setLoading(false);
                   dispatch(subscribeCourse(res.data.data.content.data));
@@ -367,7 +360,7 @@ function CourseForm(props) {
   };
 
   useEffect(() => {
-    axios.get("http://localhost:5000/instructor/get-field").then((res) => {
+    getAnyDataWithout("get-field").then((res) => {
       setSelect(res.data.data.content.data);
     });
   }, []);
@@ -403,7 +396,6 @@ function CourseForm(props) {
             }}
           />
           <textarea
-            maxLength={500}
             className="w-full my-2  px-2 pb-32 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
             type="text"
             required

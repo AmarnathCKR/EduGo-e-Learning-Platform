@@ -1,9 +1,9 @@
-import axios from "axios";
-import React, { useState, } from "react";
+import React, { useState } from "react";
 import { BiHide, BiShow } from "react-icons/bi";
 import { subscribeAdminToken } from "../../../store/store";
 import { useDispatch } from "react-redux";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
+import { adminLoginAPI } from "../../../api/adminAPI";
 
 function AdminLogin() {
   const [hide, setHide] = useState(false);
@@ -12,8 +12,8 @@ function AdminLogin() {
     email: "",
     password: "",
   });
-  const navigate = useNavigate()
-  const dispatch =useDispatch()
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
   const style = {
     backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3)), url("https://res.cloudinary.com/dqrpxoouq/image/upload/v1681280195/j6o6dpipkewt0v8hzuyp.jpg")`,
     // backgroundPosition: "70% 0%",
@@ -24,22 +24,19 @@ function AdminLogin() {
       setError("Please fill all fields");
     }
     let data = {
-      email : input.email,
-      password : input.password
-    }
+      email: input.email,
+      password: input.password,
+    };
 
-    axios
-      .post(`http://localhost:5000/admin/login`, data)
+    adminLoginAPI(data)
       .then((res) => {
         dispatch(subscribeAdminToken(res.data.data.content.meta.access_token));
         localStorage.setItem(
           "adminToken",
           res.data.data.content.meta.access_token
         );
-
         setError("");
-        navigate("/admin/dashboard")
-        
+        navigate("/admin/dashboard");
       })
       .catch((err) => {
         setError(err.response.data.data.errors[0].message);

@@ -1,12 +1,16 @@
-import React, { useState,} from "react";
-import {  useGoogleLogin } from "@react-oauth/google";
+import React, { useState } from "react";
+import { useGoogleLogin } from "@react-oauth/google";
 import axios from "axios";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
-import { useDispatch, } from "react-redux";
+import { useDispatch } from "react-redux";
 
 import { CircleSpinner } from "react-spinners-kit";
-import { subscribeStudentData, subscribeStudentToken } from "../../../store/store";
+import {
+  subscribeStudentData,
+  subscribeStudentToken,
+} from "../../../store/store";
+import { postWithoutAuthStudentApi } from "../../../api/studentAPI";
 
 function StudentGoogleAuth(props) {
   const dispatch = useDispatch();
@@ -30,25 +34,27 @@ function StudentGoogleAuth(props) {
           }
         )
         .then((res) => {
-          setLoading(true)
+          setLoading(true);
           let data = {
             name: res.data.name,
             email: res.data.email,
             image: res.data.picture,
             google: true,
           };
-          axios
-            .post(`http://localhost:5000/signup`, data)
+
+          postWithoutAuthStudentApi("signup", data)
             .then((res) => {
-              setLoading(false)
-              
-              dispatch(subscribeStudentToken(res.data.data.content.meta.access_token));
+              setLoading(false);
+
+              dispatch(
+                subscribeStudentToken(res.data.data.content.meta.access_token)
+              );
               localStorage.setItem(
                 "StudentToken",
                 res.data.data.content.meta.access_token
               );
               dispatch(subscribeStudentData(res.data.data.content.data));
-      
+
               localStorage.setItem(
                 "StudentData",
                 JSON.stringify(res.data.data.content.data)
@@ -56,28 +62,35 @@ function StudentGoogleAuth(props) {
               props.close();
               showToast();
             })
-            
-            .catch((err) => {setError(err.response.data.data.errors[0].message);setLoading(false)});
+
+            .catch((err) => {
+              setError(err.response.data.data.errors[0].message);
+              setLoading(false);
+            });
         })
-        
-        .catch((err) => {setError(err);setLoading(false)});
+
+        .catch((err) => {
+          setError(err);
+          setLoading(false);
+        });
     },
-    
+
     onError: (error) => setError("Login Failed:" + error),
   });
 
- 
   return (
     <div>
       <ToastContainer />
       <h1 className="text-warning text-lg text-center">{error}</h1>
-      
+
       {loading ? (
-        <div className="z-40  p-64 loader-local "><CircleSpinner size={40} color="#000" loading={loading} /></div>
+        <div className="z-40  p-64 loader-local ">
+          <CircleSpinner size={40} color="#000" loading={loading} />
+        </div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
-        Sign up with Google 🚀
-      </button>
+          Sign up with Google 🚀
+        </button>
       )}
     </div>
   );

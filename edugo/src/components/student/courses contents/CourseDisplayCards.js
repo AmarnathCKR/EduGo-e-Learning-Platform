@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
-import axios from "axios";
+
+import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
 
 const CourseDisplayCards = (props) => {
   const [courses, setCourses] = useState([]);
@@ -12,8 +13,7 @@ const CourseDisplayCards = (props) => {
   const [fieldData, setFieldData] = useState([]);
 
   useEffect(() => {
-    axios
-      .get("http://localhost:5000/fetch-fields")
+    getAnyDataWithoutAuthStudentApi("fetch-fields")
       .then((res) => {
         setFieldData(res.data.data.content.data);
       })
@@ -25,9 +25,8 @@ const CourseDisplayCards = (props) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/display-courses?page=${currentPage}&search=${searchQuery}&sort=${sortOrder}&fieldOfStudy=${fieldOfStudyFilter}&experience=${experienceFilter}`
-        );
+        const url = `display-courses?page=${currentPage}&search=${searchQuery}&sort=${sortOrder}&fieldOfStudy=${fieldOfStudyFilter}&experience=${experienceFilter}`
+        const response = await getAnyDataWithoutAuthStudentApi(url)
         setCourses(response.data.courses);
         setTotalPages(response.data.totalPages);
       } catch (error) {

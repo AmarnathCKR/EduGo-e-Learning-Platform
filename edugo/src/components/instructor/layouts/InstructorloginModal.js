@@ -1,20 +1,18 @@
 import React, { useState } from "react";
 import "../../../Assets/style.css";
-import {  GoogleOAuthProvider } from "@react-oauth/google";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
-import axios from "axios";
-import { useDispatch, } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   subscribeToken,
-
   subscribeTeacher,
- 
   subscribeCourse,
 } from "../../../store/store";
 import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import GoogleInstructorAuth from "../../../googleLogin";
 import { CircleSpinner } from "react-spinners-kit";
+import { postWithoutAuthApi } from "../../../api/instructorAPI";
 
 function InstructorLoginModal(props) {
   const [input, setInput] = useState({
@@ -30,7 +28,6 @@ function InstructorLoginModal(props) {
   const showToastSuccess = (data) => {
     toast.success("Welcome back " + data);
   };
- 
 
   const dispatch = useDispatch();
   if (!props.show) {
@@ -43,37 +40,37 @@ function InstructorLoginModal(props) {
   };
 
   const login = () => {
-    
     if (input.email === "" || input.password === "") {
       setError("Please fill all fields");
     }
-      
-    axios
-        .post(`http://localhost:5000/instructor/login`, data)
-        .then((res) => {
-            
-          dispatch(subscribeToken(res.data.data.content.meta.access_token));
-          localStorage.setItem(
-            "teacherToken",
-            res.data.data.content.meta.access_token
-          );
-          dispatch(subscribeTeacher(res.data.data.content.data));
 
-          
-          props.close();
-          dispatch(subscribeCourse(res.data.data.content.courses))
-          setError("");
-          showToastSuccess(res.data.data.content.data.name);
-        })
-        .catch((err) => { setError(err.response.data.data.errors[0].message)});
-    
+    postWithoutAuthApi("login", data)
+      .then((res) => {
+        dispatch(subscribeToken(res.data.data.content.meta.access_token));
+        localStorage.setItem(
+          "teacherToken",
+          res.data.data.content.meta.access_token
+        );
+        dispatch(subscribeTeacher(res.data.data.content.data));
+
+        props.close();
+        dispatch(subscribeCourse(res.data.data.content.courses));
+        setError("");
+        showToastSuccess(res.data.data.content.data.name);
+      })
+      .catch((err) => {
+        setError(err.response.data.data.errors[0].message);
+      });
   };
 
   return (
     <>
       <ToastContainer />
       {loading ? (
-       <div className="z-40  p-64 loader-local "> <CircleSpinner size={50} color="#000" /></div>
+        <div className="z-40  p-64 loader-local ">
+          {" "}
+          <CircleSpinner size={50} color="#000" />
+        </div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>
           Login with Google 🚀
@@ -132,8 +129,12 @@ function InstructorLoginModal(props) {
 
             <h1 className="text-center font-semibold text-lg">OR</h1>
 
-            <GoogleOAuthProvider clientId="635264642318-284aift53keao63nan68r055p302hmjv.apps.googleusercontent.com">
-              <GoogleInstructorAuth close={props.close} loading={loading} setLoading={setLoading} />
+            <GoogleOAuthProvider clientId={process.env.REACT_APP_GOOGLE_OAUTH}>
+              <GoogleInstructorAuth
+                close={props.close}
+                loading={loading}
+                setLoading={setLoading}
+              />
             </GoogleOAuthProvider>
           </div>
           <div className="modal-local-footer">

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Navigate, Route, Routes} from "react-router-dom";
 
 import FieldManage from "./pages/FieldManage";
 import AdminLogin from "./pages/AdminLogin"
@@ -12,7 +12,7 @@ import CourseManage from "./pages/CourseManage";
 function AdminRouter() {
   const [token, setToken] = useState(null);
   const dispatch = useDispatch();
-  const navigate = useNavigate();
+  
 
   useEffect(() => {
     const localToken = localStorage.getItem("adminToken");

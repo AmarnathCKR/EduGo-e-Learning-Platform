@@ -15,6 +15,7 @@ const {
 } = require("../controllers/student/studentManage");
 const studentAuth = require("../middlewares/student/studentAuth");
 
+const instructorProfileValidator = require("../middlewares/instructor/instructorProfileValidator");
 
 
 router.get("/fetch-allCourse", fetchAllCourse);
@@ -25,7 +26,7 @@ router.post("/verify", studentsVerify);
 
 router.post("/login", studentLogin);
 
-router.post("/update-profile", studentAuth, updateStudentProfile);
+router.post("/update-profile", studentAuth, instructorProfileValidator ,updateStudentProfile);
 
 router.get("/search", studentSearch);
 

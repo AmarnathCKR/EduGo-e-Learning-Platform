@@ -1,7 +1,7 @@
 function Course() {
   return (
     <>
-      <div className="grid grid-cols-2 items-center">
+      <div className="grid grid-cols-2 p-5 items-center">
         <div className="">
           <h1 className="text-lg">
             Gather your first ratings and reviews by promoting your course

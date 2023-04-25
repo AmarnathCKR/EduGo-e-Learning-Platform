@@ -11,6 +11,10 @@ import {
   subscribeStudentData,
   subscribeStudentToken,
 } from "../../../store/store";
+import {
+
+  postWithoutAuthStudentApi,
+} from "../../../api/studentAPI";
 
 function StudentGoogleAuthLogin(props) {
   const dispatch = useDispatch();
@@ -38,8 +42,8 @@ function StudentGoogleAuthLogin(props) {
             email: res.data.email,
             google: true,
           };
-          axios
-            .post(`http://localhost:5000/login`, data)
+
+          postWithoutAuthStudentApi("login", data)
             .then((res) => {
               dispatch(
                 subscribeStudentToken(res.data.data.content.meta.access_token)

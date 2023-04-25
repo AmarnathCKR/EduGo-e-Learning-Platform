@@ -3,8 +3,8 @@ import React, { useEffect } from "react";
 
 function AllCourse(props) {
   const style = {
-    width: "240px",
-    height: "150px",
+    width: "550px",
+    height: "300px",
   };
 
   useEffect(() => {
@@ -23,34 +23,20 @@ function AllCourse(props) {
     return (
       <>
         <div class="local-wrapper mx-2 p-3 ">
-          <div>
+          <div class="w-96 p-5 rounded overflow-hidden shadow-lg">
             <img
-              style={style}
+            style={style}
+              class="w-full"
               src={data.image}
-              alt=" random imgee"
-              className="w-full object-cover object-center rounded-lg shadow-md"
+              alt="Sunset in the mountains"
             />
-
-            <div class="relative  -mt-22  ">
-              <div class="bg-white p-6 w-60 h-52 rounded-lg shadow-lg">
-                <div class="flex items-center justify-center">
-                  <span class="bg-teal-200 text-teal-800 text-xs px-2 inline-block rounded-full  uppercase font-semibold tracking-wide">
-                    New
-                  </span>
-                </div>
-
-                <h4 class="mt-1 text-xl font-semibold uppercase leading-tight truncate">
-                  {data.name}
-                </h4>
-
-                <div class="mt-1">₹ {data.price}</div>
-                <div class="mt-4">
-                  <span class="text-sm text-clip text-gray-600">
-                    {data.headline}
-                  </span>
-                </div>
-              </div>
+            <div class="px-6 py-4">
+              <div class="font-bold text-xl mb-2">{data.name}</div>
+              <p class="text-gray-700 text-base">
+                {data.headline}
+              </p>
             </div>
+            
           </div>
         </div>
       </>

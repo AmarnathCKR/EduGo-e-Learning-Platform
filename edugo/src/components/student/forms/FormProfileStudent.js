@@ -2,11 +2,17 @@ import React, { useState } from "react";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import { CircleSpinner } from "react-spinners-kit";
 import { ToastContainer, toast } from "react-toastify";
-import { subscribeStudentData, unsuscribeStudentData, unsuscribeStudentToken } from "../../../store/store";
-import axios from "axios";
+import {
+  subscribeStudentData,
+  unsuscribeStudentData,
+  unsuscribeStudentToken,
+} from "../../../store/store";
+
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { googleLogout } from "@react-oauth/google";
+import { postAnyStudentApi } from "../../../api/studentAPI";
+import { uploadImage } from "../../../api/imageUploadAPI";
 
 function FormProfileStudent(props) {
   const [country, setCountry] = useState("");
@@ -60,14 +66,9 @@ function FormProfileStudent(props) {
 
         const data = { ...profile, image: imageUrl };
 
-        const url = "http://localhost:5000/update-profile";
-        axios
-          .post(url, data, {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer ${props.token}`,
-            },
-          })
+        const url = "update-profile";
+
+        postAnyStudentApi(url, data, props.token)
           .then((res) => {
             setLoading(false);
 
@@ -82,12 +83,12 @@ function FormProfileStudent(props) {
           })
           .catch((err) => {
             setLoading(false);
-            setError(err.response.data.data.errors[0].message);
+            setError(err.response.data.data.errors);
             if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
               localStorage.removeItem("StudentToken");
               dispatch(unsuscribeStudentToken());
               localStorage.removeItem("StudentData");
-              
+
               dispatch(unsuscribeStudentData());
               navigate("/instructor");
               googleLogout();
@@ -102,23 +103,15 @@ function FormProfileStudent(props) {
 
         try {
           if (formData) {
-            const response = await axios.post(
-              "https://api.cloudinary.com/v1_1/dqrpxoouq/image/upload",
-              formData
-            );
+            const response = await uploadImage(formData)
 
             const imageUrl = response.data.secure_url;
 
             const data = { ...profile, image: imageUrl };
 
-            const url = "http://localhost:5000/update-profile";
-            axios
-              .post(url, data, {
-                headers: {
-                  "Content-Type": "application/json",
-                  Authorization: `Bearer ${props.token}`,
-                },
-              })
+            const url = "update-profile";
+
+            postAnyStudentApi(url, data, props.token)
               .then((res) => {
                 setLoading(false);
 
@@ -133,12 +126,12 @@ function FormProfileStudent(props) {
               })
               .catch((err) => {
                 setLoading(false);
-                setError(err.response.data.data.errors[0].message);
+                setError(err.response.data.data.errors);
                 if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
                   localStorage.removeItem("StudentToken");
                   dispatch(unsuscribeStudentToken());
                   localStorage.removeItem("StudentData");
-                 
+
                   dispatch(unsuscribeStudentData());
                   navigate("/instructor");
                   googleLogout();
@@ -155,11 +148,11 @@ function FormProfileStudent(props) {
   return (
     <>
       <ToastContainer />
-      <h1 className="text-red-600 text-center">{error}</h1>
+
       <div className="grid grid-cols-2 justify-center ">
         <div className="col-span-2 md:col-span-1 border-2 shadow mx-4 my-3 py-3">
           <input
-            className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             placeholder="Name"
             value={profile.name}
@@ -168,9 +161,13 @@ function FormProfileStudent(props) {
             }}
             required
           />
+          {error.name && (
+            <h1 className="text-red-600 text-start ml-3">{error.name}</h1>
+          )}
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
+            maxLength={400}
             placeholder="Headline"
             required
             value={profile.headline}
@@ -181,9 +178,12 @@ function FormProfileStudent(props) {
               }));
             }}
           />
+          {error.headline && (
+            <h1 className="text-red-600 text-start ml-3">{error.headline}</h1>
+          )}
           <textarea
-            maxLength={500}
-            className="w-full my-2  px-2 pb-32 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            maxLength={650}
+            className="w-full mt-2  px-2 pb-32 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Description"
@@ -195,8 +195,13 @@ function FormProfileStudent(props) {
               }));
             }}
           />
+          {error.description && (
+            <h1 className="text-red-600 text-start ml-3">
+              {error.description}
+            </h1>
+          )}
           <CountryDropdown
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             value={country}
             required
             onChange={(val) => {
@@ -204,8 +209,11 @@ function FormProfileStudent(props) {
               setProfile((state) => ({ ...state, country: val }));
             }}
           />
+          {error.country && (
+            <h1 className="text-red-600 text-start ml-3">{error.country}</h1>
+          )}
           <RegionDropdown
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             country={country}
             value={region}
             required
@@ -215,12 +223,15 @@ function FormProfileStudent(props) {
               setProfile((state) => ({ ...state, region: val }));
             }}
           />
+          {error.region && (
+            <h1 className="text-red-600 text-start ml-3">{error.region}</h1>
+          )}
         </div>
 
         <div className="col-span-2 md:col-span-1  border-2 shadow mx-4 my-3 py-3">
           <label className="mx-3">Social Links</label>
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Git Hub"
@@ -229,8 +240,11 @@ function FormProfileStudent(props) {
               setProfile((state) => ({ ...state, git: event.target.value }));
             }}
           />
+          {error.git && (
+            <h1 className="text-red-600 text-start ml-3">{error.git}</h1>
+          )}
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Linkedin"
@@ -242,8 +256,11 @@ function FormProfileStudent(props) {
               }));
             }}
           />
+          {error.linkedin && (
+            <h1 className="text-red-600 text-start ml-3">{error.linkedin}</h1>
+          )}
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Facebook"
@@ -255,8 +272,11 @@ function FormProfileStudent(props) {
               }));
             }}
           />
+          {error.facebook && (
+            <h1 className="text-red-600 text-start ml-3">{error.facebook}</h1>
+          )}
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
             required
             placeholder="Twitter"
@@ -268,9 +288,12 @@ function FormProfileStudent(props) {
               }));
             }}
           />
+          {error.twitter && (
+            <h1 className="text-red-600 text-start ml-3">{error.twitter}</h1>
+          )}
           <label className="mx-3">Profile Picture</label>
           <img
-            className="my-3 mx-4"
+            className="mb-3 mx-4"
             width="20%"
             height="20%"
             src={
@@ -281,15 +304,18 @@ function FormProfileStudent(props) {
             alt="profilePicture"
           />
           <input
-            className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
+            className="w-full mt-2 px-2  border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="file"
             required
             onChange={fileBrowseHandler}
             placeholder="Update profile Picture"
           />
+          {error.image && (
+            <h1 className="text-red-600 text-start ml-3">{error.image}</h1>
+          )}
         </div>
       </div>
-      <div className="flex justify-center items-middle border shadow my-3">
+      <div className="flex justify-center items-middle my-3">
         {loading ? (
           <CircleSpinner size={40} color="#000" loading={loading} />
         ) : (

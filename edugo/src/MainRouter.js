@@ -1,11 +1,11 @@
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import { Route, Routes, useNavigate } from "react-router-dom";
 
 import TeacherRouter from "./components/instructor/TeacherRouter";
 import HomeInstructor from "./components/instructor/pages/HomeInstructor";
 import StudentRouter from "./components/student/StudentRouter";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import { useDispatch, useSelector } from "react-redux";
+
+import { useDispatch } from "react-redux";
 import {
   subscribeTeacher,
   subscribeToken,
@@ -14,25 +14,18 @@ import {
 } from "./store/store";
 import { googleLogout } from "@react-oauth/google";
 import AdminRouter from "./components/admin/AdminRouter";
-import AdminLogin from "./components/admin/pages/AdminLogin";
+import { getAnyData } from "./api/instructorAPI";
 
 function MainRouter() {
   const [token, setToken] = useState(null);
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const adminToken = useSelector((state) => state.adminToken);
+
   useEffect(() => {
     const localToken = localStorage.getItem("teacherToken");
 
     if (localToken) {
-      const url = "http://localhost:5000/instructor/fetch-user";
-      axios
-        .get(url, {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${localToken}`,
-          },
-        })
+      getAnyData("fetch-user", localToken)
         .then((res) => {
           dispatch(subscribeTeacher(res.data.data.content.data));
         })
