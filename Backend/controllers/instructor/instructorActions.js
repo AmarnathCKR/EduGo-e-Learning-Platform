@@ -139,7 +139,8 @@ exports.fetchInstructor = async (req, res) => {
 exports.searchCourse = async (req, res) => {
   const { id, search } = req.query;
   if (search) {
-    const data = await Course.find({instructor : id,
+    const data = await Course.find({
+      instructor: id,
       $or: [{ name: { $regex: search, $options: "i" } }],
     }).sort({ datefield: -1 });
 
@@ -165,10 +166,10 @@ exports.searchCourse = async (req, res) => {
   }
 };
 
-exports.findCourseByID = async (req,res) =>{
-  const {course} = req.query
-  if(course){
-    const data = await Course.findOne({_id : course}).populate("field")
+exports.findCourseByID = async (req, res) => {
+  const { course } = req.query;
+  if (course) {
+    const data = await Course.findOne({ _id: course }).populate("field");
     const success = {
       status: true,
       content: {
@@ -176,7 +177,7 @@ exports.findCourseByID = async (req,res) =>{
       },
     };
     res.status(200).send({ data: success });
-  }else{
+  } else {
     const emailError = {
       status: false,
       errors: [
@@ -189,4 +190,54 @@ exports.findCourseByID = async (req,res) =>{
     };
     res.status(409).send({ data: emailError });
   }
-}
+};
+
+exports.ediInstructorCourse = async (req, res) => {
+  console.log("edit course")
+  const { id } = req.params;
+  const {
+    name,
+    headline,
+    description,
+    image,
+    field,
+    topics,
+    total,
+    experience,
+    price,
+    video,
+    courseId,
+  } = req.body;
+
+  await Instructor.findOne({ _id: id }).then(async (user) => {
+    await Course.findByIdAndUpdate(courseId, {
+      name: name,
+      headline: headline,
+      description: description,
+      image: image,
+
+      field: field,
+      price: price,
+      experience: experience,
+      total: total,
+      topics: topics,
+      video: video,
+    }).then((result)=>{
+      console.log(result)
+    }).catch((err)=>{
+      console.log(err)
+    })
+
+    const courseData = await Course.findOne({
+      _id: courseId,
+    });
+
+    const success = {
+      status: true,
+      content: {
+        data: courseData,
+      },
+    };
+    res.status(200).send({ data: success });
+  });
+};

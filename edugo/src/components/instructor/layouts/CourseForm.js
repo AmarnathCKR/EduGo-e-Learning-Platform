@@ -22,7 +22,11 @@ import {
 import { Player, ControlBar } from "video-react";
 import { BiTrash } from "react-icons/bi";
 import { uploadImage } from "../../../api/imageUploadAPI";
-import { createAny, getAnyDataWithout } from "../../../api/instructorAPI";
+import {
+  createAny,
+  getAnyData,
+  getAnyDataWithout,
+} from "../../../api/instructorAPI";
 
 const firebaseConfig = {
   apiKey: "AIzaSyASd_nl36pkPP-68OtSzhwacsQxtQ88ZwY",
@@ -40,6 +44,8 @@ const storage = getStorage(app);
 function CourseForm(props) {
   const [progress, setProgress] = useState(0);
 
+  console.log(props.courseList);
+
   const [error, setError] = useState("");
   const [course, setcourse] = useState({
     name: "",
@@ -54,12 +60,14 @@ function CourseForm(props) {
     video: "",
     videoRaw: null,
   });
+
   const [loading, setLoading] = useState(false);
   const [select, setSelect] = useState([]);
-
-  const [topics, setTopics] = useState([
+  const [effect, setEffect] = useState(false)
+  const dummy = [
     { name: "", description: "", time: "", video: "", progress: 0, ref: {} },
-  ]);
+  ];
+  const [topics, setTopics] = useState(dummy);
 
   const handleVideoRender = async (event) => {
     let value = URL.createObjectURL(event.target.files[0]);
@@ -77,11 +85,13 @@ function CourseForm(props) {
   };
 
   const showToastSuccess = () => {
+    if (props.id) {
+      toast.success("course Updated Successfully");
+    }
     toast.success("course Created Successfully");
   };
 
   const submitData = async () => {
-    console.log(course);
     if (
       !course.name ||
       !course.headline ||
@@ -129,14 +139,23 @@ function CourseForm(props) {
 
               const imageUrl = response.data.secure_url;
 
-              const data = {
+              let data = {
                 ...course,
                 image: imageUrl,
                 topics: topics,
                 video: url,
               };
+              if (props.id) {
+                data = {
+                  ...course,
+                  image: imageUrl,
+                  topics: topics,
+                  video: url,
+                  courseId: props.id,
+                };
+              }
 
-              const url1 = "update-course";
+              const url1 = props.link || "update-course";
 
               createAny(url1, data, props.token)
                 .then((res) => {
@@ -363,7 +382,30 @@ function CourseForm(props) {
     getAnyDataWithout("get-field").then((res) => {
       setSelect(res.data.data.content.data);
     });
-  }, []);
+    if (!effect) {
+      getAnyData(`get-course?course=${props.id}`, props.token)
+        .then((res) => {
+          const courseData = res.data.data.content.data;
+          setcourse((state) => ({
+            ...state,
+            image: courseData.image,
+            name: courseData.name,
+            headline: courseData.headline,
+            description: courseData.description,
+            total: courseData.total,
+            experience: courseData.experience,
+            field: courseData.field,
+            price: courseData.price,
+            video: courseData.video,
+          }));
+          setTopics(courseData.topics);
+          setEffect(true)
+        })
+        .catch((err) => console.log(err));
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [props.link]);
 
   return (
     <>

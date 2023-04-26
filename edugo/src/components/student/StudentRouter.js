@@ -14,6 +14,8 @@ import EditProfile from "./pages/EditProfile";
 import { googleLogout } from "@react-oauth/google";
 import AllCoursesBrowse from "./pages/AllCoursesBrowse";
 import { getAnyDataStudentAPI } from "../../api/studentAPI";
+import SingleStudentCourse from "./pages/SingleStudentCourse";
+import Payment from "./payment/Payment";
 
 function StudentRouter() {
   const [token, setToken] = useState(null);
@@ -68,8 +70,16 @@ function StudentRouter() {
           element={auth ? <EditProfile /> : <Navigate to="/" />}
         />
         <Route
+          path="/coursePage/:id"
+          element={auth ? <SingleStudentCourse /> : <Navigate to="/" />}
+        />
+        <Route
           path="/courses"
           element={auth ? <AllCoursesBrowse /> : <Navigate to="/" />}
+        />
+        <Route
+          path="/purchase-course/:id"
+          element={auth ? <Payment /> : <Navigate to="/" />}
         />
       </Route>
       <Route path="/*" element={<h1>Error 404</h1>} />

@@ -7,6 +7,7 @@ import InstructorProfile from "./pages/InstructorProfile";
 import InstructorProfileView from "./pages/InstructorProfileView";
 import NewCourse from "./pages/NewCourse";
 import SingleCourse from "./course/SingleCourse";
+import UpdateCourse from "./course/UpdateCourse";
 
 function TeacherRouter() {
   const token = useSelector((state) => state.token);
@@ -35,11 +36,15 @@ function TeacherRouter() {
           element={token ? <NewCourse /> : <Navigate to="/instructor" />}
         />
         <Route
+          path="/update-course/:id"
+          element={token ? <UpdateCourse /> : <Navigate to="/instructor" />}
+        />
+        <Route
           path="/coursePage/:id"
           element={token ? <SingleCourse /> : <Navigate to="/instructor" />}
         />
       </Route>
-      <Route path="/*" element={<h1>Stufffff</h1>} />
+      <Route path="/*" element={<h1>Error 404</h1>} />
     </Routes>
   );
 }

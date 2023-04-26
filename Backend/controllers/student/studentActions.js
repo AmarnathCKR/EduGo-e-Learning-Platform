@@ -134,3 +134,29 @@ exports.fetchAllFields = async (req,res)=>{
     res.status(200).send({ data: success });
   })
 }
+
+exports.findStudentCourseByID = async (req, res) => {
+  const { course } = req.query;
+  if (course) {
+    const data = await Course.findOne({ _id: course }).populate("field").populate("instructor");
+    const success = {
+      status: true,
+      content: {
+        data: data,
+      },
+    };
+    res.status(200).send({ data: success });
+  } else {
+    const emailError = {
+      status: false,
+      errors: [
+        {
+          param: "Input error",
+          message: "No input received",
+          code: "INPUT_ERROR",
+        },
+      ],
+    };
+    res.status(409).send({ data: emailError });
+  }
+};

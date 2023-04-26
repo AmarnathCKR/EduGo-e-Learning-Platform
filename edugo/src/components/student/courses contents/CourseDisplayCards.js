@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
+import { useNavigate } from "react-router-dom";
 
 const CourseDisplayCards = (props) => {
   const [courses, setCourses] = useState([]);
@@ -51,6 +52,7 @@ const CourseDisplayCards = (props) => {
     setSearchQuery(value);
     setCurrentPage(1);
   };
+  const navigate =useNavigate()
 
   useEffect(() => {
     handleSearchChange(props.search);
@@ -72,8 +74,8 @@ const CourseDisplayCards = (props) => {
   };
 
   const style = {
-    width: "240px",
-    height: "150px",
+    width: "280px",
+    height: "200px",
   };
 
   return (
@@ -141,26 +143,26 @@ const CourseDisplayCards = (props) => {
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
         {courses.map((data) => (
           <>
-            <div class="local-wrapper mx-2 p-3 mb-3">
-              <div className="p-2">
+            <div onClick={()=>{navigate(`/coursePage/:${data._id}`, {state : data._id})}} class=" md:mx-2 mx-0 md:p-3 p-1 mb-3  cursor-pointer">
+              <div className="md:p-2 p-1 w-full">
                 <img
                   style={style}
                   src={data.image}
                   alt="courseLogo"
-                  className="w-full object-cover object-center rounded-lg shadow-md"
+                  className="w-full object-cover object-center"
                 />
 
-                <div class="relative  -mt-22 p-2">
-                  <div class="bg-white p-3 w-60 h-52 rounded-lg shadow-lg ">
+                <div class="relative  -mt-22 w-full">
+                  <div class="bg-white p-3 h-64 rounded-lg shadow-lg w-full">
                     <h4 class="mt-1 text-xl font-semibold uppercase leading-tight truncate">
                       {data.name}
                     </h4>
 
                     <div class="mt-1">₹ {data.price}</div>
-                    <div class="mt-4 ">
-                      <span class="text-sm  text-gray-600">
+                    <div class="mt-4 h-min">
+                      
                         {data.headline}
-                      </span>
+                     
                     </div>
                   </div>
                 </div>

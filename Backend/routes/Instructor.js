@@ -13,6 +13,7 @@ const {
   fetchInstructor,
   searchCourse,
   findCourseByID,
+  ediInstructorCourse,
 } = require("../controllers/instructor/instructorActions");
 const instructorAuth = require("../middlewares/instructor/instructorAuth");
 const instructorProfileValidator = require("../middlewares/instructor/instructorProfileValidator");
@@ -40,4 +41,8 @@ router.get("/get-field",allCategory)
 router.get("/search",searchCourse)
 
 router.get("/get-course",instructorAuth, findCourseByID)
+
+router.post("/edit-course", instructorAuth,ediInstructorCourse)
+
+
 module.exports = router;

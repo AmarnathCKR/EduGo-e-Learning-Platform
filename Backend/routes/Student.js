@@ -6,6 +6,7 @@ const {
   fetchAllCourse,
   fetchStudent,
   fetchAllFields,
+  findStudentCourseByID,
 } = require("../controllers/student/studentActions");
 const {
   studentLogin,
@@ -34,6 +35,8 @@ router.get("/fetch-student",studentAuth, fetchStudent);
 
 router.get("/display-courses", displayCourses);
 
-router.get("/fetch-fields", fetchAllFields)
+router.get("/fetch-fields", fetchAllFields);
+
+router.get("/get-course",studentAuth, findStudentCourseByID)
 
 module.exports = router;

@@ -3,29 +3,31 @@ import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import Header from "../layouts/Header";
-import Footer from "../layouts/Footer";
-import { getAnyData } from "../../../api/instructorAPI";
-import { IoIosArrowDropdown,  } from "react-icons/io";
-import { BiEditAlt } from "react-icons/bi";
-import { ControlBar, Player } from "video-react";
 
-function SingleCourse() {
+import { IoIosArrowDropdown } from "react-icons/io";
+import { BiPurchaseTag } from "react-icons/bi";
+import { ControlBar, Player } from "video-react";
+import { getAnyDataStudentAPI } from "../../../api/studentAPI";
+import HeaderLanding from "../layouts/HeaderLanding";
+import FooterLanding from "../layouts/FooterLanding";
+
+function SingleStudentCourse() {
   const [courses, setCourse] = useState([]);
-  const Instructor = useSelector((state) => state.InstructorProfile);
-  
-  const token = useSelector((state) => state.token);
+
+  const auth = useSelector((state) => state.studentToken);
+  const Instructor = useSelector((state) => state.studentData);
+  const search = useSelector((state) => state.studentSearch);
   const location = useLocation();
 
   useEffect(() => {
-    getAnyData(`get-course?course=${location.state}`, token)
+    getAnyDataStudentAPI(`get-course?course=${location.state}`, auth)
       .then((res) => {
         console.log(res.data.data.content.data);
         setCourse(res.data.data.content.data);
       })
       .catch((err) => console.log(err));
   }, []);
-  const navigate = useNavigate()
+  const navigate = useNavigate();
 
   const modules = courses?.topics?.map((item, index) => (
     <div key={item.name} className="w-full group relative">
@@ -54,14 +56,13 @@ function SingleCourse() {
       </div>
     </div>
   ));
-  
 
   return (
     <>
       <ToastContainer />
-      <Header Instructor={Instructor} token={token} />
+      <HeaderLanding token={auth} student={Instructor} search={search} />
       <div className="md:p-8 p-2">
-        <div className="mt-36 border shadow">
+        <div className="mt-24 border shadow">
           {courses && (
             <>
               <div className="mt-10 p-8  text-center">
@@ -128,7 +129,19 @@ function SingleCourse() {
                       </Player>
                     </div>
                     <div className="flex flex-col my-5 w-full">
-                      <button onClick={()=>{navigate(`/instructor/update-course/:${courses._id}`, {state : courses._id})}} className="bg-black flex rounded border justify-center text-center text-2xl text-white p-3"><BiEditAlt size="30" color="white"/><h1 className="mx-3">Edit Course Details</h1></button>
+                      <button
+                        onClick={() => {
+                          navigate(`/purchase-course/:${courses._id}`, {
+                            state: courses._id,
+                          });
+                        }}
+                        className="bg-black flex rounded border justify-center text-center text-2xl text-white p-3"
+                      >
+                        <BiPurchaseTag size="30" color="white" />
+                        <h1 className="mx-3">
+                          Enroll Now for ₹{courses.price}
+                        </h1>
+                      </button>
                     </div>
                   </div>
                 </div>
@@ -137,9 +150,9 @@ function SingleCourse() {
           )}
         </div>
       </div>
-      <Footer />
+      <FooterLanding />
     </>
   );
 }
 
-export default SingleCourse;
+export default SingleStudentCourse;

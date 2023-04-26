@@ -150,7 +150,7 @@ function FormProfileStudent(props) {
       <ToastContainer />
 
       <div className="grid grid-cols-2 justify-center ">
-        <div className="col-span-2 md:col-span-1 border-2 shadow mx-4 my-3 py-3">
+        <div className="col-span-2 md:col-span-1 border-2 shadow mx-4 my-3 py-3 px-5">
           <input
             className="w-full mt-2 px-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
             type="text"
@@ -228,7 +228,7 @@ function FormProfileStudent(props) {
           )}
         </div>
 
-        <div className="col-span-2 md:col-span-1  border-2 shadow mx-4 my-3 py-3">
+        <div className="col-span-2 md:col-span-1  border-2 shadow mx-4 my-3 py-3 px-5">
           <label className="mx-3">Social Links</label>
           <input
             className="w-full mt-2 px-2 border-2 rounded py-1 text-gray-700 bg-white focus:outline-none items-center"
