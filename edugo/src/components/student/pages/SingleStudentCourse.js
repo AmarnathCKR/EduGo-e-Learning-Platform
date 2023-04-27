@@ -46,13 +46,7 @@ function SingleStudentCourse() {
         <span className="font-semibold">Description: </span>
         <br />
         {item.description}
-        <p className="text-center font-medium">Content Video</p>
-        <Player
-          className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-          src={item.video}
-        >
-          <ControlBar autoHide={false} className="my-class" />
-        </Player>
+
       </div>
     </div>
   ));
