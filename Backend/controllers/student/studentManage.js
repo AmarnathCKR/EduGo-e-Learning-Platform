@@ -402,9 +402,11 @@ exports.displayCourses = async (req, res) => {
   const fieldOfStudyFilter = req.query.fieldOfStudy || "";
   const experienceFilter = req.query.experience || "";
 
+  const escapedQuery = searchQuery.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
   const searchObject = searchQuery
-    ? { $or: [{ name: { $regex: searchQuery, $options: "i" } }] }
+    ? { name: { $regex: new RegExp(escapedQuery, 'i') } }
     : {};
+
   const fieldOfStudyFilterObject = fieldOfStudyFilter
     ? { field: fieldOfStudyFilter }
     : {};
@@ -430,7 +432,7 @@ exports.displayCourses = async (req, res) => {
     ...searchObject,
     ...fieldOfStudyFilterObject,
     ...experienceFilterObject,
-  })
+  }).populate("field").populate("instructor")
     .sort(sortObject)
     .skip((currentPage - 1) * pageSize)
     .limit(pageSize);

@@ -10,12 +10,12 @@ import { Link, useNavigate } from "react-router-dom";
 import { Icon } from "@iconify/react";
 import logo from "../../../Assets/logo.png";
 
-import { debounce } from "lodash";
 import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
 
 function HeaderLanding(props) {
   const [menuToggler, setToggle] = useState(false);
   const [menuResponsive, setMenu] = useState(false);
+  const [timeout, setTimeoutTimer] = useState();
 
   const [searchSuggestions, setSearchSuggestions] = useState([]);
 
@@ -52,7 +52,7 @@ function HeaderLanding(props) {
       window.innerWidth < 900 ? setToggle(false) : setToggle(true);
       window.innerWidth < 900 ? setMenu(false) : setToggle(true);
       return () => {
-        window.removeEventListener("resize", () => {});
+        window.removeEventListener("resize", () => { });
       };
     });
   }, []);
@@ -69,21 +69,27 @@ function HeaderLanding(props) {
   };
 
   // Searching
+  const handleSearch = (search) => {
+    clearTimeout(timeout)
+    const newTimer = setTimeout(() => {
+      console.log('first')
+      getAnyDataWithoutAuthStudentApi(`search?search=${search}`)
+        .then((res) => {
+          setSearchSuggestions(res.data.data.content.data);
+        })
+        .catch((err) => {
+          console.log(err.response.data.data.errors[0].message);
+        });
+    }, 1000)
+    setTimeoutTimer(newTimer)
 
-  const handleSearch = debounce((value) => {
-    setSearchKeyword(value);
 
-    getAnyDataWithoutAuthStudentApi(`search?search=${value}`)
-      .then((res) => {
-        setSearchSuggestions(res.data.data.content.data);
-      })
-      .catch((err) => {
-        console.log(err.response.data.data.errors[0].message);
-      });
-  }, 200);
+  }
+
 
   const handleInputChange = (event) => {
     const value = event.target.value;
+    setSearchKeyword(value);
     handleSearch(value);
     dispatch(subscribeStudentSearch(value));
     if (event.key === "ArrowDown" && searchSuggestions.length > 0) {

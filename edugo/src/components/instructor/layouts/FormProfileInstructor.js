@@ -101,14 +101,17 @@ function FormProfileInstructor(props) {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "n0d0jino");
+        formData.append("e_crop", "fill");
+        formData.append("width", "300");
+        formData.append("height", "300");
 
         try {
           if (formData) {
             const response = await uploadImage(formData);
 
             const imageUrl = response.data.secure_url;
-
-            const data = { ...profile, image: imageUrl };
+            const croppedUrl = imageUrl.replace('/upload/', '/upload/c_fill,g_auto,h_800,w_1200/')
+            const data = { ...profile, image: croppedUrl };
 
             createAny("update-profile", data, props.token)
               .then((res) => {

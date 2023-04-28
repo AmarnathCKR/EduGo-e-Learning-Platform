@@ -10,12 +10,16 @@ const createToken = (_id) => {
 };
 
 exports.studentSearch = async (req, res) => {
+  
   if (req.query.search) {
     const { search } = req.query;
-    
-    const data = await Course.find({
-      $or: [{ name: { $regex: search, $options: "i" }  }],
-    }).sort({ datefield: -1 });
+    console.log("searched"+search)
+    const escapedQuery = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    const searchObject = search
+      ? { name: { $regex: new RegExp(escapedQuery, 'i') } }
+      : {};
+
+    const data = await Course.find({ ...searchObject }).sort({ datefield: -1 });
 
     const success = {
       status: true,
@@ -101,7 +105,7 @@ exports.updateStudentProfile = async (req, res) => {
 };
 
 exports.fetchAllCourse = async (req, res) => {
-  const allCourse = await Course.find({status : "active"});
+  const allCourse = await Course.find({ status: "active" });
   const success = {
     status: true,
     content: {
@@ -111,9 +115,9 @@ exports.fetchAllCourse = async (req, res) => {
   res.status(200).send({ data: success });
 };
 
-exports.fetchStudent = async (req,res) =>{
-  const {id} = req.params;
-  const studentData = await Student.findOne({_id : id});
+exports.fetchStudent = async (req, res) => {
+  const { id } = req.params;
+  const studentData = await Student.findOne({ _id: id });
   const success = {
     status: true,
     content: {
@@ -123,8 +127,8 @@ exports.fetchStudent = async (req,res) =>{
   res.status(200).send({ data: success });
 }
 
-exports.fetchAllFields = async (req,res)=>{
-  FieldCategory.find().then((result)=>{
+exports.fetchAllFields = async (req, res) => {
+  FieldCategory.find().then((result) => {
     const success = {
       status: true,
       content: {

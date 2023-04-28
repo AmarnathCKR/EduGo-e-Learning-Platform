@@ -64,7 +64,7 @@ function Header(props) {
   };
  
   const handleLink = ()=>{
-    navigate("/instructor")
+    navigate("/instructor/")
   }
   const handleSearch = debounce((value) => {
     setSearchKeyword(value);
@@ -99,7 +99,7 @@ function Header(props) {
     if (event.key === "Enter") {
       event.preventDefault();
       handleSelectSuggestion(searchSuggestions[index]?.name || searchKeyword);
-      navigate("/courses");
+      navigate("/instructor/courses");
     } else if (event.key === "ArrowUp" && index > 0) {
       // move focus to previous suggestion
       event.preventDefault();

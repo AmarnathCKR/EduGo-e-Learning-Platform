@@ -100,14 +100,14 @@ function FormProfileStudent(props) {
         const formData = new FormData();
         formData.append("file", file);
         formData.append("upload_preset", "n0d0jino");
-
+        
         try {
           if (formData) {
             const response = await uploadImage(formData)
 
             const imageUrl = response.data.secure_url;
-
-            const data = { ...profile, image: imageUrl };
+            const croppedUrl = imageUrl.replace('/upload/', '/upload/c_fill,g_auto,h_800,w_1200/')
+            const data = { ...profile, image: croppedUrl };
 
             const url = "update-profile";
 

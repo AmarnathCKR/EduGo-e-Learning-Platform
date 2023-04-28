@@ -44,8 +44,6 @@ const storage = getStorage(app);
 function CourseForm(props) {
   const [progress, setProgress] = useState(0);
 
-  console.log(props.courseList);
-
   const [error, setError] = useState("");
   const [course, setcourse] = useState({
     name: "",
@@ -113,6 +111,7 @@ function CourseForm(props) {
       formData.append("file", file);
       formData.append("upload_preset", "n0d0jino");
 
+
       try {
         if (formData) {
           const file2 = course.videoRaw;
@@ -138,17 +137,19 @@ function CourseForm(props) {
               const response = await uploadImage(formData);
 
               const imageUrl = response.data.secure_url;
+              
+              const croppedUrl = imageUrl.replace('/upload/', '/upload/c_fill,g_auto,h_800,w_1200/')
 
               let data = {
                 ...course,
-                image: imageUrl,
+                image: croppedUrl,
                 topics: topics,
                 video: url,
               };
               if (props.id) {
                 data = {
                   ...course,
-                  image: imageUrl,
+                  image: croppedUrl,
                   topics: topics,
                   video: url,
                   courseId: props.id,
@@ -299,9 +300,8 @@ function CourseForm(props) {
             Uploading Please wait
             <div class="bg-white text-xs font-medium text-blue-100 text-center h-4 my-2 p-0.5 leading-none w-full rounded-full relative">
               <span
-                className={`z-30 absolute ${
-                  topic.progress >= 50 ? "text-white" : "text-neutral-500"
-                }`}
+                className={`z-30 absolute ${topic.progress >= 50 ? "text-white" : "text-neutral-500"
+                  }`}
               >
                 {Math.floor(topic.progress)}%
               </span>
@@ -329,19 +329,27 @@ function CourseForm(props) {
   };
 
   const handleDeleteVideo = async (index, event) => {
-    const fileRef = ref(storage, `videos/${topics[index].ref.name}`);
-    //2.
-    deleteObject(fileRef)
-      .then(() => {
-        showVideoRemoval();
-        const newTopics = [...topics];
-        newTopics[index].video = "";
-        newTopics[index].progress = 0;
-        setTopics(newTopics);
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+
+    if (topics[index]?.ref?.name) {
+      const fileRef = ref(storage, `videos/${topics[index].ref.name}`);
+      deleteObject(fileRef)
+        .then(() => {
+          showVideoRemoval();
+          const newTopics = [...topics];
+          newTopics[index].video = "";
+          newTopics[index].progress = 0;
+          setTopics(newTopics);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    }
+    const newTopics = [...topics];
+    newTopics[index].video = "";
+    newTopics[index].progress = 0;
+    setTopics(newTopics);
+
+
   };
 
   const handleTopicVideoChange = async (index, event) => {

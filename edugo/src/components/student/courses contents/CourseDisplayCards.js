@@ -52,7 +52,7 @@ const CourseDisplayCards = (props) => {
     setSearchQuery(value);
     setCurrentPage(1);
   };
-  const navigate =useNavigate()
+  const navigate = useNavigate()
 
   useEffect(() => {
     handleSearchChange(props.search);
@@ -73,14 +73,11 @@ const CourseDisplayCards = (props) => {
     setCurrentPage(1);
   };
 
-  const style = {
-    width: "280px",
-    height: "200px",
-  };
+
 
   return (
     <>
-      <div className="grid grid-cols-3 p-5">
+      <div className="grid grid-cols-3 md:p-3 p-1">
         <div className="md:col-span-1 col-span-3 flex justify-center ">
           <label
             className="p-3 border rounded shadow w-52"
@@ -140,30 +137,42 @@ const CourseDisplayCards = (props) => {
           </select>
         </div>
       </div>
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+      <div className="grid grid-cols-1  md:grid-cols-2">
         {courses.map((data) => (
           <>
-            <div onClick={()=>{navigate(`/coursePage/:${data._id}`, {state : data._id})}} class=" md:mx-2 mx-0 md:p-3 p-1 mb-3  cursor-pointer">
-              <div className="md:p-2 p-1 w-full">
-                <img
-                  style={style}
-                  src={data.image}
-                  alt="courseLogo"
-                  className="w-full object-cover object-center"
-                />
-
-                <div class="relative  -mt-22 w-full">
-                  <div class="bg-white p-3 h-64 rounded-lg shadow-lg w-full">
-                    <h4 class="mt-1 text-xl font-semibold uppercase leading-tight truncate">
-                      {data.name}
-                    </h4>
-
-                    <div class="mt-1">₹ {data.price}</div>
-                    <div class="mt-4 h-min">
+            <div onClick={() => { navigate(`/coursePage/:${data._id}`, { state: data._id }) }} >
+              <div class="flex flex-col justify-center md:mx-5 mx-1 ">
+                <div
+                  class="relative flex flex-col md:flex-row md:space-x-5 space-y-3 md:space-y-0 rounded-xl shadow-sm hover:shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white">
+                  <div class="w-full md:w-1/3 bg-white grid place-items-center">
+                    <img src={data.image} alt="tailwind logo" class="rounded-xl" />
+                  </div>
+                  <div class="w-full md:w-2/3 bg-white flex flex-col space-y-2 p-3">
+                    <div class="flex justify-between item-center">
                       
-                        {data.headline}
-                     
+                      <div class="flex items-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20"
+                          fill="currentColor">
+                          <path
+                            d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                        </svg>
+                        <p class="text-gray-600 font-bold text-sm ml-1">
+                          4.96
+                          <span class="text-gray-500 font-normal">(76 reviews)</span>
+                        </p>
+                      </div>
+                      <div class="">
+                       
+                      </div>
+                      <div class="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-800 hidden md:block">
+                        {data.instructor.name}</div>
                     </div>
+                    <h3 class="font-black text-gray-800 md:text-3xl text-xl">{data.name}</h3>
+                    <p class="md:text-lg text-gray-500 text-base">{data.headline}</p>
+                    <p class="text-xl font-black text-gray-800">
+                    ₹{data.price}
+                      <span class="font-normal text-gray-600 text-base"></span>
+                    </p>
                   </div>
                 </div>
               </div>

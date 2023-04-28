@@ -10,6 +10,8 @@ import { ControlBar, Player } from "video-react";
 import { getAnyDataStudentAPI } from "../../../api/studentAPI";
 import HeaderLanding from "../layouts/HeaderLanding";
 import FooterLanding from "../layouts/FooterLanding";
+import { BsArrowBarRight } from "react-icons/bs";
+import { FaAngleRight, FaArrowRight } from "react-icons/fa";
 
 function SingleStudentCourse() {
   const [courses, setCourse] = useState([]);
@@ -27,6 +29,7 @@ function SingleStudentCourse() {
       })
       .catch((err) => console.log(err));
   }, []);
+
   const navigate = useNavigate();
 
   const modules = courses?.topics?.map((item, index) => (
@@ -51,97 +54,47 @@ function SingleStudentCourse() {
     </div>
   ));
 
+
   return (
     <>
       <ToastContainer />
       <HeaderLanding token={auth} student={Instructor} search={search} />
-      <div className="md:p-8 p-2">
-        <div className="mt-24 border shadow">
+      <div className="">
+        <div className="mt-20">
           {courses && (
             <>
-              <div className="mt-10 p-8  text-center">
-                <div className="flex flex-col md:px-8 px-3 justify-center items-center">
-                  <h1 className=" text-center font-semibold text-2xl py-6">
-                    {courses.name}
-                  </h1>
-                  <div className="grid grid-cols-2  justify-center w-full">
-                    <div className="md:col-span-1 col-span-2 flex justify-center items-center">
-                      <img width={150} src={courses.image} alt="img" />
-                    </div>
-
-                    <div className="md:col-span-1 col-span-2">
-                      <h1 className=" text-start text-lg  py-2">
-                        <span className="  font-semibold">
-                          Experience Level :{" "}
-                        </span>
-                        {courses.experience}
-                      </h1>
-                      <h1 className=" text-start text-lg  py-2">
-                        <span className="  font-semibold">
-                          Field of Study :{" "}
-                        </span>{" "}
-                        {courses?.field?.name}
-                      </h1>
-                      <h1 className=" text-start text-lg  py-2">
-                        <span className="  font-semibold">Price : </span> ₹
-                        {courses.price}
-                      </h1>
-                      <h1 className=" text-start text-lg  py-2">
-                        <span className="  font-semibold">Total Time : </span>{" "}
-                        {courses.total} minutes
-                      </h1>
-                    </div>
+              <div className="grid md:grid-cols-2 grid-cols-1  text-center text-white bg-gradient-to-r from-[#1f4077] to-[#588de2] md:p-5 p-1 w-full h-96 align-middle justify-items-center justify-center items-center fixed" >
+                <div className="flex flex-col p-5">
+                  <p className=" text-left text-xl my-3 flex align-middle items-center">Browse<span><FaAngleRight /></span>{courses?.field?.name}<span><FaAngleRight /></span> </p>
+                  <p className="font-black text-left md:text-3xl text-xl my-3">{courses.name}</p>
+                  
+                  <div className="flex items-center my-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500" viewBox="0 0 20 20"
+                      fill="currentColor">
+                      <path
+                        d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
+                    </svg>
+                    <p className="text-white font-bold text-sm ml-1">
+                      4.96
+                      <span className="text-white font-normal">(76 reviews)</span>
+                    </p>
+                    
                   </div>
+                  <p className=" md:text-lg text-left text-xs">{courses.headline}</p>
+                  <p className="flex items-center my-3 tracking-wide font-lg"><span>By</span> <img className="mx-2 rounded-full" height="40" width="40" src={courses?.instructor?.image} alt="inst" /><span className=' font-semibold'>{courses?.instructor?.name}</span></p>
+                </div>
+                <div className="w-full h-full flex-col font-semibold md:text-xl text-lg text-white flex justify-center items-center text-left p-5">
 
-                  <div className="flex flex-col items-start justify-start w-full">
-                    <h1 className=" text-start text-lg  py-2">
-                      <span className="  font-semibold">Headline : </span>
-                      {courses.headline}
-                    </h1>
-                    <h1 className=" text-start text-lg  py-2">
-                      <span className="  font-semibold">Description : </span>
-                      {courses.description}
-                    </h1>
-
-                    <h1 className=" text-start text-lg  py-2">
-                      <span className="  font-semibold">Topics Covered : </span>{" "}
-                    </h1>
-                    <div className="flex flex-col divide-y-2 w-full">
-                      {modules}
-                    </div>
-                    <div className="flex flex-col w-full">
-                      <h1 className=" text-start text-lg  py-2">
-                        <span className="  font-semibold">
-                          Course Overview :{" "}
-                        </span>{" "}
-                      </h1>
-                      <Player
-                        className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-                        src={courses.video}
-                      >
-                        <ControlBar autoHide={false} className="my-class" />
-                      </Player>
-                    </div>
-                    <div className="flex flex-col my-5 w-full">
-                      <button
-                        onClick={() => {
-                          navigate(`/purchase-course/:${courses._id}`, {
-                            state: courses._id,
-                          });
-                        }}
-                        className="bg-black flex rounded border justify-center text-center text-2xl text-white p-3"
-                      >
-                        <BiPurchaseTag size="30" color="white" />
-                        <h1 className="mx-3">
-                          Enroll Now for ₹{courses.price}
-                        </h1>
-                      </button>
-                    </div>
-                  </div>
+                  <button className="bg-black border rounded p-3 tex-sm font-bold w-1/2">Enroll Now</button>
+                  
                 </div>
               </div>
+              
             </>
           )}
+        </div>
+        <div className="h-screen mt-96">
+          
         </div>
       </div>
       <FooterLanding />
