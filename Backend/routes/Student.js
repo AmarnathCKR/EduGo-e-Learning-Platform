@@ -7,6 +7,7 @@ const {
   fetchStudent,
   fetchAllFields,
   findStudentCourseByID,
+  streamVideo,
 } = require("../controllers/student/studentActions");
 const {
   studentLogin,
@@ -38,5 +39,7 @@ router.get("/display-courses", displayCourses);
 router.get("/fetch-fields", fetchAllFields);
 
 router.get("/get-course",studentAuth, findStudentCourseByID)
+
+router.get("/stream/video",streamVideo)
 
 module.exports = router;

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -12,9 +12,39 @@ import HeaderLanding from "../layouts/HeaderLanding";
 import FooterLanding from "../layouts/FooterLanding";
 import { BsArrowBarRight } from "react-icons/bs";
 import { FaAngleRight, FaArrowRight } from "react-icons/fa";
+import axios from 'axios';
+import MediaSource from 'mediasource';
+import VideoPlayer from "../courses contents/VideoPlayer";
 
 function SingleStudentCourse() {
   const [courses, setCourse] = useState([]);
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const [active, setActive] = useState(false)
+  
+  useEffect(() => {
+    const handleScroll = () => {
+      const currentPosition = window.pageYOffset;
+      setScrollPosition(currentPosition);
+    };
+
+    window.addEventListener('scroll', handleScroll);
+
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (scrollPosition >= 260) {
+      // perform action when scroll position is greater than or equal to 500
+      setActive(true)
+
+    }
+    if (scrollPosition <= 260) {
+      setActive(false)
+    }
+  }, [scrollPosition]);
+
 
   const auth = useSelector((state) => state.studentToken);
   const Instructor = useSelector((state) => state.studentData);
@@ -54,6 +84,18 @@ function SingleStudentCourse() {
     </div>
   ));
 
+  function extractVideoIdFromUrl(url) {
+    if (!url || typeof url !== "string") {
+      return "";
+    }
+    const path = url.split('?')[0]; // get the path portion of the URL
+    const parts = path.split('/'); // split the path into segments
+    const filename = parts.pop(); // get the last segment (the filename)
+    const decodedFilename = decodeURIComponent(filename); // decode the filename (replace %20 with spaces)
+    const videoId = decodedFilename.replace(/^videos\//, ''); // remove the "videos/" prefix from the filename
+    return videoId;
+  }
+
 
   return (
     <>
@@ -63,12 +105,12 @@ function SingleStudentCourse() {
         <div className="mt-20">
           {courses && (
             <>
-              <div className="grid md:grid-cols-2 grid-cols-1  text-center text-white bg-gradient-to-r from-[#1f4077] to-[#588de2] md:p-5 p-1 w-full h-96 align-middle justify-items-center justify-center items-center fixed" >
-                <div className="flex flex-col p-5">
-                  <p className=" text-left text-xl my-3 flex align-middle items-center">Browse<span><FaAngleRight /></span>{courses?.field?.name}<span><FaAngleRight /></span> </p>
-                  <p className="font-black text-left md:text-3xl text-xl my-3">{courses.name}</p>
-                  
-                  <div className="flex items-center my-2">
+              <div className={active ? "grid md:grid-cols-2 grid-cols-1  text-center text-white bg-gradient-to-r from-[#1f4077] to-[#588de2] p-1 w-full md:h-24 h-32 align-middle justify-items-center justify-center items-center fixed" : "grid md:grid-cols-2 grid-cols-1  text-center text-white bg-gradient-to-r from-[#1f4077] to-[#588de2] md:p-5 p-1 w-full h-96 align-middle justify-items-center justify-center items-center"} >
+                <div className="flex flex-col md:p-5 p-1 md:px-1 px-5">
+                  <p className={active ? " text-left md:text-lg text-base md:my-3 my-0 align-middle items-center hidden" : " text-left md:text-lg text-base my-3 flex align-middle items-center"}>Browse<span><FaAngleRight /></span>{courses?.field?.name}<span><FaAngleRight /></span> </p>
+                  <p className={active ? "md:font-black font-bold text-left md:text-2xl text-lg md:my-3" : "font-black text-left md:text-3xl text-lg my-3"}>{courses.name}</p>
+
+                  <div className={active ? "hidden items-center my-2" : "flex items-center my-2"}>
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500" viewBox="0 0 20 20"
                       fill="currentColor">
                       <path
@@ -78,24 +120,25 @@ function SingleStudentCourse() {
                       4.96
                       <span className="text-white font-normal">(76 reviews)</span>
                     </p>
-                    
-                  </div>
-                  <p className=" md:text-lg text-left text-xs">{courses.headline}</p>
-                  <p className="flex items-center my-3 tracking-wide font-lg"><span>By</span> <img className="mx-2 rounded-full" height="40" width="40" src={courses?.instructor?.image} alt="inst" /><span className=' font-semibold'>{courses?.instructor?.name}</span></p>
-                </div>
-                <div className="w-full h-full flex-col font-semibold md:text-xl text-lg text-white flex justify-center items-center text-left p-5">
 
-                  <button className="bg-black border rounded p-3 tex-sm font-bold w-1/2">Enroll Now</button>
-                  
+                  </div>
+                  <p className={active ? "hidden md:text-lg text-left text-xs" : " md:text-lg text-left text-xs"}>{courses.headline}</p>
+                  <p className={active ? "hidden items-center my-3 tracking-wide font-lg" : "flex items-center my-3 tracking-wide font-lg"}><span>By</span> <img className="mx-2 rounded-full" height="40" width="40" src={courses?.instructor?.image} alt="inst" /><span className=' font-semibold'>{courses?.instructor?.name}</span></p>
+                </div>
+                <div className="w-full h-full flex-col font-semibold md:text-xl text-lg text-white flex justify-center items-center text-left ">
+
+                  <button className="border-2 border-white rounded md:p-3 p-2 text-sm tracking-wide font-bold w-1/2 shadow-[#1f4077] hover:shadow-lg">Enroll Now</button>
+
                 </div>
               </div>
-              
+
             </>
           )}
         </div>
-        <div className="h-screen mt-96">
-          
-        </div>
+
+      </div >
+      <div className="h-screen mt-96">
+       <VideoPlayer videoId={extractVideoIdFromUrl(courses.video)} />
       </div>
       <FooterLanding />
     </>
