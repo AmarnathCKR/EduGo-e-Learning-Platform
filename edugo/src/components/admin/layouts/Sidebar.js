@@ -76,8 +76,8 @@ export default function Sidebar({ show, setter }) {
                         icon={<BiBookReader />}
                     />
                     <MenuItem
-                        name="About Us"
-                        route="/admin/about"
+                        name="Coupons"
+                        route="/admin/coupons"
                         icon={<BsInfoSquare />}
                     />
                     <MenuItem

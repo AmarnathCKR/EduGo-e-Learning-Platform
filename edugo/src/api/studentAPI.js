@@ -19,5 +19,13 @@ export const getAnyDataStudentAPI = (link, token) =>
     },
   });
 
+export const getSearchStudentAPI = (link,input, token) =>
+  studentAPI.get(`${link}?search=${input}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
 export const getAnyDataWithoutAuthStudentApi = (link) =>
   studentAPI.get(`${link}`);

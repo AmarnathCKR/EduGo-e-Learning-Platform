@@ -14,13 +14,20 @@ const StudentSchema = new mongoose.Schema(
     description: String,
     country: String,
     region: String,
-    git:String,
+    git: String,
     linkedin: String,
     facebook: String,
     twitter: String,
     password: String,
     google: Boolean,
-    status : Boolean,
+    status: Boolean,
+    coupons: [{
+
+      type: mongoose.Types.ObjectId,
+      ref: 'Coupon'
+
+
+    }],
   },
   { timestamps: true }
 );

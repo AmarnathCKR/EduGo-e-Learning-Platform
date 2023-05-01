@@ -8,6 +8,7 @@ import AdminDashboard from "./pages/AdminDashboard";
 import { subscribeAdminToken } from "../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import CourseManage from "./pages/CourseManage";
+import CouponManagement from "./pages/CouponsManagement";
 
 function AdminRouter() {
   const [token, setToken] = useState(null);
@@ -40,6 +41,9 @@ function AdminRouter() {
         <Route path="/field" element={auth ? <FieldManage /> : <Navigate to="/admin" />} /> 
         <Route path="/dashboard" element={auth ?<AdminDashboard />: <Navigate to="/admin" />} />
         <Route path="/course" element={auth ?<CourseManage />: <Navigate to="/admin" />} /> 
+        <Route path="/coupons" element={auth ?<CouponManagement />: <Navigate to="/admin" />} /> 
+        
+        
         </Route>
       </Routes>
     </>

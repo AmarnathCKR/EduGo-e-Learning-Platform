@@ -33,6 +33,14 @@ export const blockFieldApi = (id, token) =>
     },
   });
 
+  export const blockCouponApi = (id, token) =>
+  adminAPI.delete(`delete-coupon?id=${id}&status=${true}`, {
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${token}`,
+    },
+  });
+
 export const createAny = (link, input, token) =>
   adminAPI.post(`${link}`, input, {
     headers: {

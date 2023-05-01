@@ -9,6 +9,7 @@ const Multer = require('multer');
 
 
 var serviceAccount = require("../../database/edugo-e-lerning-firebase-adminsdk-byo2p-024b7d9521.json");
+const Coupon = require("../../database/Coupon");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -191,24 +192,23 @@ exports.findStudentCourseByID = async (req, res) => {
 
 
 exports.streamVideo = async (req, res) => {
-  console.log("streaming")
   const videoId = req.query.videoId;
 
-  // Get a reference to the video file in Firebase Storage
-  const videoRef = bucket.file('videos/' + videoId);
-
   try {
+    // Get a reference to the video file in Firebase Storage
+    const videoRef = bucket.file(`videos/${videoId}`);
+
     // Download the video file to a local file
     const [url, videoSize] = await Promise.all([
       videoRef.getSignedUrl({
-        action: 'read',
-        expires: '03-17-2024', // expiration date of the signed URL
+        action: "read",
+        expires: "03-17-2024", // expiration date of the signed URL
       }),
       videoRef.getMetadata().then((metadata) => metadata.size),
     ]);
 
     // Set the response headers to allow for range requests
-    res.setHeader('Accept-Ranges', 'bytes');
+    res.setHeader("Accept-Ranges", "bytes");
     const range = req.headers.range;
 
     if (!range) {
@@ -218,8 +218,8 @@ exports.streamVideo = async (req, res) => {
     }
 
     // Parse the range header
-    const start = Number(range.replace(/bytes=/, '').split('-')[0]);
-    const end = Number(range.replace(/bytes=/, '').split('-')[1]) || videoSize - 1;
+    const start = Number(range.replace(/bytes=/, "").split("-")[0]);
+    const end = Number(range.replace(/bytes=/, "").split("-")[1]) || videoSize - 1;
     const chunkSize = (end - start) + 1;
 
     // Create a readable stream from the video file
@@ -227,15 +227,110 @@ exports.streamVideo = async (req, res) => {
 
     // Set the response headers for the chunk
     res.status(206).set({
-      'Content-Type': 'video/mp4',
-      'Content-Length': chunkSize,
-      'Content-Range': `bytes ${start}-${end}/${videoSize}`,
+      "Content-Type": "video/mp4",
+      "Content-Length": chunkSize,
+      "Content-Range": `bytes ${start}-${end}/${videoSize}`,
     });
 
     // Send the video chunk
     stream.pipe(res);
 
+    // Revoke the signed URL to prevent memory leaks
+    setTimeout(() => URL.revokeObjectURL(url), 10000);
   } catch (error) {
-    res.status(404).send('Video not found');
+    res.status(404).send("Video not found");
+    console.error(error);
   }
 };
+
+
+exports.searchCoupon = async (req, res) => {
+  const { search, id } = req.query;
+  if (search) {
+
+    const data = await Coupon.findOne({ name: search, status: true });
+    if (data) {
+      const valid = await Student.findOne({ _id: id, coupons: data._id })
+      if (valid) {
+        const emailError = {
+          status: false,
+          errors: [
+            {
+              param: "Input error",
+              message: "Coupon Already Used",
+              code: "INVALID",
+            },
+          ],
+        };
+        res.status(409).send({ data: emailError });
+
+      } else {
+        let currentDate = Date.now();
+
+        function formatDate(date) {
+          let d = new Date(date),
+            month = "" + (d.getMonth() + 1),
+            day = "" + d.getDate(),
+            year = d.getFullYear();
+
+          if (month.length < 2) month = "0" + month;
+          if (day.length < 2) day = "0" + day;
+
+          return [year, month, day].join("-");
+        }
+
+        let formatedDate = formatDate(currentDate);
+
+        if (data.expirationTime > formatedDate) {
+          const success = {
+            status: true,
+            content: {
+              data: data,
+            },
+          };
+          res.status(200).send({ data: success });
+        } else {
+          const emailError = {
+            status: false,
+            errors: [
+              {
+                param: "Input error",
+                message: "Coupon Expired",
+                code: "INPUT_ERROR",
+              },
+            ],
+          };
+          res.status(409).send({ data: emailError });
+        }
+
+      }
+
+    } else {
+      const emailError = {
+        status: false,
+        errors: [
+          {
+            param: "Input error",
+            message: "No Coupon found",
+            code: "INPUT_ERROR",
+          },
+        ],
+      };
+      res.status(409).send({ data: emailError });
+
+    }
+
+  } else {
+    const emailError = {
+      status: false,
+      errors: [
+        {
+          param: "Input error",
+          message: "No input received",
+          code: "INPUT_ERROR",
+        },
+      ],
+    };
+    res.status(409).send({ data: emailError });
+  }
+}

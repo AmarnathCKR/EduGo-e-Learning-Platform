@@ -8,6 +8,7 @@ const {
   fetchAllFields,
   findStudentCourseByID,
   streamVideo,
+  searchCoupon,
 } = require("../controllers/student/studentActions");
 const {
   studentLogin,
@@ -39,6 +40,8 @@ router.get("/display-courses", displayCourses);
 router.get("/fetch-fields", fetchAllFields);
 
 router.get("/get-course",studentAuth, findStudentCourseByID)
+
+router.get("/search-coupon", studentAuth,searchCoupon)
 
 router.get("/stream/video",streamVideo)
 
