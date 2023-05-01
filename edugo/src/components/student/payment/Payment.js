@@ -48,9 +48,6 @@ function Payment() {
   const navigate = useNavigate();
 
 
-
-
-
   const checkCoupon = () => {
     if (input) {
       getSearchStudentAPI("search-coupon", input, auth).then((res) => {
