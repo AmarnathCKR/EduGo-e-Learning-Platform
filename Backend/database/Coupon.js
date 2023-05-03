@@ -5,9 +5,7 @@ const mongoose = require("mongoose");
 const couponSchema = new mongoose.Schema({
     name: {
         type: String,
-        min: 5,
-        max: 15,
-        trim: true,
+        
         required: true,
     },
 

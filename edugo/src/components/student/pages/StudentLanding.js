@@ -60,8 +60,8 @@ function StudentLanding() {
       {state && (
         <>
           {loading ? (
-            <div className="z-40  p-64 loader-local bg-secondary">
-              <RotateSpinner size="60" color="#000" />
+            <div className="z-[999]  p-64 loader-local bg-secondary">
+              <RotateSpinner size="60" color="#000000" />
             </div>
           ) : (
             ""

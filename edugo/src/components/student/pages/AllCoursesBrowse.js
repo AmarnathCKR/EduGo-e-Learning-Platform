@@ -4,7 +4,7 @@ import HeaderLanding from "../layouts/HeaderLanding";
 import FooterLanding from "../layouts/FooterLanding";
 import CourseDisplayCards from "../courses contents/CourseDisplayCards";
 
-function AllCoursesBrowse() {
+function AllCoursesBrowse(props) {
   const Instructor = useSelector((state) => state.studentData);
 
   const token = useSelector((state) => state.studentToken);
@@ -19,7 +19,8 @@ function AllCoursesBrowse() {
             <h1 className="text-center text-2xl font-medium">Search : {search}</h1>
             
         )}
-        <CourseDisplayCards search={search} />
+        {props.link ? <CourseDisplayCards search={search} link={props.link} /> :<CourseDisplayCards search={search} />}
+        
         
     </div>
     <FooterLanding />

@@ -10,6 +10,7 @@ const Multer = require('multer');
 
 var serviceAccount = require("../../database/edugo-e-lerning-firebase-adminsdk-byo2p-024b7d9521.json");
 const Coupon = require("../../database/Coupon");
+const Order = require("../../database/Order");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -327,6 +328,109 @@ exports.searchCoupon = async (req, res) => {
         {
           param: "Input error",
           message: "No input received",
+          code: "INPUT_ERROR",
+        },
+      ],
+    };
+    res.status(409).send({ data: emailError });
+  }
+}
+
+
+exports.purchase = async (req, res) => {
+  const {
+    orderId,
+    courseId,
+    coupon,
+    amount,
+    final,
+    discount
+  } = req.body;
+  console.log(req.body)
+
+  const { id } = req.query;
+  let newOrder = new Order({
+    orderId: orderId,
+    courseId: courseId,
+    coupon: coupon,
+    amount: amount,
+    final: final,
+    discount: discount,
+    user: id
+  })
+
+  if (orderId) {
+    if (coupon === "nil") {
+       newOrder = new Order({
+        orderId: orderId,
+        courseId: courseId,
+
+        amount: amount,
+        final: final,
+        discount: discount,
+        user: id
+      })
+    }
+
+    newOrder.save().then((result) => {
+      const success = {
+        status: true,
+        content: {
+          data: result,
+        },
+      };
+      res.status(200).send({ data: success });
+    }).catch((err) => {
+      const emailError = {
+        status: false,
+        errors: [
+          {
+            param: "Input error",
+            message: err,
+            code: "INPUT_ERROR",
+          },
+        ],
+      };
+      res.status(409).send({ data: emailError });
+    })
+
+  }
+}
+
+exports.getOrder = async (req, res) => {
+  const { search } = req.query;
+  if (search) {
+    const order = await Order.findOne({ _id: search });
+    if (order) {
+      const success = {
+        status: true,
+        content: {
+          data: order,
+        },
+      };
+      res.status(200).send({ data: success });
+    }
+  }
+}
+
+exports.getStatus = async (req,res) =>{
+  const { id,course } = req.query;
+  const status = await Order.findOne({user : id, courseId : course}) 
+  if(status){
+    const success = {
+      status: true,
+      content: {
+        data: "status",
+      },
+    };
+    res.status(200).send({ data: success });
+  }else{
+    const emailError = {
+      status: false,
+      errors: [
+        {
+          param: "Input error",
+          message: "No course",
           code: "INPUT_ERROR",
         },
       ],

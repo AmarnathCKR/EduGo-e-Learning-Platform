@@ -15,6 +15,7 @@ import {
 import { googleLogout } from "@react-oauth/google";
 import AdminRouter from "./components/admin/AdminRouter";
 import { getAnyData } from "./api/instructorAPI";
+import ErrorPage from "./helper/ErrorPage";
 
 function MainRouter() {
   const [token, setToken] = useState(null);
@@ -61,7 +62,7 @@ function MainRouter() {
       <Route path="/instructor/*" element={<TeacherRouter />} />
       <Route path="/admin/*" element={<AdminRouter />} />
 
-      <Route path="*" element={<h1>Error 404</h1>} />
+      <Route path="*" element={<ErrorPage title="Page not found" />} />
     </Routes>
   );
 }

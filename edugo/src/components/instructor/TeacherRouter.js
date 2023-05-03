@@ -8,6 +8,7 @@ import InstructorProfileView from "./pages/InstructorProfileView";
 import NewCourse from "./pages/NewCourse";
 import SingleCourse from "./course/SingleCourse";
 import UpdateCourse from "./course/UpdateCourse";
+import ErrorPage from "../../helper/ErrorPage";
 
 function TeacherRouter() {
   const token = useSelector((state) => state.token);
@@ -44,7 +45,7 @@ function TeacherRouter() {
           element={token ? <SingleCourse /> : <Navigate to="/instructor" />}
         />
       </Route>
-      <Route path="/*" element={<h1>Error 404</h1>} />
+      <Route path="/*" element={<ErrorPage title="Page not found" />} />
     </Routes>
   );
 }

@@ -75,9 +75,9 @@ function StudentLoginModal(props) {
     <>
       <ToastContainer />
       {loading ? (
-        <div className="z-40  p-64 loader-local ">
+        <div className="z-[999]  p-64 loader-local ">
           {" "}
-          <CircleSpinner size={50} color="#000" />
+          <CircleSpinner size={50} color="#000000" />
         </div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>

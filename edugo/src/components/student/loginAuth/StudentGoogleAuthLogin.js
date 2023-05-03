@@ -87,9 +87,9 @@ function StudentGoogleAuthLogin(props) {
       <h1 className="text-warning text-lg text-center">{error}</h1>
 
       {props.loading ? (
-        <div className="z-40  p-64 loader-local ">
+        <div className="z-[999]  p-64 loader-local ">
           {" "}
-          <CircleSpinner size={50} color="#000" loading={props.loading} />
+          <CircleSpinner size={50} color="#000000" loading={props.loading} />
         </div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>

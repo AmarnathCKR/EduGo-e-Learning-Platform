@@ -2,14 +2,15 @@
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
-import { ToastContainer } from "react-toastify";
-import { getAnyDataStudentAPI, getSearchStudentAPI } from "../../../api/studentAPI";
+import { ToastContainer, toast } from "react-toastify";
+import { getAnyDataStudentAPI, getSearchStudentAPI, postAnyStudentApi } from "../../../api/studentAPI";
 import FooterLanding from "../layouts/FooterLanding";
 import HeaderLanding from "../layouts/HeaderLanding";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import { SlClose } from "react-icons/sl";
-import { TbSquareRoundedCheck } from "react-icons/tb";
+import { TbLayoutAlignMiddle, TbSquareRoundedCheck } from "react-icons/tb";
 import { BiCheck, BiCheckCircle } from "react-icons/bi";
+import { PayPalButtons } from "@paypal/react-paypal-js";
 
 function Payment() {
   const [courses, setCourse] = useState([]);
@@ -26,6 +27,7 @@ function Payment() {
   const [error, setError] = useState()
   const [coupon, setCoupon] = useState()
   const [payment, setPayment] = useState("paypal")
+  const [final, setFinal] = useState(null)
 
   const auth = useSelector((state) => state.studentToken);
   const Instructor = useSelector((state) => state.studentData);
@@ -39,9 +41,23 @@ function Payment() {
         setCourse(res.data.data.content.data);
       })
       .catch((err) => console.log(err));
-    const payButton = document.getElementById("paypal")
-    payButton.checked = true;
+    
+    setPayment("paypal")
   }, []);
+
+  useEffect(()=>{
+ 
+    if(coupon){
+      let total = (courses.price - (coupon.discount / 100) * courses.price) / 71
+      setFinal(total.toFixed(2))
+    
+    }else{
+      let total = courses.price / 71
+      setFinal(total.toFixed(2))
+    }
+
+
+  },[input,coupon,payment,courses])
 
 
 
@@ -203,14 +219,68 @@ function Payment() {
               <p className="text-2xl font-semibold text-gray-900">₹{coupon ? courses.price - (coupon.discount / 100) * courses.price : courses.price}</p>
             </div>
           </div>
-          <div className="mt-6 flex items-center justify-between">
-            <p className="text-lg font-medium text-gray-900">Choose Payment Method</p>
-          </div>
+          
 
 
-          <div className="my-3 w-full p-2 text-lg font-semibold"><label className="mx-3"><input id="paypal" onChange={() => { setPayment("paypal") }} type="radio" name="payment" value="Paypal" />Paypal</label><label className="mx-3"><input onChange={() => { setPayment("razorpay") }} name="payment" type="radio" value="Razorpay" />Razorpay</label></div>
+          
           <button className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
-            {payment}
+            {payment === "paypal" && final != null &&
+              <div className="-z-0">
+                <PayPalButtons
+                  style={{
+                    layout: 'vertical',
+                    color: 'gold',
+                    shape: 'rect',
+                    label: 'pay',
+                    height: 40,
+
+                  }}
+                  forceReRender={[final]}
+
+                  createOrder={(data, actions) => {
+                    
+
+                    return actions.order.create({
+                      purchase_units: [
+                        {
+                          amount: {
+                            currency_code: 'USD',
+                            value: `${final}`
+                          }
+                        }
+                      ]
+                    });
+                  }}
+
+                  onApprove={async (data, actions) => {
+                    const order = await actions.order.capture();
+                    let orderData = {
+                      orderId : order.id,
+                      courseId : courses._id,
+                      coupon : coupon ? coupon._id : "nil",
+                      amount : courses.price,
+                      final : final*71,
+                      discount :  coupon ? coupon.discount : 0,
+                    }
+                    postAnyStudentApi("purchase",orderData, auth)
+                    .then((res)=>{
+                      toast.success("Payment Successfull")
+                      navigate(`/payment-success/:${res.data.data.content.data._id}`,{state : res.data.data.content.data._id})
+                    }).catch((err)=>{
+                      console.log(err)
+                      toast.error("Purchase Failed")
+                    })
+
+
+                  }}
+
+                  onError={(err) => {
+
+                    console.error("PayPal Checkout onError", err);
+                  }}
+
+
+                /></div>}
           </button>
         </div>
       </div>

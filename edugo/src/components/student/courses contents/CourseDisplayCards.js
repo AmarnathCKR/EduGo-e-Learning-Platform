@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
 
-import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
+import { getAnyDataStudentAPI, getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const CourseDisplayCards = (props) => {
   const [courses, setCourses] = useState([]);
@@ -12,9 +13,10 @@ const CourseDisplayCards = (props) => {
   const [fieldOfStudyFilter, setFieldOfStudyFilter] = useState("");
   const [experienceFilter, setExperienceFilter] = useState("");
   const [fieldData, setFieldData] = useState([]);
-
+  const auth = useSelector((state) => state.studentToken);
   useEffect(() => {
-    getAnyDataWithoutAuthStudentApi("fetch-fields")
+    const url = "fetch-fields";
+    getAnyDataWithoutAuthStudentApi(url)
       .then((res) => {
         setFieldData(res.data.data.content.data);
       })
@@ -26,10 +28,18 @@ const CourseDisplayCards = (props) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const url = `display-courses?page=${currentPage}&search=${searchQuery}&sort=${sortOrder}&fieldOfStudy=${fieldOfStudyFilter}&experience=${experienceFilter}`
-        const response = await getAnyDataWithoutAuthStudentApi(url)
-        setCourses(response.data.courses);
-        setTotalPages(response.data.totalPages);
+        const url = `${props?.link ? props?.link : "display-courses"}?page=${currentPage}&search=${searchQuery}&sort=${sortOrder}&fieldOfStudy=${fieldOfStudyFilter}&experience=${experienceFilter}`
+        if (props?.link) {
+          const response = await getAnyDataStudentAPI(url, auth)
+          setCourses(response.data.courses);
+          setTotalPages(response.data.totalPages);
+        } else {
+          const response = await getAnyDataWithoutAuthStudentApi(url)
+          setCourses(response.data.courses);
+          setTotalPages(response.data.totalPages);
+        }
+
+
       } catch (error) {
         console.error(error);
       }
@@ -42,6 +52,7 @@ const CourseDisplayCards = (props) => {
     sortOrder,
     fieldOfStudyFilter,
     experienceFilter,
+    props.link, props
   ]);
 
   const handlePageChange = (page) => {
@@ -77,7 +88,7 @@ const CourseDisplayCards = (props) => {
 
   return (
     <>
-      <div className="grid grid-cols-3 md:p-3 p-1">
+      {!props?.link && <div className="grid grid-cols-3 md:p-3 p-1">
         <div className="md:col-span-1 col-span-3 flex justify-center ">
           <label
             className="p-3 border rounded shadow w-52"
@@ -136,20 +147,20 @@ const CourseDisplayCards = (props) => {
             <option value="Expert">Expert</option>
           </select>
         </div>
-      </div>
+      </div>}
       <div className="grid grid-cols-1  md:grid-cols-2">
         {courses.map((data) => (
           <>
-            <div onClick={() => { navigate(`/coursePage/:${data._id}`, { state: data._id }) }} >
+            <div onClick={() => { navigate(`${props.link ? "/own-coursePage" : "/coursePage"}/:${props.link ? data?.courseId?._id : data?._id}`, { state: props.link ? data?.courseId?._id : data._id, owner: true }) }} >
               <div class="flex flex-col justify-center md:mx-5 mx-1 ">
                 <div
                   class="relative flex flex-col md:flex-row md:space-x-5 space-y-3 md:space-y-0 rounded-xl shadow-sm hover:shadow-lg p-3 max-w-xs md:max-w-3xl mx-auto border border-white bg-white">
                   <div class="w-full md:w-1/3 bg-white grid place-items-center">
-                    <img src={data.image} alt="tailwind logo" class="rounded-xl" />
+                    <img src={props.link ? data?.courseId?.image : data.image} alt="tailwind logo" class="rounded-xl" />
                   </div>
                   <div class="w-full md:w-2/3 bg-white flex flex-col space-y-2 p-3">
                     <div class="flex justify-between item-center">
-                      
+
                       <div class="flex items-center">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-yellow-500" viewBox="0 0 20 20"
                           fill="currentColor">
@@ -162,15 +173,15 @@ const CourseDisplayCards = (props) => {
                         </p>
                       </div>
                       <div class="">
-                       
+
                       </div>
                       <div class="bg-gray-200 px-3 py-1 rounded-full text-xs font-medium text-gray-800 hidden md:block">
-                        {data.instructor.name}</div>
+                        {props.link ? data?.courseId?.price : data.instructor?.name}</div>
                     </div>
-                    <h3 class="font-black text-gray-800 md:text-3xl text-xl">{data.name}</h3>
-                    <p class="md:text-lg text-gray-500 text-base">{data.headline}</p>
+                    <h3 class="font-black text-gray-800 md:text-3xl text-xl">{props.link ? data?.courseId?.name : data.name}</h3>
+                    <p class="md:text-lg text-gray-500 text-base">{props.link ? data?.courseId?.headline : data.headline}</p>
                     <p class="text-xl font-black text-gray-800">
-                    ₹{data.price}
+                      ₹{props.link ? data?.courseId?.price : data.price}
                       <span class="font-normal text-gray-600 text-base"></span>
                     </p>
                   </div>

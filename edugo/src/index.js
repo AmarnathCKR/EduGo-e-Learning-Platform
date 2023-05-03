@@ -5,12 +5,13 @@ import App from './App';
 import { Provider } from 'react-redux';
 import store from './store/store';
 import { ErrorBoundary } from "react-error-boundary";
+import ErrorPage from './helper/ErrorPage';
 
 
 
 const root = ReactDOM.createRoot(document.getElementById('root'));
 root.render(
-    <ErrorBoundary FallbackComponent={<h1 className='text-red-500 text-center '>Oops Something went wrong.</h1>} onReset={() => {}}>
+    <ErrorBoundary FallbackComponent={<ErrorPage title="Something Went Wrong" />} onReset={() => {}}>
      <Provider store={store}>
       <App />
      </Provider>

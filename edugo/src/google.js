@@ -74,9 +74,9 @@ function Google(props) {
       <h1 className="text-warning text-lg text-center">{error}</h1>
 
       {loading ? (
-        <div className="z-40  p-64 loader-local ">
+        <div className="z-[999]  p-64 loader-local ">
           {" "}
-          <CircleSpinner size={40} color="#000" loading={loading} />
+          <CircleSpinner size={40} color="#000000" loading={loading} />
         </div>
       ) : (
         <button className="border-2 py-2 px-2 rounded" onClick={() => login()}>

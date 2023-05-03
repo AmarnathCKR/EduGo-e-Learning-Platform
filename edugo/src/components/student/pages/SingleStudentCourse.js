@@ -20,7 +20,8 @@ import VideoPlayer from "../courses contents/VideoPlayer";
 function SingleStudentCourse() {
   const [courses, setCourse] = useState([]);
   const [scrollPosition, setScrollPosition] = useState(0);
-  const [active, setActive] = useState(false)
+  const [active, setActive] = useState(false);
+  const [owned, setOwned] = useState(false)
 
   useEffect(() => {
     const handleScroll = () => {
@@ -60,6 +61,14 @@ function SingleStudentCourse() {
       })
       .catch((err) => console.log(err));
   }, []);
+
+  useEffect(() => {
+    getAnyDataStudentAPI(`get-status?course=${location.state}`, auth)
+      .then((res) => {
+        setOwned(true)
+      })
+      .catch((err) => console.log(err));
+  }, [])
 
   const navigate = useNavigate();
 
@@ -149,7 +158,9 @@ function SingleStudentCourse() {
               </div>
               <div className="w-full h-full flex-col font-semibold md:text-xl text-lg text-white flex justify-center items-center text-left ">
 
-                <button onClick={() => { navigate(`/purchase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 border-white rounded md:p-3 p-2 text-sm tracking-wide font-bold w-1/2 shadow-[#1f4077] hover:shadow-lg">Enroll Now</button>
+                {owned ? <button onClick={() => { navigate(`/purchase-couse/:${courses._id}`, { state: courses._id }) }} className="border-2 border-white rounded md:p-3 p-2 text-sm tracking-wide font-bold w-1/2 shadow-[#1f4077] hover:shadow-lg">Go back to Learning</button>
+                  : <button onClick={() => { navigate(`/purchase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 border-white rounded md:p-3 p-2 text-sm tracking-wide font-bold w-1/2 shadow-[#1f4077] hover:shadow-lg">Enroll Now</button>
+                }
 
               </div>
             </div>
@@ -170,15 +181,16 @@ function SingleStudentCourse() {
               <p className="flex align-middle p-8 justify-center items-center w-full"><span className="border-[#baafaf] border p-2 mx-2 rounded-full"><TbCertificate size="35px" /></span><span className="flex flex-col"><h1 className="text-xl font-bold">Flexible Schedule</h1><h4>Set and maintain flexible deadlines.</h4></span></p>
 
               <div className="flex p-8 justify-center items-center w-full">
-                
+
                 <p className="items-center flex my-3 tracking-wide font-lg"><span>By</span> <img className="mx-2 rounded-full" height="40" width="40" src={courses?.instructor?.image} alt="inst" /><span className=' font-semibold'>{courses?.instructor?.name}</span></p>
 
               </div>
 
               <div className="w-full my-2 flex-col font-semibold md:text-xl text-lg text-white flex justify-center items-center text-left ">
 
-                <button onClick={() => { navigate(`/purchase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 md:p-3 p-2 text-sm text-black tracking-wide w-3/4 font-bold shadow-[#1f4077] hover:shadow-lg">Enroll Now for ₹{courses.price}</button>
-
+                {owned ? <button onClick={() => { navigate(`/purcase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 md:p-3 p-2 text-sm text-black tracking-wide w-3/4 font-bold shadow-[#1f4077] hover:shadow-lg">Go back to Learning</button>
+                  : <button onClick={() => { navigate(`/purchase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 md:p-3 p-2 text-sm text-black tracking-wide w-3/4 font-bold shadow-[#1f4077] hover:shadow-lg">Enroll Now for ₹{courses.price}</button>
+                }
               </div>
             </div>
           </div>

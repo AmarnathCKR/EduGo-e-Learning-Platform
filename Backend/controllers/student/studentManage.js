@@ -3,6 +3,7 @@ const { Student } = require("../../database/Student");
 const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
+const Order = require("../../database/Order");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -442,3 +443,48 @@ exports.displayCourses = async (req, res) => {
     totalPages,
   });
 };
+
+exports.getOwnedCourse = async (req, res) => {
+  const { id } = req.query;
+  const pageSize = 12;
+  const currentPage = parseInt(req.query.page) || 1;
+  const searchQuery = { user: id };
+  const sortOrder = req.query.sort || "";
+  const fieldOfStudyFilter = req.query.fieldOfStudy || "";
+  const experienceFilter = req.query.experience || "";
+
+
+  const fieldOfStudyFilterObject = fieldOfStudyFilter
+    ? { field: fieldOfStudyFilter }
+    : {};
+  const experienceFilterObject = experienceFilter
+    ? { experience: experienceFilter }
+    : {};
+  const status = { status: "active" };
+  const sortObject = {};
+  if (sortOrder) {
+    sortObject[sortOrder] = 1;
+  }
+
+  const count = await Order.countDocuments({
+
+    ...searchQuery,
+
+  });
+  const totalPages = Math.ceil(count / pageSize);
+
+  const courses = await Order.find({
+
+    ...searchQuery,
+
+  }).populate("courseId")
+    .sort(sortObject)
+    .skip((currentPage - 1) * pageSize)
+    .limit(pageSize);
+
+  res.json({
+    courses,
+    totalPages,
+  });
+};
+

@@ -29,13 +29,13 @@ import {
 } from "../../../api/instructorAPI";
 
 const firebaseConfig = {
-  apiKey: "AIzaSyASd_nl36pkPP-68OtSzhwacsQxtQ88ZwY",
-  authDomain: "edugo-e-lerning.firebaseapp.com",
-  projectId: "edugo-e-lerning",
-  storageBucket: "edugo-e-lerning.appspot.com",
-  messagingSenderId: "110356446945",
-  appId: "1:110356446945:web:49cfe86d61dc2aedf341a0",
-  measurementId: "G-6NZZ398W04",
+  apiKey: "AIzaSyDUrOSbu7aIWBt2FUJeqAB_TIDKiryx_fs",
+  authDomain: "edugo-2.firebaseapp.com",
+  projectId: "edugo-2",
+  storageBucket: "edugo-2.appspot.com",
+  messagingSenderId: "900365865405",
+  appId: "1:900365865405:web:ac6509113f9930f28bc2d4",
+  measurementId: "G-P667128RPD"
 };
 
 const app = initializeApp(firebaseConfig);
@@ -45,6 +45,7 @@ function CourseForm(props) {
   const [progress, setProgress] = useState(0);
 
   const [error, setError] = useState("");
+  const [errorInput , seterrorInput] =useState()
   const [course, setcourse] = useState({
     name: "",
     headline: "",
@@ -137,7 +138,7 @@ function CourseForm(props) {
               const response = await uploadImage(formData);
 
               const imageUrl = response.data.secure_url;
-              
+
               const croppedUrl = imageUrl.replace('/upload/', '/upload/c_fill,g_auto,h_800,w_1200/')
 
               let data = {
@@ -171,7 +172,14 @@ function CourseForm(props) {
                 })
                 .catch((err) => {
                   setLoading(false);
-                  setError(err.response.data.data.errors[0].message);
+                  if(!err?.response?.data?.data?.errors[0]?.message){
+                    console.log(err?.response?.data?.data?.errors)
+                    seterrorInput(err?.response?.data?.data?.errors);
+                  }
+                  if(err?.response?.data?.data?.errors[0]?.message){
+                    setError(err?.response?.data?.data?.errors[0]?.message);
+                  }
+                  
                   if (
                     err.response.data.data.errors[0].code === "USER_BLOCKED"
                   ) {
@@ -391,25 +399,28 @@ function CourseForm(props) {
       setSelect(res.data.data.content.data);
     });
     if (!effect) {
-      getAnyData(`get-course?course=${props.id}`, props.token)
-        .then((res) => {
-          const courseData = res.data.data.content.data;
-          setcourse((state) => ({
-            ...state,
-            image: courseData.image,
-            name: courseData.name,
-            headline: courseData.headline,
-            description: courseData.description,
-            total: courseData.total,
-            experience: courseData.experience,
-            field: courseData.field,
-            price: courseData.price,
-            video: courseData.video,
-          }));
-          setTopics(courseData.topics);
-          setEffect(true)
-        })
-        .catch((err) => console.log(err));
+      if (props.id) {
+        getAnyData(`get-course?course=${props.id}`, props.token)
+          .then((res) => {
+            const courseData = res.data.data.content.data;
+            setcourse((state) => ({
+              ...state,
+              image: courseData.image,
+              name: courseData.name,
+              headline: courseData.headline,
+              description: courseData.description,
+              total: courseData.total,
+              experience: courseData.experience,
+              field: courseData.field,
+              price: courseData.price,
+              video: courseData.video,
+            }));
+            setTopics(courseData.topics);
+            setEffect(true)
+          })
+          .catch((err) => console.log(err));
+
+      }
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -432,6 +443,7 @@ function CourseForm(props) {
             }}
             required
           />
+          {errorInput?.name &&<p className="text-start ml-5 text-red-500">{errorInput?.name}</p>}
           <input
             className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
             type="text"
@@ -445,6 +457,7 @@ function CourseForm(props) {
               }));
             }}
           />
+          {errorInput?.headline &&<p className="text-start ml-5 text-red-500">{errorInput?.headline}</p>}
           <textarea
             className="w-full my-2  px-2 pb-32 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
             type="text"
@@ -458,6 +471,7 @@ function CourseForm(props) {
               }));
             }}
           />
+          {errorInput?.description &&<p className="text-start ml-5 text-red-500">{errorInput?.description}</p>}
 
           <select
             className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
@@ -509,7 +523,9 @@ function CourseForm(props) {
               }));
             }}
           />
+          {errorInput?.price &&<p className="text-start ml-5 text-red-500">{errorInput?.price}</p>}
         </div>
+
 
         <div className="col-span-2 md:col-span-1  border-2 shadow mx-4 my-3 py-3">
           <label className="mx-3">
@@ -537,6 +553,7 @@ function CourseForm(props) {
               }));
             }}
           />
+          {errorInput?.total &&<p className="text-start ml-5 text-red-500">{errorInput?.total}</p>}
           <label className="mx-3 font-semibold text-lg">Course Image</label>
           <img
             className="my-3 mx-4"
@@ -590,7 +607,7 @@ function CourseForm(props) {
       <div className="flex justify-center border items-center shadow my-3">
         {loading ? (
           <div className="z-40  p-64 loader-local bg-secondary">
-            <CircleSpinner size={40} color="#000 " loading={loading} />
+            <CircleSpinner size={40} color="#000000" loading={loading} />
           </div>
         ) : (
           <button

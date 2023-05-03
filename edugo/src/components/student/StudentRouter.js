@@ -16,6 +16,8 @@ import AllCoursesBrowse from "./pages/AllCoursesBrowse";
 import { getAnyDataStudentAPI } from "../../api/studentAPI";
 import SingleStudentCourse from "./pages/SingleStudentCourse";
 import Payment from "./payment/Payment";
+import PaymentSuccess from "./payment/PaymentSuccess";
+import ErrorPage from "../../helper/ErrorPage";
 
 function StudentRouter() {
   const [token, setToken] = useState(null);
@@ -81,8 +83,10 @@ function StudentRouter() {
           path="/purchase-course/:id"
           element={auth ? <Payment /> : <Navigate to="/" />}
         />
+        <Route path="/purchased-courses" element={auth ? <AllCoursesBrowse owned={true} link="get-purchasedCourse" /> : <Navigate to="/" />} />
+        <Route path="/payment-success/:id" element={auth ? <PaymentSuccess /> : <Navigate to="/" />} />
       </Route>
-      <Route path="/*" element={<h1>Error 404</h1>} />
+      <Route path="/*" element={<ErrorPage title="Page not found" />} />
     </Routes>
   );
 }

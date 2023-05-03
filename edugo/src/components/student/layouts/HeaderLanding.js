@@ -125,8 +125,8 @@ function HeaderLanding(props) {
   };
 
   return (
-    <>
-      <div className="z-20  grid grid-cols-6  border w-full mx-auto fixed shadow bg-[#fff]">
+    <div className='z-[700]'>
+      <div className="  grid grid-cols-6  border w-full mx-auto fixed shadow bg-[#fff]">
         <div className="flex w-[130px] h-[76px]  p-2 align-middle">
           <img src={logo} alt="logo" onClick={handleLink} />
           {menuToggler ? (
@@ -225,10 +225,11 @@ function HeaderLanding(props) {
                                 Profile
                               </span>
                             </Link>
-
+                            <Link to="/purchased-courses">
                             <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                               Purchased Courses
                             </span>
+                            </Link>
 
                             <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                               Browse Courses
@@ -356,7 +357,7 @@ function HeaderLanding(props) {
       ) : (
         ""
       )}
-    </>
+    </div>
   );
 }
 
