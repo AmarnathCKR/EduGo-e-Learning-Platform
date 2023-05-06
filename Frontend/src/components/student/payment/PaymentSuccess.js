@@ -1,6 +1,7 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
 import { Navigate, useLocation } from 'react-router-dom'
-import { getAnyDataStudentAPI, getSearchStudentAPI } from '../../../api/studentAPI'
+import {  getSearchStudentAPI } from '../../../api/studentAPI'
 import { useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import HeaderLanding from '../layouts/HeaderLanding';

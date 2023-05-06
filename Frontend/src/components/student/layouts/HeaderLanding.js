@@ -80,7 +80,7 @@ function HeaderLanding(props) {
         .catch((err) => {
           console.log(err.response.data.data.errors[0].message);
         });
-    }, 1000)
+    }, 600)
     setTimeoutTimer(newTimer)
 
 

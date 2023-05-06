@@ -14,6 +14,7 @@ const {
   searchCourse,
   findCourseByID,
   ediInstructorCourse,
+  generateOTP,
 } = require("../controllers/instructor/instructorActions");
 const instructorAuth = require("../middlewares/instructor/instructorAuth");
 const instructorProfileValidator = require("../middlewares/instructor/instructorProfileValidator");
@@ -44,6 +45,9 @@ router.get("/search",searchCourse)
 router.get("/get-course",instructorAuth, findCourseByID)
 
 router.post("/edit-course", instructorAuth, instructorCourseValidator,ediInstructorCourse)
+
+
+router.get("/generate-otp", instructorAuth ,generateOTP)
 
 
 module.exports = router;

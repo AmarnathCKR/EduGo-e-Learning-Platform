@@ -1,5 +1,7 @@
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
+const request = require("request");
+
 
 const nodemailer = require("nodemailer");
 const { Instructor } = require("../../database/Instructor");
@@ -241,3 +243,33 @@ exports.ediInstructorCourse = async (req, res) => {
     res.status(200).send({ data: success });
   });
 };
+
+
+exports.generateOTP = async (req, res) => {
+  const auth =process.env.VIDEO_API;
+
+  const { videoId } = req.query;
+  var options = {
+    method: "POST",
+    url: `https://dev.vdocipher.com/api/videos/${videoId}/otp`,
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Apisecret ${auth}`,
+    },
+    body: { ttl: 300 },
+    json: true,
+  };
+  let result;
+
+  await request(options, function (error, response, body) {
+    if (error) {console.log(error)}
+
+    console.log(body);
+    
+    result =  response
+    
+  });
+
+  res.json({result})
+}

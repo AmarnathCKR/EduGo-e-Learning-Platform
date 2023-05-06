@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
@@ -8,8 +9,7 @@ import FooterLanding from "../layouts/FooterLanding";
 import HeaderLanding from "../layouts/HeaderLanding";
 import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import { SlClose } from "react-icons/sl";
-import { TbLayoutAlignMiddle, TbSquareRoundedCheck } from "react-icons/tb";
-import { BiCheck, BiCheckCircle } from "react-icons/bi";
+import { BiCheck, } from "react-icons/bi";
 import { PayPalButtons } from "@paypal/react-paypal-js";
 
 function Payment() {

@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
+import "react-dropzone-uploader/dist/styles.css";
+
+import Dropzone from "react-dropzone-uploader";
+
+import axios from 'axios'
+import { ProgressBar, Button } from 'react-bootstrap'
 
 import { useDispatch } from "react-redux";
 import {
@@ -28,6 +34,29 @@ import {
   getAnyDataWithout,
 } from "../../../api/instructorAPI";
 
+
+////////////////////////////////////
+import AWS from 'aws-sdk'
+
+const S3_BUCKET = 'edugoservice';
+const REGION = 'ap-south-1';
+
+
+AWS.config.update({
+  accessKeyId: 'AKIAWBURZL7NKX5P356M',
+  secretAccessKey: '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'
+})
+
+const myBucket = new AWS.S3({
+  params: { Bucket: S3_BUCKET },
+  region: REGION,
+})
+
+
+
+
+//////////////////////////////////////
+
 const firebaseConfig = {
   apiKey: "AIzaSyDUrOSbu7aIWBt2FUJeqAB_TIDKiryx_fs",
   authDomain: "edugo-2.firebaseapp.com",
@@ -43,9 +72,11 @@ const storage = getStorage(app);
 
 function CourseForm(props) {
   const [progress, setProgress] = useState(0);
+  const [indexValue, setIndex] = useState()
+
 
   const [error, setError] = useState("");
-  const [errorInput , seterrorInput] =useState()
+  const [errorInput, seterrorInput] = useState()
   const [course, setcourse] = useState({
     name: "",
     headline: "",
@@ -56,7 +87,7 @@ function CourseForm(props) {
     total: "",
     image: "",
     imageRaw: null,
-    video: "",
+    video: {},
     videoRaw: null,
   });
 
@@ -64,9 +95,14 @@ function CourseForm(props) {
   const [select, setSelect] = useState([]);
   const [effect, setEffect] = useState(false)
   const dummy = [
-    { name: "", description: "", time: "", video: "", progress: 0, ref: {} },
+    { name: "", description: "", time: "", video: {}, progress: 0, ref: {}, cancelSource: '' },
   ];
   const [topics, setTopics] = useState(dummy);
+
+
+
+
+
 
   const handleVideoRender = async (event) => {
     let value = URL.createObjectURL(event.target.files[0]);
@@ -172,14 +208,14 @@ function CourseForm(props) {
                 })
                 .catch((err) => {
                   setLoading(false);
-                  if(!err?.response?.data?.data?.errors[0]?.message){
+                  if (!err?.response?.data?.data?.errors[0]?.message) {
                     console.log(err?.response?.data?.data?.errors)
                     seterrorInput(err?.response?.data?.data?.errors);
                   }
-                  if(err?.response?.data?.data?.errors[0]?.message){
+                  if (err?.response?.data?.data?.errors[0]?.message) {
                     setError(err?.response?.data?.data?.errors[0]?.message);
                   }
-                  
+
                   if (
                     err.response.data.data.errors[0].code === "USER_BLOCKED"
                   ) {
@@ -242,6 +278,92 @@ function CourseForm(props) {
     );
   });
 
+
+
+
+
+
+
+
+
+
+
+
+
+  ///////////////////////////////////////////////////////////////////////////
+
+
+  const getSignedUrl = (file) => {
+    const params = {
+      Bucket: "edugoservice",
+      Key: file.file.name,
+      ContentType: file.file.type,
+    };
+    return new Promise((resolve, reject) => {
+      myBucket.getSignedUrl('putObject', params, (err, url) => {
+        if (err) {
+          reject(err);
+          console.log(err)
+        }
+        resolve(url);
+
+      });
+    });
+  };
+  const getUploadData = async (file) => {
+
+
+    const signedUrl = await getSignedUrl(file);
+    console.log(signedUrl)
+
+    setcourse((state) => ({
+      ...state, video: {
+        name: file.file.name,
+        size: file.file.size,
+        type: file.file.type,
+      }
+    }));
+
+    return {
+      url: signedUrl,
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type,
+      },
+    };
+  };
+
+
+  const getUploadParams = async (file, index) => {
+
+
+    const signedUrl = await getSignedUrl(file);
+    console.log(signedUrl)
+    const newTopics = [...topics];
+    newTopics[index].video = {
+      name: file.file.name,
+      size: file.file.size,
+      type: file.file.type,
+    };
+    setTopics(newTopics);
+
+
+    return {
+      url: signedUrl,
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type,
+      },
+    };
+  };
+
+  const handleChangeStatus = ({ meta }, status) => {
+    console.log(status, meta);
+  };
+
+
+
+
   const topic = topics.map((topic, index) => (
     <div
       className="mb-10 justify-center items-center bg-neutral-200 border"
@@ -283,116 +405,52 @@ function CourseForm(props) {
         required
       />
 
-      {topic.video && (
-        <div className="md:px-20 px-3 w-full">
-          <Player
-            className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-            autoPlay
-            src={topic.video}
-          >
-            <ControlBar autoHide={false} className="my-class" />
-          </Player>
-          <div className="flex justify-center items-center my-4 w-full">
-            <button
-              className="text-red-500 p-2 bg-black border flex rounded align-middle items-center"
-              onClick={(event) => handleDeleteVideo(index, event)}
-            >
-              <BiTrash color="white" size="35px" /> Remove this video
-            </button>
-          </div>
-        </div>
-      )}
-      {topic.progress !== 0 && topic.progress !== 100 && topic.progress && (
-        <div className="flex justify-center items-center w-full ">
-          <div class="w-1/2 bg-gray-200 flex-col text-center text-lg rounded-full dark:bg-gray-700">
-            Uploading Please wait
-            <div class="bg-white text-xs font-medium text-blue-100 text-center h-4 my-2 p-0.5 leading-none w-full rounded-full relative">
-              <span
-                className={`z-30 absolute ${topic.progress >= 50 ? "text-white" : "text-neutral-500"
-                  }`}
-              >
-                {Math.floor(topic.progress)}%
-              </span>
-              <div
-                class="bg-blue-600 z-10 text-xs font-medium text-blue-100 text-center p-0.5 leading-none rounded-full h-full absolute top-0"
-                style={{ width: `${Math.floor(topic.progress)}%` }}
-              ></div>
-            </div>
-          </div>
-        </div>
-      )}
-      {!topic.video && !topic.progress && (
-        <input
-          className="w-full my-2 px-2  mx-2 border-2 rounded  py-1 text-gray-700 bg-white focus:outline-none items-center"
-          type="file"
-          accept="video/*"
-          onChange={(event) => handleTopicVideoChange(index, event)}
-        />
-      )}
+
+
+      <Dropzone
+        getUploadParams={(file) => getUploadParams(file, index)}
+        onChangeStatus={handleChangeStatus}
+        accept="image/*,audio/*,video/*"
+      />
+
+
+
+
     </div>
+
+
+
+
+
+
+
   ));
 
-  const showVideoRemoval = () => {
-    toast.success("Video Removed Successfully");
-  };
-
-  const handleDeleteVideo = async (index, event) => {
-
-    if (topics[index]?.ref?.name) {
-      const fileRef = ref(storage, `videos/${topics[index].ref.name}`);
-      deleteObject(fileRef)
-        .then(() => {
-          showVideoRemoval();
-          const newTopics = [...topics];
-          newTopics[index].video = "";
-          newTopics[index].progress = 0;
-          setTopics(newTopics);
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-    const newTopics = [...topics];
-    newTopics[index].video = "";
-    newTopics[index].progress = 0;
-    setTopics(newTopics);
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-  };
 
-  const handleTopicVideoChange = async (index, event) => {
-    const file2 = event.target.files[0];
 
-    const storageRef = ref(storage, `videos/${file2.name}`);
-    const uploadTask = uploadBytesResumable(storageRef, file2);
 
-    uploadTask.on(
-      "state_changed",
-      async (snapshot) => {
-        // Handle progress
-        const progresss =
-          (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
-        const newTopics = [...topics];
-        newTopics[index].progress = +progresss;
-        newTopics[index].ref = file2;
 
-        setTopics(newTopics);
-      },
-      (error) => {
-        // Handle error
-        console.log("hererer");
-        console.error(error);
-      },
-      async () => {
-        const url = await getDownloadURL(uploadTask.snapshot.ref);
 
-        const newTopics = [...topics];
-        newTopics[index].video = url;
-        setTopics(newTopics);
-      }
-    );
-  };
+
+
+
+
+
+
+
+
+
+
+
+
+  ////////////////////////////////////////////////////////////////////////////
+
+
+
 
   useEffect(() => {
     getAnyDataWithout("get-field").then((res) => {
@@ -443,7 +501,7 @@ function CourseForm(props) {
             }}
             required
           />
-          {errorInput?.name &&<p className="text-start ml-5 text-red-500">{errorInput?.name}</p>}
+          {errorInput?.name && <p className="text-start ml-5 text-red-500">{errorInput?.name}</p>}
           <input
             className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
             type="text"
@@ -457,7 +515,7 @@ function CourseForm(props) {
               }));
             }}
           />
-          {errorInput?.headline &&<p className="text-start ml-5 text-red-500">{errorInput?.headline}</p>}
+          {errorInput?.headline && <p className="text-start ml-5 text-red-500">{errorInput?.headline}</p>}
           <textarea
             className="w-full my-2  px-2 pb-32 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
             type="text"
@@ -471,7 +529,7 @@ function CourseForm(props) {
               }));
             }}
           />
-          {errorInput?.description &&<p className="text-start ml-5 text-red-500">{errorInput?.description}</p>}
+          {errorInput?.description && <p className="text-start ml-5 text-red-500">{errorInput?.description}</p>}
 
           <select
             className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
@@ -523,7 +581,7 @@ function CourseForm(props) {
               }));
             }}
           />
-          {errorInput?.price &&<p className="text-start ml-5 text-red-500">{errorInput?.price}</p>}
+          {errorInput?.price && <p className="text-start ml-5 text-red-500">{errorInput?.price}</p>}
         </div>
 
 
@@ -553,7 +611,7 @@ function CourseForm(props) {
               }));
             }}
           />
-          {errorInput?.total &&<p className="text-start ml-5 text-red-500">{errorInput?.total}</p>}
+          {errorInput?.total && <p className="text-start ml-5 text-red-500">{errorInput?.total}</p>}
           <label className="mx-3 font-semibold text-lg">Course Image</label>
           <img
             className="my-3 mx-4"
@@ -580,27 +638,11 @@ function CourseForm(props) {
             going teach. Please include all the topics. The admin will review
             this video.
           </h1>
-          {course.video && (
-            <div className="md:px-20 px-3">
-              <Player
-                className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-                autoPlay
-                src={course.video}
-              >
-                <ControlBar autoHide={false} className="my-class" />
-              </Player>
-            </div>
-          )}
-          {progress !== 0 && progress !== 100 && progress ? (
-            progress
-          ) : (
-            <input
-              className="w-full my-2 px-2 mx-2 border-2 rounded py-1 text-gray-700bg-white focus:outline-none items-center"
-              type="file"
-              accept="video/*"
-              onChange={handleVideoRender}
-            />
-          )}
+          <Dropzone
+            getUploadParams={(file) => getUploadData(file)}
+            onChangeStatus={handleChangeStatus}
+            accept="image/*,audio/*,video/*"
+          />
         </div>
       </div>
 

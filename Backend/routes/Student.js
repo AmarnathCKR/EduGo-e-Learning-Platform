@@ -12,6 +12,7 @@ const {
   purchase,
   getOrder,
   getStatus,
+ 
 } = require("../controllers/student/studentActions");
 const {
   studentLogin,
@@ -56,5 +57,6 @@ router.get("/get-order", studentAuth, getOrder)
 router.get("/stream/video",streamVideo)
 
 router.post("/purchase",studentAuth, purchase)
+
 
 module.exports = router;

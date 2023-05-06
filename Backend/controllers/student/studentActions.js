@@ -361,7 +361,7 @@ exports.purchase = async (req, res) => {
 
   if (orderId) {
     if (coupon === "nil") {
-       newOrder = new Order({
+      newOrder = new Order({
         orderId: orderId,
         courseId: courseId,
 
@@ -413,10 +413,10 @@ exports.getOrder = async (req, res) => {
   }
 }
 
-exports.getStatus = async (req,res) =>{
-  const { id,course } = req.query;
-  const status = await Order.findOne({user : id, courseId : course}) 
-  if(status){
+exports.getStatus = async (req, res) => {
+  const { id, course } = req.query;
+  const status = await Order.findOne({ user: id, courseId: course })
+  if (status) {
     const success = {
       status: true,
       content: {
@@ -424,7 +424,7 @@ exports.getStatus = async (req,res) =>{
       },
     };
     res.status(200).send({ data: success });
-  }else{
+  } else {
     const emailError = {
       status: false,
       errors: [
@@ -438,3 +438,5 @@ exports.getStatus = async (req,res) =>{
     res.status(409).send({ data: emailError });
   }
 }
+
+

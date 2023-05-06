@@ -1,21 +1,17 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect,  useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
-import video from "../../../Assets/videoplayback.mp4";
+
 
 import { IoIosArrowDropdown } from "react-icons/io";
 import { TbCertificate } from "react-icons/tb";
-import { ControlBar, Player } from "video-react";
 import { getAnyDataStudentAPI } from "../../../api/studentAPI";
 import HeaderLanding from "../layouts/HeaderLanding";
 import FooterLanding from "../layouts/FooterLanding";
-import { BsArrowBarRight } from "react-icons/bs";
-import { FaAngleRight, FaArrowRight } from "react-icons/fa";
-import axios from 'axios';
-import MediaSource from 'mediasource';
-import VideoPlayer from "../courses contents/VideoPlayer";
+import { FaAngleRight } from "react-icons/fa";
+
 
 function SingleStudentCourse() {
   const [courses, setCourse] = useState([]);
@@ -72,39 +68,39 @@ function SingleStudentCourse() {
 
   const navigate = useNavigate();
 
-  const modules = courses?.topics?.map((item, index) => (
-    <div key={item.name} className="w-full group relative">
-      <div className="grid grid-cols-3 py-3 w-full">
-        <span className="text-start flex align-middle items-center col-span-2">
-          <span className="font-medium flex items-center align-middle">
-            <IoIosArrowDropdown className="mr-2" /> Module.{" "}
-          </span>{" "}
-          {index + 1} : {item.name}
-        </span>
-        <span className="text-end font-semibold col-span-1">
-          {item.time} min
-        </span>
-      </div>
-      <div className="hidden group-hover:block px-4 m-2 rounded border-t text-left">
-        <span className="font-semibold">Description: </span>
-        <br />
-        {item.description}
+  // const modules = courses?.topics?.map((item, index) => (
+  //   <div key={item.name} className="w-full group relative">
+  //     <div className="grid grid-cols-3 py-3 w-full">
+  //       <span className="text-start flex align-middle items-center col-span-2">
+  //         <span className="font-medium flex items-center align-middle">
+  //           <IoIosArrowDropdown className="mr-2" /> Module.{" "}
+  //         </span>{" "}
+  //         {index + 1} : {item.name}
+  //       </span>
+  //       <span className="text-end font-semibold col-span-1">
+  //         {item.time} min
+  //       </span>
+  //     </div>
+  //     <div className="hidden group-hover:block px-4 m-2 rounded border-t text-left">
+  //       <span className="font-semibold">Description: </span>
+  //       <br />
+  //       {item.description}
 
-      </div>
-    </div>
-  ));
+  //     </div>
+  //   </div>
+  // ));
 
-  function extractVideoIdFromUrl(url) {
-    if (!url || typeof url !== "string") {
-      return "";
-    }
-    const path = url.split('?')[0]; // get the path portion of the URL
-    const parts = path.split('/'); // split the path into segments
-    const filename = parts.pop(); // get the last segment (the filename)
-    const decodedFilename = decodeURIComponent(filename); // decode the filename (replace %20 with spaces)
-    const videoId = decodedFilename.replace(/^videos\//, ''); // remove the "videos/" prefix from the filename
-    return videoId;
-  }
+  // function extractVideoIdFromUrl(url) {
+  //   if (!url || typeof url !== "string") {
+  //     return "";
+  //   }
+  //   const path = url.split('?')[0]; // get the path portion of the URL
+  //   const parts = path.split('/'); // split the path into segments
+  //   const filename = parts.pop(); // get the last segment (the filename)
+  //   const decodedFilename = decodeURIComponent(filename); // decode the filename (replace %20 with spaces)
+  //   const videoId = decodedFilename.replace(/^videos\//, ''); // remove the "videos/" prefix from the filename
+  //   return videoId;
+  // }
 
   const contents = courses?.topics?.map((item, index) => (
     <div key={item.name} className=" w-full group ">
