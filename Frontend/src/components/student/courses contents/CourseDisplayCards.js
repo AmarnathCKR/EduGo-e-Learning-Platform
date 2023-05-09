@@ -32,9 +32,8 @@ const CourseDisplayCards = (props) => {
   useEffect(() => {
     const fetchCourses = async () => {
       try {
-        const url = `${
-          props?.link ? props?.link : "display-courses"
-        }?page=${currentPage}&search=${searchQuery}&sort=${sortOrder}&fieldOfStudy=${fieldOfStudyFilter}&experience=${experienceFilter}`;
+        const url = `${props?.link ? props?.link : "display-courses"
+          }?page=${currentPage}&search=${searchQuery}&sort=${sortOrder}&fieldOfStudy=${fieldOfStudyFilter}&experience=${experienceFilter}`;
         if (props?.link) {
           const response = await getAnyDataStudentAPI(url, auth);
           setCourses(response.data.courses);
@@ -154,13 +153,12 @@ const CourseDisplayCards = (props) => {
         </div>
       )}
       <div className="grid grid-cols-1 md:p-5 p-2 md:grid-cols-2">
-        {courses.map((data) => (
+        {courses === [] ? <p className="">No Courses Found</p> : <>{courses.map((data) => (
           <>
             <div
               onClick={() => {
                 navigate(
-                  `${props.link ? "/own-coursePage" : "/coursePage"}/:${
-                    props.link ? data?.courseId?._id : data?._id
+                  `${props.link ? "/owned-course" : "/coursePage"}/:${props.link ? data?.courseId?._id : data?._id
                   }`,
                   {
                     state: props.link ? data?.courseId?._id : data._id,
@@ -218,7 +216,8 @@ const CourseDisplayCards = (props) => {
               </div>
             </div>
           </>
-        ))}
+        ))}</>}
+
       </div>
 
       <div className="flex justify-center">

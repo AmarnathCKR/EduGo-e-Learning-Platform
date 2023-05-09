@@ -68,39 +68,7 @@ function SingleStudentCourse() {
 
   const navigate = useNavigate();
 
-  // const modules = courses?.topics?.map((item, index) => (
-  //   <div key={item.name} className="w-full group relative">
-  //     <div className="grid grid-cols-3 py-3 w-full">
-  //       <span className="text-start flex align-middle items-center col-span-2">
-  //         <span className="font-medium flex items-center align-middle">
-  //           <IoIosArrowDropdown className="mr-2" /> Module.{" "}
-  //         </span>{" "}
-  //         {index + 1} : {item.name}
-  //       </span>
-  //       <span className="text-end font-semibold col-span-1">
-  //         {item.time} min
-  //       </span>
-  //     </div>
-  //     <div className="hidden group-hover:block px-4 m-2 rounded border-t text-left">
-  //       <span className="font-semibold">Description: </span>
-  //       <br />
-  //       {item.description}
-
-  //     </div>
-  //   </div>
-  // ));
-
-  // function extractVideoIdFromUrl(url) {
-  //   if (!url || typeof url !== "string") {
-  //     return "";
-  //   }
-  //   const path = url.split('?')[0]; // get the path portion of the URL
-  //   const parts = path.split('/'); // split the path into segments
-  //   const filename = parts.pop(); // get the last segment (the filename)
-  //   const decodedFilename = decodeURIComponent(filename); // decode the filename (replace %20 with spaces)
-  //   const videoId = decodedFilename.replace(/^videos\//, ''); // remove the "videos/" prefix from the filename
-  //   return videoId;
-  // }
+  
 
   const contents = courses?.topics?.map((item, index) => (
     <div key={item.name} className=" w-full group ">
@@ -154,7 +122,7 @@ function SingleStudentCourse() {
               </div>
               <div className="w-full h-full flex-col font-semibold md:text-xl text-lg text-white flex justify-center items-center text-left ">
 
-                {owned ? <button onClick={() => { navigate(`/purchase-couse/:${courses._id}`, { state: courses._id }) }} className="border-2 border-white rounded md:p-3 p-2 text-sm tracking-wide font-bold w-1/2 shadow-[#1f4077] hover:shadow-lg">Go back to Learning</button>
+                {owned ? <button onClick={() => { navigate(`/owned-course/:${courses._id}`, { state: courses._id }) }} className="border-2 border-white rounded md:p-3 p-2 text-sm tracking-wide font-bold w-1/2 shadow-[#1f4077] hover:shadow-lg">Go back to Learning</button>
                   : <button onClick={() => { navigate(`/purchase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 border-white rounded md:p-3 p-2 text-sm tracking-wide font-bold w-1/2 shadow-[#1f4077] hover:shadow-lg">Enroll Now</button>
                 }
 

@@ -22,18 +22,15 @@ const instructorCourseValidator = (req, res, next) => {
         errors.image = "Invalid image URL";
     }
 
-    if (!validator.isLength(headline, { min: 100, max: 200 })) {
+    if (!validator.isLength(headline, { min: 60, max: 200 })) {
         errors.headline = "Headline must be less than 200 characters";
     }
 
-    if (!validator.isLength(description, { min: 200, max: 550 })) {
+    if (!validator.isLength(description, { min: 200, max: 1000 })) {
         errors.description =
-            "Description must be more than 200 and less than 650 characters";
+            "Description must be more than 200 and less than 1000 characters";
     }
-    if (!validator.isLength(description, { min: 200, max: 550 })) {
-        errors.description =
-            "Description must be more than 200 and less than 650 characters";
-    }
+   
     if (!validator.isNumeric(price)) {
         errors.price = "Price must be a number";
     } else if (Number(price) < 500) {

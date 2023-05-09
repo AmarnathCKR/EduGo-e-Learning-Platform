@@ -6,14 +6,16 @@ import { ToastContainer } from "react-toastify";
 import Header from "../layouts/Header";
 import Footer from "../layouts/Footer";
 import { getAnyData } from "../../../api/instructorAPI";
-import { IoIosArrowDropdown,  } from "react-icons/io";
+import { IoIosArrowDropdown, } from "react-icons/io";
 import { BiEditAlt } from "react-icons/bi";
 import { ControlBar, Player } from "video-react";
 
 function SingleCourse() {
   const [courses, setCourse] = useState([]);
   const Instructor = useSelector((state) => state.InstructorProfile);
-  
+
+
+
   const token = useSelector((state) => state.token);
   const location = useLocation();
 
@@ -54,14 +56,14 @@ function SingleCourse() {
       </div>
     </div>
   ));
-  
+
 
   return (
     <>
       <ToastContainer />
       <Header Instructor={Instructor} token={token} />
       <div className="md:p-8 p-2">
-        <div className="mt-36 border shadow">
+        <div className="mt-24 border shadow">
           {courses && (
             <>
               <div className="mt-10 p-8  text-center">
@@ -128,7 +130,7 @@ function SingleCourse() {
                       </Player>
                     </div>
                     <div className="flex flex-col my-5 w-full">
-                      <button onClick={()=>{navigate(`/instructor/update-course/:${courses._id}`, {state : courses._id})}} className="bg-black flex rounded border justify-center text-center text-2xl text-white p-3"><BiEditAlt size="30" color="white"/><h1 className="mx-3">Edit Course Details</h1></button>
+                      <button onClick={() => { navigate(`/instructor/update-course/:${courses._id}`, { state: courses._id }) }} className="bg-black flex rounded border justify-center text-center text-2xl text-white p-3"><BiEditAlt size="30" color="white" /><h1 className="mx-3">Edit Course Details</h1></button>
                     </div>
                   </div>
                 </div>

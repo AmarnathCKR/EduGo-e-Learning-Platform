@@ -11,7 +11,7 @@ function CouponManagement() {
     setShow(!show)
   }
   const style = {
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3)), url("https://res.cloudinary.com/dqrpxoouq/image/upload/v1681280195/j6o6dpipkewt0v8hzuyp.jpg")`,
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3)), url("https://res.cloudinary.com/dqrpxoouq/image/upload/v1683623573/axe1hjkpnybiqoo5fkhb.jpg")`,
     backgroundPosition: "70% 0%",
     backgroundSize: "cover"
   };

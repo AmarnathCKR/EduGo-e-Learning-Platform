@@ -6,6 +6,16 @@ const Joi = require("joi");
 const bcrypt = require("bcrypt");
 const admin = require("firebase-admin");
 const Multer = require('multer');
+// const privateKey = require("../../keys/private_key.key")
+const fs = require('fs');
+const path = require('path');
+
+
+const AWS = require("aws-sdk");
+
+
+
+
 
 
 var serviceAccount = require("../../database/edugo-e-lerning-firebase-adminsdk-byo2p-024b7d9521.json");
@@ -440,3 +450,23 @@ exports.getStatus = async (req, res) => {
 }
 
 
+
+exports.generateCookie = async (req, res) => {
+  const { videoId } = req.query;
+
+  const keyPairId = process.env.AWS_CLOUD_KEY;
+  const distributionDomainName = 'dc0l5jdt0nhwc.cloudfront.net';
+
+
+  const CFSigner = await new AWS.CloudFront.Signer(keyPairId, fs.readFileSync(path.join(__dirname, '../../keys/private_key.pem')));
+
+
+  const myCookie = await CFSigner.getSignedUrl({
+    url: `https://${distributionDomainName}/${videoId}`,
+    expires: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
+  });
+
+  console.log(myCookie)
+  res.json({ myCookie })
+
+}

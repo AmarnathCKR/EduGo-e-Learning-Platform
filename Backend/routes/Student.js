@@ -12,6 +12,7 @@ const {
   purchase,
   getOrder,
   getStatus,
+  generateCookie,
  
 } = require("../controllers/student/studentActions");
 const {
@@ -24,6 +25,7 @@ const {
 const studentAuth = require("../middlewares/student/studentAuth");
 
 const instructorProfileValidator = require("../middlewares/instructor/instructorProfileValidator");
+const instructorAuth = require("../middlewares/instructor/instructorAuth");
 
 
 router.get("/fetch-allCourse", fetchAllCourse);
@@ -57,6 +59,8 @@ router.get("/get-order", studentAuth, getOrder)
 router.get("/stream/video",streamVideo)
 
 router.post("/purchase",studentAuth, purchase)
+
+router.get("/generate-cookie", instructorAuth, generateCookie)
 
 
 module.exports = router;

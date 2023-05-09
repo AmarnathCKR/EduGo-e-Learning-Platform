@@ -314,7 +314,9 @@ function FormProfileInstructor(props) {
       </div>
       <div className="flex justify-center items-middle  my-3">
         {loading ? (
+          <div className="z-40  p-64 loader-local bg-secondary">
           <CircleSpinner size={40} color="#000" loading={loading} />
+          </div>
         ) : (
           <button
             onClick={submitData}

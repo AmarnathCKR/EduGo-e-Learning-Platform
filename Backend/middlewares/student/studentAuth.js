@@ -19,22 +19,38 @@ const studentAuth = async (req, res, next) => {
       };
       res.status(409).send({ data: emailError });
     } else {
+      console.log(decoded._id)
       const user = await Student.findOne({ _id: decoded._id });
-      if (!user.status) {
+      if (user) {
+        if (user.status === false) {
+          const emailError = {
+            status: false,
+            errors: [
+              {
+                param: "user blocked",
+                message: "User have been blocked",
+                code: "USER_BLOCKED",
+              },
+            ],
+          };
+          res.status(409).send({ data: emailError });
+        } else {
+          req.params.id = decoded._id;
+          next();
+        }
+
+      }else{
         const emailError = {
           status: false,
           errors: [
             {
               param: "user blocked",
-              message: "User have been blocked",
+              message: "User not found",
               code: "USER_BLOCKED",
             },
           ],
         };
         res.status(409).send({ data: emailError });
-      } else {
-        req.params.id = decoded._id;
-        next();
       }
     }
   });

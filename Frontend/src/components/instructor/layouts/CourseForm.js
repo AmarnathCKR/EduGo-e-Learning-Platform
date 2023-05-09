@@ -1,10 +1,19 @@
-import React, { useEffect, useState, useCallback } from "react";
+import React, { useEffect, useState } from "react";
 import "react-dropzone-uploader/dist/styles.css";
 
 import Dropzone from "react-dropzone-uploader";
+import { initializeApp } from "firebase/app";
+import {
+  getStorage,
+  ref,
+  uploadBytesResumable,
+  getDownloadURL,
+  
+} from "firebase/storage";
 
-import axios from 'axios'
-import { ProgressBar, Button } from 'react-bootstrap'
+
+
+
 
 import { useDispatch } from "react-redux";
 import {
@@ -16,17 +25,7 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router-dom";
 import { CircleSpinner } from "react-spinners-kit";
 import { googleLogout } from "@react-oauth/google";
-import { initializeApp } from "firebase/app";
-import {
-  getStorage,
-  ref,
-  uploadBytesResumable,
-  getDownloadURL,
-  deleteObject,
-} from "firebase/storage";
 
-import { Player, ControlBar } from "video-react";
-import { BiTrash } from "react-icons/bi";
 import { uploadImage } from "../../../api/imageUploadAPI";
 import {
   createAny,
@@ -36,21 +35,6 @@ import {
 
 
 ////////////////////////////////////
-import AWS from 'aws-sdk'
-
-const S3_BUCKET = 'edugoservice';
-const REGION = 'ap-south-1';
-
-
-AWS.config.update({
-  accessKeyId: process.env.REACT_APP_AWS_KEY ,
-  secretAccessKey: process.env.REACT_APP_AWS_KEY_SECRET
-})
-
-const myBucket = new AWS.S3({
-  params: { Bucket: S3_BUCKET },
-  region: REGION,
-})
 
 
 
@@ -58,21 +42,22 @@ const myBucket = new AWS.S3({
 //////////////////////////////////////
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDUrOSbu7aIWBt2FUJeqAB_TIDKiryx_fs",
-  authDomain: "edugo-2.firebaseapp.com",
-  projectId: "edugo-2",
-  storageBucket: "edugo-2.appspot.com",
-  messagingSenderId: "900365865405",
-  appId: "1:900365865405:web:ac6509113f9930f28bc2d4",
-  measurementId: "G-P667128RPD"
+  apiKey: "AIzaSyASd_nl36pkPP-68OtSzhwacsQxtQ88ZwY",
+  authDomain: "edugo-e-lerning.firebaseapp.com",
+  projectId: "edugo-e-lerning",
+  storageBucket: "edugo-e-lerning.appspot.com",
+  messagingSenderId: "110356446945",
+  appId: "1:110356446945:web:49cfe86d61dc2aedf341a0",
+  measurementId: "G-6NZZ398W04",
 };
 
 const app = initializeApp(firebaseConfig);
 const storage = getStorage(app);
 
+
+
 function CourseForm(props) {
-  const [progress, setProgress] = useState(0);
-  const [indexValue, setIndex] = useState()
+
 
 
   const [error, setError] = useState("");
@@ -100,16 +85,6 @@ function CourseForm(props) {
   const [topics, setTopics] = useState(dummy);
 
 
-
-
-
-
-  const handleVideoRender = async (event) => {
-    let value = URL.createObjectURL(event.target.files[0]);
-    setcourse((state) => ({ ...state, videoRaw: event.target.files[0] }));
-    setcourse((state) => ({ ...state, video: value }));
-  };
-
   const dispatch = useDispatch();
   const navigate = useNavigate();
 
@@ -136,8 +111,8 @@ function CourseForm(props) {
       !course.field ||
       !course.experience ||
       !course.image ||
-      !course.imageRaw ||
-      !course.videoRaw
+      !course.imageRaw
+
     ) {
       setError("Please fill all the fields required");
     } else {
@@ -151,85 +126,66 @@ function CourseForm(props) {
 
       try {
         if (formData) {
-          const file2 = course.videoRaw;
-          const storageRef = ref(storage, `videos/${file2.name}`);
-          const uploadTask = uploadBytesResumable(storageRef, file2);
 
-          await uploadTask.on(
-            "state_changed",
-            (snapshot) => {
-              // Handle progress
-              const progresss =
-                (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              setProgress(+progresss);
-            },
-            (error) => {
-              // Handle error
-              console.error(error);
-              setProgress(error);
-            },
-            async () => {
-              const url = await getDownloadURL(uploadTask.snapshot.ref);
-              setcourse((state) => ({ ...state, video: url }));
-              const response = await uploadImage(formData);
+          const response = await uploadImage(formData);
 
-              const imageUrl = response.data.secure_url;
+          const imageUrl = response.data.secure_url;
 
-              const croppedUrl = imageUrl.replace('/upload/', '/upload/c_fill,g_auto,h_800,w_1200/')
+          const croppedUrl = imageUrl.replace('/upload/', '/upload/c_fill,g_auto,h_800,w_1200/')
 
-              let data = {
-                ...course,
-                image: croppedUrl,
-                topics: topics,
-                video: url,
-              };
-              if (props.id) {
-                data = {
-                  ...course,
-                  image: croppedUrl,
-                  topics: topics,
-                  video: url,
-                  courseId: props.id,
-                };
+          let data = {
+            ...course,
+            image: croppedUrl,
+            topics: topics,
+
+          };
+          if (props.id) {
+            data = {
+              ...course,
+              image: croppedUrl,
+              topics: topics,
+
+              courseId: props.id,
+            };
+          }
+
+          const url1 = props.link || "update-course";
+
+          createAny(url1, data, props.token)
+            .then((res) => {
+              setLoading(false);
+              dispatch(subscribeCourse(res.data.data.content.data));
+              localStorage.setItem(
+                "courses",
+                JSON.stringify(res.data.data.content.data)
+              );
+              navigate("/instructor/course-page");
+              showToastSuccess();
+            })
+            .catch((err) => {
+              setLoading(false);
+              if (!err?.response?.data?.data?.errors[0]?.message) {
+                console.log(err?.response?.data?.data?.errors)
+                seterrorInput(err?.response?.data?.data?.errors);
+              }
+              if (err?.response?.data?.data?.errors[0]?.message) {
+                setError(err?.response?.data?.data?.errors[0]?.message);
               }
 
-              const url1 = props.link || "update-course";
-
-              createAny(url1, data, props.token)
-                .then((res) => {
-                  setLoading(false);
-                  dispatch(subscribeCourse(res.data.data.content.data));
-                  localStorage.setItem(
-                    "courses",
-                    JSON.stringify(res.data.data.content.data)
-                  );
-                  navigate("/instructor/course-page");
-                  showToastSuccess();
-                })
-                .catch((err) => {
-                  setLoading(false);
-                  if (!err?.response?.data?.data?.errors[0]?.message) {
-                    console.log(err?.response?.data?.data?.errors)
-                    seterrorInput(err?.response?.data?.data?.errors);
-                  }
-                  if (err?.response?.data?.data?.errors[0]?.message) {
-                    setError(err?.response?.data?.data?.errors[0]?.message);
-                  }
-
-                  if (
-                    err.response.data.data.errors[0].code === "USER_BLOCKED"
-                  ) {
-                    localStorage.removeItem("teacherToken");
-                    dispatch(unsuscribeToken());
-                    localStorage.removeItem("teacherData");
-                    dispatch(unsuscribeTeacher());
-                    navigate("/instructor");
-                    googleLogout();
-                  }
-                });
-            }
-          );
+              if (
+                err.response.data.data.errors[0].code === "USER_BLOCKED"
+              ) {
+                localStorage.removeItem("teacherToken");
+                dispatch(unsuscribeToken());
+                localStorage.removeItem("teacherData");
+                dispatch(unsuscribeTeacher());
+                navigate("/instructor");
+                googleLogout();
+              }
+            });
         }
+
+
       } catch (error) {
         setLoading(false);
         console.error(error);
@@ -278,89 +234,80 @@ function CourseForm(props) {
     );
   });
 
+  const handleChangeStatus = (meta, updateFile, file, status, index) => {
 
+    const file2 = status[0].file;
 
+    if (file === "done") {
+      const storageRef = ref(storage, `videos/${file2.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file2);
 
+      uploadTask.on(
+        "state_changed",
+        async (snapshot) => {
+          // Handle progress
+          const progresss =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
 
+          const newTopics = [...topics];
+          newTopics[index].progress = +progresss;
+          newTopics[index].ref = file2;
 
+          setTopics(newTopics);
+        },
+        (error) => {
+          // Handle error
+          console.log("hererer");
+          console.error(error);
+        },
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log(url)
 
-
-
-
-
-
-
-  ///////////////////////////////////////////////////////////////////////////
-
-
-  const getSignedUrl = (file) => {
-    const params = {
-      Bucket: "edugoservice",
-      Key: file.file.name,
-      ContentType: file.file.type,
-    };
-    return new Promise((resolve, reject) => {
-      myBucket.getSignedUrl('putObject', params, (err, url) => {
-        if (err) {
-          reject(err);
-          console.log(err)
+          const newTopics = [...topics];
+          newTopics[index].video = url;
+          setTopics(newTopics);
         }
-        resolve(url);
-
-      });
-    });
-  };
-  const getUploadData = async (file) => {
+      );
+    }
 
 
-    const signedUrl = await getSignedUrl(file);
-    console.log(signedUrl)
-
-    setcourse((state) => ({
-      ...state, video: {
-        name: file.file.name,
-        size: file.file.size,
-        type: file.file.type,
-      }
-    }));
-
-    return {
-      url: signedUrl,
-      method: 'PUT',
-      headers: {
-        'Content-Type': file.type,
-      },
-    };
   };
 
 
-  const getUploadParams = async (file, index) => {
+  const handleChangeStatus2 = (meta, updateFile, file, status) => {
+
+    const file2 = status[0].file;
+
+    if (file === "done") {
+      const storageRef = ref(storage, `videos/${file2.name}`);
+      const uploadTask = uploadBytesResumable(storageRef, file2);
+
+      uploadTask.on(
+        "state_changed",
+        async (snapshot) => {
+          // Handle progress
+          const progresss =
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+            console.log(progresss)
+
+        },
+        (error) => {
+          // Handle error
+          console.log("hererer");
+          console.error(error);
+        },
+        async () => {
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log(url)
+
+          setcourse((state) => ({ ...state, video: url }))
+        }
+      );
+    }
 
 
-    const signedUrl = await getSignedUrl(file);
-    console.log(signedUrl)
-    const newTopics = [...topics];
-    newTopics[index].video = {
-      name: file.file.name,
-      size: file.file.size,
-      type: file.file.type,
-    };
-    setTopics(newTopics);
-
-
-    return {
-      url: signedUrl,
-      method: 'PUT',
-      headers: {
-        'Content-Type': file.type,
-      },
-    };
   };
-
-  const handleChangeStatus = ({ meta }, status) => {
-    console.log(status, meta);
-  };
-
 
 
 
@@ -408,10 +355,13 @@ function CourseForm(props) {
 
 
       <Dropzone
-        getUploadParams={(file) => getUploadParams(file, index)}
-        onChangeStatus={handleChangeStatus}
-        accept="image/*,audio/*,video/*"
+
+        onChangeStatus={({ meta, updateFile }, file, status) => { handleChangeStatus(meta, updateFile, file, status, index) }}
+        accept="video/*"
+        multiple={false}
+        maxFiles={1}
       />
+
 
 
 
@@ -425,29 +375,6 @@ function CourseForm(props) {
 
 
   ));
-
-  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-  ////////////////////////////////////////////////////////////////////////////
 
 
 
@@ -639,9 +566,11 @@ function CourseForm(props) {
             this video.
           </h1>
           <Dropzone
-            getUploadParams={(file) => getUploadData(file)}
-            onChangeStatus={handleChangeStatus}
-            accept="image/*,audio/*,video/*"
+
+            onChangeStatus={({ meta, updateFile }, file, status) => { handleChangeStatus2(meta, updateFile, file, status) }}
+            accept="video/*"
+            multiple={false}
+            maxFiles={1}
           />
         </div>
       </div>

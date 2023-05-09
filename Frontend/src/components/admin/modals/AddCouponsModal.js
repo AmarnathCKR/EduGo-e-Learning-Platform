@@ -185,7 +185,7 @@ function AddCouponsModal(props) {
                                 <div className="flex flex-col my-4 mx-2 justify-center">
                                     <ToastContainer />
                                     {loading ? (
-                                        <div className="flex items-center justify-center w-full">
+                                        <div className="z-40  p-64 loader-local bg-secondary">
                                             {" "}
                                             <CircleSpinner size={20} color="#000" />
                                         </div>
