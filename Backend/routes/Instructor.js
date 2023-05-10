@@ -5,6 +5,10 @@ const {
   createInstructor,
   instructorLogin,
   allCategory,
+  test,
+  findConversation,
+  sendMessage,
+  getMessage,
 } = require("../controllers/instructor/instructorManage");
 const {
   updateProfile,
@@ -49,5 +53,9 @@ router.post("/edit-course", instructorAuth, instructorCourseValidator,ediInstruc
 
 router.get("/generate-otp", instructorAuth ,generateOTP)
 
+
+router.post("/send-message", instructorAuth , sendMessage)
+
+router.get("/get-message",instructorAuth,getMessage)
 
 module.exports = router;

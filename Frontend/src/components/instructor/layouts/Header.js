@@ -216,6 +216,11 @@ function Header(props) {
                             <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                               Payments
                             </span>
+                            <Link to="/instructor/chat">
+                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                              Chat
+                            </span>
+                            </Link>
                             <span onClick={handleLogout} className="block px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">
                               Logout
                             </span>

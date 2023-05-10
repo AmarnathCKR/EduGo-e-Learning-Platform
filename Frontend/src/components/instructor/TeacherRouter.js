@@ -9,6 +9,7 @@ import NewCourse from "./pages/NewCourse";
 import SingleCourse from "./course/SingleCourse";
 import UpdateCourse from "./course/UpdateCourse";
 import ErrorPage from "../../helper/ErrorPage";
+import InstructorChat from "./pages/InstructorChat";
 
 function TeacherRouter() {
   const token = useSelector((state) => state.token);
@@ -43,6 +44,10 @@ function TeacherRouter() {
         <Route
           path="/coursePage/:id"
           element={token ? <SingleCourse /> : <Navigate to="/instructor" />}
+        />
+        <Route
+          path="/chat"
+          element={token ? <InstructorChat /> : <Navigate to="/instructor" />}
         />
       </Route>
       <Route path="/*" element={<ErrorPage title="Page not found" />} />

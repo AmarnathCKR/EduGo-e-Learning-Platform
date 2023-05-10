@@ -21,6 +21,8 @@ const AWS = require("aws-sdk");
 var serviceAccount = require("../../database/edugo-e-lerning-firebase-adminsdk-byo2p-024b7d9521.json");
 const Coupon = require("../../database/Coupon");
 const Order = require("../../database/Order");
+const Conversation = require("../../database/Conversation");
+const Message = require("../../database/Message");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -382,7 +384,19 @@ exports.purchase = async (req, res) => {
       })
     }
 
-    newOrder.save().then((result) => {
+    newOrder.save().then(async (result) => {
+      const courseData = await Course.findOne({ _id: courseId })
+      const instructorId = courseData.instructor.toString().match(/^[a-f\d]{24}$/i)[0];
+      const conversation = await Conversation.findOne({
+        members: { $in: [instructorId] },
+      });
+      console.log(conversation)
+      const dataUpdate = await Conversation.findByIdAndUpdate({ _id: conversation._id },
+        { $push: { members: id } }
+      ).catch((err)=>{
+        console.log(err)
+      })
+
       const success = {
         status: true,
         content: {
@@ -391,6 +405,7 @@ exports.purchase = async (req, res) => {
       };
       res.status(200).send({ data: success });
     }).catch((err) => {
+      console.log(err)
       const emailError = {
         status: false,
         errors: [
@@ -469,4 +484,58 @@ exports.generateCookie = async (req, res) => {
   console.log(myCookie)
   res.json({ myCookie })
 
+}
+
+exports.courseCount = async (req, res) => {
+  const { course } = req.query;
+  await Order.find({ courseId: course }).then((result) => {
+    const success = {
+      status: true,
+      content: {
+        data: result,
+      },
+    };
+    res.status(200).send({ data: success });
+  }).catch((err) => {
+    const emailError = {
+      status: false,
+      errors: [
+        {
+          param: "Input error",
+          message: "No course",
+          code: "INPUT_ERROR",
+        },
+      ],
+    };
+    res.status(409).send({ data: emailError });
+  })
+}
+
+
+exports.sendNewMessage = async (req, res) => {
+  const conversation = await Conversation.find({
+    members: { $in: [req.body.instructor] },
+  });
+  const newMessage = new Message({sender: req.body.sender , text : req.body.text ,conversationId :conversation._id });
+
+  try {
+    const savedMessage = await newMessage.save();
+    res.status(200).json(savedMessage);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+}
+
+exports.getAllMessages = async (req, res) => {
+  try {
+    const conversation = await Conversation.find({
+      members: { $in: [req.query.userId] },
+    }); 
+    const messages = await Message.find({
+      conversationId: conversation._id,
+    });
+    res.status(200).json(messages);
+  } catch (err) {
+    res.status(500).json(err);
+  }
 }

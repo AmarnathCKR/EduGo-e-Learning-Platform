@@ -13,6 +13,9 @@ const {
   getOrder,
   getStatus,
   generateCookie,
+  courseCount,
+  sendNewMessage,
+  getAllMessages,
  
 } = require("../controllers/student/studentActions");
 const {
@@ -61,6 +64,12 @@ router.get("/stream/video",streamVideo)
 router.post("/purchase",studentAuth, purchase)
 
 router.get("/generate-cookie", instructorAuth, generateCookie)
+
+router.get("/get-count", studentAuth, courseCount)
+
+router.post("/send-message", studentAuth,sendNewMessage)
+
+router.get("/get-message",studentAuth,getAllMessages)
 
 
 module.exports = router;

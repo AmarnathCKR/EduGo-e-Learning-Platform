@@ -5,6 +5,8 @@ const nodemailer = require("nodemailer");
 const { Instructor } = require("../../database/Instructor");
 const { Course } = require("../../database/Course");
 const { FieldCategory } = require("../../database/FieldCategory");
+const Conversation = require("../../database/Conversation");
+const Message = require("../../database/Message");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -40,6 +42,12 @@ exports.createInstructor = async (req, res) => {
 
         const users = await Instructor.findOne({ email });
         const token = await createToken(users._id);
+
+        const newConversation = new Conversation({
+          members: [users._id],
+        });
+
+        const savedConversation = await newConversation.save();
 
         const success = {
           status: true,
@@ -204,6 +212,12 @@ exports.verifyInstructor = async (req, res) => {
         await newUser.save();
 
         const users = await Instructor.findOne({ email: user.email });
+        const newConversation = new Conversation({
+          members: [users._id],
+        });
+
+        const savedConversation = await newConversation.save();
+
         const token1 = await createToken(users._id);
 
         const success = {
@@ -412,3 +426,42 @@ exports.allCategory = async (req, res) => {
     res.status(200).send({ data: success });
   });
 };
+
+exports.findConversation = async (req, res) => {
+  try {
+    const conversation = await Conversation.find({
+      members: { $in: [req.query.id] },
+    });
+    res.status(200).json(conversation);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+};
+
+exports.sendMessage= async (req, res) => {
+  const conversation = await Conversation.find({
+    members: { $in: [req.query.id] },
+  });
+  const newMessage = new Message({sender: req.body.sender , text : req.body.text ,conversationId :conversation._id });
+
+  try {
+    const savedMessage = await newMessage.save();
+    res.status(200).json(savedMessage);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+}
+
+exports.getMessage = async (req, res) => {
+  try {
+    const conversation = await Conversation.find({
+      members: { $in: [req.query.id] },
+    }); 
+    const messages = await Message.find({
+      conversationId: conversation._id,
+    });
+    res.status(200).json(messages);
+  } catch (err) {
+    res.status(500).json(err);
+  }
+}

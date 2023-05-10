@@ -79,10 +79,23 @@ body {
 .overlay {
   position: absolute;
   top: 0;
+  width: 100%;
+  height: 60px;
+  background-image: linear-gradient(to bottom, #000000 0%, #00000096 60%, #0000002e 100%);
+  color: white;
+  font-size: 20px;
+  text-align: center;
+  opacity: 0;
+  transition: opacity 0.5s ease-in-out;
+}
+
+.overlay1 {
+  position: absolute;
+  top: 0;
  
   width: 100%;
   height: 60px;
-  background-image: linear-gradient(to bottom, #000000 0%, #212020 70%, #3d3838 100%);
+ 
   color: white;
   font-size: 20px;
   text-align: center;
@@ -92,4 +105,8 @@ body {
 
 .container1:hover .overlay {
   opacity: 0.8;
+}
+
+.container1:hover .overlay1 {
+  opacity: 1;
 }

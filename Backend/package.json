@@ -27,6 +27,7 @@
     "nodemon": "^2.0.22",
     "request": "^2.88.2",
     "session": "^0.1.0",
+    "socket.io": "^4.6.1",
     "validater": "^1.0.5",
     "validator": "^13.9.0"
   }
