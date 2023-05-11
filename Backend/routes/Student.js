@@ -16,6 +16,7 @@ const {
   courseCount,
   sendNewMessage,
   getAllMessages,
+  getStudentDetails,
  
 } = require("../controllers/student/studentActions");
 const {
@@ -70,6 +71,9 @@ router.get("/get-count", studentAuth, courseCount)
 router.post("/send-message", studentAuth,sendNewMessage)
 
 router.get("/get-message",studentAuth,getAllMessages)
+
+
+router.get("/get-student", getStudentDetails)
 
 
 module.exports = router;

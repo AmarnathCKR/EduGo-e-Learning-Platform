@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import "../../../Assets/style.css";
 import { GoogleOAuthProvider } from "@react-oauth/google";
 
@@ -11,49 +11,65 @@ import { ToastContainer, toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 
 import { CircleSpinner } from "react-spinners-kit";
-import { io, Socket } from "socket.io-client";
 
 
-import { getAnyDataStudentAPI, postWithoutAuthStudentApi } from "../../../api/studentAPI";
+import { getAnyDataStudentAPI, postAnyStudentApi, postWithoutAuthStudentApi } from "../../../api/studentAPI";
 import { BsDoorClosed } from "react-icons/bs";
 import { AiOutlineClose } from "react-icons/ai";
 import Message from "../message/Message";
+import { SocketContext } from "../../../helper/socketContext";
 
-function ChatModal({course}) {
+function ChatModal(props) {
+  const socket = useContext(SocketContext)
+  useEffect(() => {
+    socket.on("users", users => {
+      console.log(users)
+    })
+  })
 
 
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState(null)
   const [input, setInput] = useState("")
-  const socket = useRef();
+
+  useEffect(() => {
+    socket.on("message", msg => {
+      console.log(msg)
+      setMessage(messages => [...messages, msg.text]);
+    })
+
+
+  }, [socket])
+
+
 
   const token = useSelector((state) => state.studentToken);
   const student = useSelector((state) => state.studentData);
-      useEffect(() => {
-        socket.current = io("http://localhost:5000");
-        socket.current.emit("join", {
-            userName: student?.name,
-            userId: student?._id,
 
-        });
-        // eslint-disable-next-line
-    }, []);
   useEffect(() => {
     getAnyDataStudentAPI("get-message", token).then((res) => {
       setMessage(res.data)
     })
+    
+    socket.emit('login', { name: student._id, room: props?.course?._id }, error => {
+      if (error) {
+        console.log(error)
+
+      }
+      console.log("success")
+    })
   }, [])
+
   const handleSubmit = (e) => {
     e.preventDefault()
-    createAny("send-message", {sender: student._id , text : input , instructor : course?.instructor?._id},token)
-        /// submit
-        socket.current?.emit("sendMessage", {
-            userName: student?.name,
-            userId: student?._id,
+    postAnyStudentApi("send-message", { sender: student._id, text: input, instructor: props?.course?.name }, token)
+      .then((res) => {
+        socket.emit('sendMessage', res.data, () => setInput(''))
 
-            message :input,
-        });
-        return setInput("");
+      })
+
+
+    return setInput("");
     /// submit
   }
 
@@ -78,11 +94,11 @@ function ChatModal({course}) {
           </div>
           <div className="modal-local-body h-3/5 text-center">
             <div className='text-center text-2xl  font-bold'>Online Students Chat</div>
-            <div className='flex flex-col p-10 h-[500px]'>
+            <div className='flex flex-col p-10 h-[400px] overflow-y-scroll'>
               <div className='grow'>
                 {message && <>
                   {message?.map((e) =>
-                    <Message own={e.sender === student._id} message={e} />
+                    <Message user={props.course} own={e.sender === student._id} message={e} />
                   )}
                 </>}
 

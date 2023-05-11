@@ -162,7 +162,7 @@ function OwnedCourse() {
 
                 </div>
             </div>
-            {chat && <ChatModal close={()=>setChat(!chat)} /> }
+            {chat && <ChatModal course={course?.instructor} close={()=>setChat(!chat)} /> }
             <FooterLanding />
         </>
     )

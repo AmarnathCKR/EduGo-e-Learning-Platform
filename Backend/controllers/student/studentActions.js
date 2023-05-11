@@ -539,3 +539,12 @@ exports.getAllMessages = async (req, res) => {
     res.status(500).json(err);
   }
 }
+
+exports.getStudentDetails = async (req,res ) => {
+    const  {userId} = req.query;
+    await Student.findOne({_id : userId}).then((result)=>{
+      res.status(200).json(result);
+    }).catch((err)=>{
+      res.status(500).json(err);
+    })
+}
