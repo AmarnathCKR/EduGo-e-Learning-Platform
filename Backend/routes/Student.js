@@ -17,7 +17,9 @@ const {
   sendNewMessage,
   getAllMessages,
   getStudentDetails,
- 
+  addNewReview,
+  deleteReview,
+
 } = require("../controllers/student/studentActions");
 const {
   studentLogin,
@@ -40,40 +42,44 @@ router.post("/verify", studentsVerify);
 
 router.post("/login", studentLogin);
 
-router.post("/update-profile", studentAuth, instructorProfileValidator ,updateStudentProfile);
+router.post("/update-profile", studentAuth, instructorProfileValidator, updateStudentProfile);
 
 router.get("/search", studentSearch);
 
-router.get("/fetch-student",studentAuth, fetchStudent);
+router.get("/fetch-student", studentAuth, fetchStudent);
 
 router.get("/display-courses", displayCourses);
 
-router.get("/get-purchasedCourse",studentAuth, getOwnedCourse)
+router.get("/get-purchasedCourse", studentAuth, getOwnedCourse)
 
 router.get("/get-status", studentAuth, getStatus)
 
 router.get("/fetch-fields", fetchAllFields);
 
-router.get("/get-course",studentAuth, findStudentCourseByID)
+router.get("/get-course", studentAuth, findStudentCourseByID)
 
-router.get("/search-coupon", studentAuth,searchCoupon)
+router.get("/search-coupon", studentAuth, searchCoupon)
 
 router.get("/get-order", studentAuth, getOrder)
 
-router.get("/stream/video",streamVideo)
+router.get("/stream/video", streamVideo)
 
-router.post("/purchase",studentAuth, purchase)
+router.post("/purchase", studentAuth, purchase)
 
 router.get("/generate-cookie", instructorAuth, generateCookie)
 
 router.get("/get-count", studentAuth, courseCount)
 
-router.post("/send-message", studentAuth,sendNewMessage)
+router.post("/send-message", studentAuth, sendNewMessage)
 
-router.get("/get-message",studentAuth,getAllMessages)
-
+router.get("/get-message", studentAuth, getAllMessages)
 
 router.get("/get-student", getStudentDetails)
+
+router.get("/add-review", studentAuth, addNewReview)
+
+router.get("/delete-review", studentAuth, deleteReview)
+
 
 
 module.exports = router;

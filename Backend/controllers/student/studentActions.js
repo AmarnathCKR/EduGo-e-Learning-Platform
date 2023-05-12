@@ -23,6 +23,7 @@ const Coupon = require("../../database/Coupon");
 const Order = require("../../database/Order");
 const Conversation = require("../../database/Conversation");
 const Message = require("../../database/Message");
+const { default: mongoose } = require("mongoose");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -205,38 +206,31 @@ exports.findStudentCourseByID = async (req, res) => {
 
 
 exports.streamVideo = async (req, res) => {
-  const videoId = req.query.videoId;
+  const { videoId } = req.query;
 
   try {
-    // Get a reference to the video file in Firebase Storage
     const videoRef = bucket.file(`videos/${videoId}`);
-
-    // Download the video file to a local file
     const [url, videoSize] = await Promise.all([
       videoRef.getSignedUrl({
         action: "read",
-        expires: "03-17-2024", // expiration date of the signed URL
+        expires: expiresIn,
       }),
       videoRef.getMetadata().then((metadata) => metadata.size),
     ]);
 
-    // Set the response headers to allow for range requests
     res.setHeader("Accept-Ranges", "bytes");
     const range = req.headers.range;
 
     if (!range) {
-      // Send the full video if no range header is provided
       res.status(200).send(url);
       return;
     }
 
-    // Parse the range header
     const start = Number(range.replace(/bytes=/, "").split("-")[0]);
     const end = Number(range.replace(/bytes=/, "").split("-")[1]) || videoSize - 1;
     const chunkSize = (end - start) + 1;
-
-    // Create a readable stream from the video file
     const stream = videoRef.createReadStream({ start, end });
+
 
     // Set the response headers for the chunk
     res.status(206).set({
@@ -258,7 +252,9 @@ exports.streamVideo = async (req, res) => {
 
 
 exports.searchCoupon = async (req, res) => {
-  const { search, id } = req.query;
+  const { search } = req.query;
+  const { id } = req.params;
+
   if (search) {
 
     const data = await Coupon.findOne({ name: search, status: true });
@@ -360,7 +356,7 @@ exports.purchase = async (req, res) => {
   } = req.body;
   console.log(req.body)
 
-  const { id } = req.query;
+  const { id } = req.params;
   let newOrder = new Order({
     orderId: orderId,
     courseId: courseId,
@@ -386,14 +382,14 @@ exports.purchase = async (req, res) => {
 
     newOrder.save().then(async (result) => {
       const courseData = await Course.findOne({ _id: courseId })
-      const instructorId = courseData.instructor.toString().match(/^[a-f\d]{24}$/i)[0];
+
       const conversation = await Conversation.findOne({
-        members: { $in: [instructorId] },
+        members: courseData.instructor,
       });
       console.log(conversation)
       const dataUpdate = await Conversation.findByIdAndUpdate({ _id: conversation._id },
         { $push: { members: id } }
-      ).catch((err)=>{
+      ).catch((err) => {
         console.log(err)
       })
 
@@ -439,8 +435,12 @@ exports.getOrder = async (req, res) => {
 }
 
 exports.getStatus = async (req, res) => {
-  const { id, course } = req.query;
-  const status = await Order.findOne({ user: id, courseId: course })
+  const { id } = req.params;
+  const { course } = req.query;
+  console.log(id)
+  console.log(course)
+  const status = await Order.findOne({ user: new mongoose.Types.ObjectId(id), courseId: course })
+  console.log(status)
   if (status) {
     const success = {
       status: true,
@@ -513,10 +513,11 @@ exports.courseCount = async (req, res) => {
 
 
 exports.sendNewMessage = async (req, res) => {
-  const conversation = await Conversation.find({
-    members: { $in: [req.body.instructor] },
+  const conversation = await Conversation.findOne({
+    members: new mongoose.Types.ObjectId(req.body.instructor),
   });
-  const newMessage = new Message({sender: req.body.sender , text : req.body.text ,conversationId :conversation._id });
+  console.log(conversation)
+  const newMessage = new Message({ sender: req.body.sender, text: req.body.text, conversationId: conversation._id });
 
   try {
     const savedMessage = await newMessage.save();
@@ -528,9 +529,11 @@ exports.sendNewMessage = async (req, res) => {
 
 exports.getAllMessages = async (req, res) => {
   try {
-    const conversation = await Conversation.find({
-      members: { $in: [req.query.userId] },
-    }); 
+    console.log(req.query.userId)
+    const conversation = await Conversation.findOne({
+      members: new mongoose.Types.ObjectId(req.query.userId),
+    });
+    console.log(conversation)
     const messages = await Message.find({
       conversationId: conversation._id,
     });
@@ -540,11 +543,26 @@ exports.getAllMessages = async (req, res) => {
   }
 }
 
-exports.getStudentDetails = async (req,res ) => {
-    const  {userId} = req.query;
-    await Student.findOne({_id : userId}).then((result)=>{
-      res.status(200).json(result);
-    }).catch((err)=>{
-      res.status(500).json(err);
-    })
+exports.getStudentDetails = async (req, res) => {
+  const { userId } = req.query;
+  await Student.findOne({ _id: userId }).then((result) => {
+    res.status(200).json(result);
+  }).catch((err) => {
+    res.status(500).json(err);
+  })
 }
+
+exports.addNewReview = async (req, res) => {
+  const { id } = req.query;
+  const data = { ...req.body, student: id }
+  await Review.create(data);
+  res.status(200).json("success");
+};
+
+exports.deleteReview = async (req, res) => {
+  const { reviewId } = req.query;
+  await Review.findByIdAndDelete({_id : reviewId})
+  res.status(200).json("success");
+};
+
+

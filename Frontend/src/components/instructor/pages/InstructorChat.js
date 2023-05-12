@@ -6,6 +6,7 @@ import Message from '../../student/message/Message';
 import { createAny, getAnyData } from '../../../api/instructorAPI';
 import { postAnyStudentApi } from '../../../api/studentAPI';
 import { SocketContext } from '../../../helper/socketContext';
+import { BsSend, BsSendCheck } from 'react-icons/bs';
 
 
 function InstructorChat() {
@@ -16,13 +17,11 @@ function InstructorChat() {
     const socket = useContext(SocketContext)
 
 
-
-
-
-
     const Instructor = useSelector((state) => state.InstructorProfile);
     const token = useSelector((state) => state.token);
     const search = useSelector((state) => state.instructorSearch);
+    const scrollRef = useRef();
+
 
 
 
@@ -48,15 +47,20 @@ function InstructorChat() {
 
     const handleSubmit = (e) => {
         e.preventDefault()
-        createAny("send-message", { sender: Instructor._id, text: input }, token).then((res)=>{
-            
-            socket.emit('sendMessage', res.data, () => setInput(''))
-            
-        })
-        /// submit
-        
+        if (input !== "") {
 
-        return setInput("");
+            createAny("send-message", { sender: Instructor._id, text: input }, token).then((res) => {
+
+                socket.emit('sendMessage', res.data, () => setInput(''))
+
+            })
+            /// submit
+
+
+            return setInput("");
+
+        }
+
 
     }
     useEffect(() => {
@@ -64,25 +68,32 @@ function InstructorChat() {
             console.log(msg)
             setMessage(messages => [...messages, msg.text]);
         })
+    }, [])
 
-
-    }, [socket])
+    useEffect(() => {
+        scrollRef.current?.scrollIntoView({
+            behavior: "smooth", block: "start",
+            inline: "nearest",
+        });
+    }, [message]);
 
     return (
         <>
             <Header Instructor={Instructor} token={token} search={search} />
             <div className='mt-24'>
-                <div className='text-center text-2xl  font-bold'>Online Students Chat</div>
-                <div className='flex flex-col p-10 h-[500px]'>
-                    <div className='grow overflow-y-scroll'>
+                <div className='text-center text-2xl mb-4 font-bold'>Public Students Chat</div>
+                <div className='flex flex-col md:px-44 h-[518px]'>
+                    <div className='grow overflow-y-auto p-5 border shadow'>
                         {message && <>
                             {message?.map((e) =>
-                                <Message user={Instructor} own={e.sender === Instructor._id} message={e} />
+                                <div ref={scrollRef}>
+                                    <Message user={Instructor} own={e.sender === Instructor._id} message={e} />
+                                </div>
                             )}
                         </>}
 
                     </div>
-                    <div className='h-28'><textarea className='w-1/2' value={input} onChange={(e) => setInput(e.target.value)} /><button onClick={handleSubmit}>Submit</button></div>
+                    <form className='p-0' onSubmit={handleSubmit}><div className=' border mx-auto w-3/4 rounded p-3 my-5 flex  items-center'><input className='w-full outline-none' value={input} onChange={(e) => setInput(e.target.value)} /><button type="submit"><BsSendCheck size="30px" /></button></div></form>
                 </div>
             </div>
             <Footer />

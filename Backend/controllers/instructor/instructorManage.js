@@ -7,6 +7,7 @@ const { Course } = require("../../database/Course");
 const { FieldCategory } = require("../../database/FieldCategory");
 const Conversation = require("../../database/Conversation");
 const Message = require("../../database/Message");
+const { default: mongoose } = require("mongoose");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -439,8 +440,8 @@ exports.findConversation = async (req, res) => {
 };
 
 exports.sendMessage= async (req, res) => {
-  const conversation = await Conversation.find({
-    members: { $in: [req.query.id] },
+  const conversation = await Conversation.findOne({
+    members: new mongoose.Types.ObjectId(req.params.id),
   });
   const newMessage = new Message({sender: req.body.sender , text : req.body.text ,conversationId :conversation._id });
 
@@ -454,9 +455,10 @@ exports.sendMessage= async (req, res) => {
 
 exports.getMessage = async (req, res) => {
   try {
-    const conversation = await Conversation.find({
-      members: { $in: [req.query.id] },
+    const conversation = await Conversation.findOne({
+      members: new mongoose.Types.ObjectId(req.params.id),
     }); 
+    console.log(conversation)
     const messages = await Message.find({
       conversationId: conversation._id,
     });

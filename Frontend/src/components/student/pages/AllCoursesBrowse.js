@@ -14,7 +14,7 @@ function AllCoursesBrowse(props) {
 
   return <div>
     <HeaderLanding student={Instructor} search={search} token={token} />
-    <div className="mt-36 ">
+    <div className="mt-24 ">
         {search && (
             <h1 className="text-center text-2xl font-medium">Search : {search}</h1>
             

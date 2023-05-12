@@ -56,6 +56,6 @@ router.get("/generate-otp", instructorAuth ,generateOTP)
 
 router.post("/send-message", instructorAuth , sendMessage)
 
-router.get("/get-message",instructorAuth,getMessage)
+router.get("/get-message",instructorAuth, getMessage)
 
 module.exports = router;

@@ -226,12 +226,12 @@ function HeaderLanding(props) {
                               </span>
                             </Link>
                             <Link to="/purchased-courses">
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Purchased Courses
-                            </span>
+                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                                Purchased Courses
+                              </span>
                             </Link>
 
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                            <span  onClick={handleLink} className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                               Browse Courses
                             </span>
                             <span
@@ -344,10 +344,32 @@ function HeaderLanding(props) {
                 </div>
                 <div className="grow">
                   <input
-                    className="w-full border-none rounded py-1 bg-neutral-100 text-gray-700 focus:outline-none items-center"
+                    id="search-input"
+                    value={searchKeyword}
+                    onChange={handleInputChange}
+                    onKeyDown={(event) => handleKeyDown(event, -1)}
+                    className="w-full border-none bg-white rounded py-1 text-gray-700bg-white focus:outline-none items-center"
                     type="text"
                     placeholder="Search anything"
                   />
+                  {searchSuggestions.length > 0 && (
+                    <ul className="bg-white md:w-1/2 p-2 border shadow absolute">
+                      {searchSuggestions.map((suggestion, index) => (
+                        <li
+                          className="bg-white hover:bg-neutral-50 cursor-pointer"
+                          key={suggestion.id}
+                          id={`suggestion-${index}`}
+                          onClick={() =>
+                            handleSelectSuggestion(suggestion.name)
+                          }
+                          onKeyDown={(event) => handleKeyDown(event, index)}
+                          tabIndex="0"
+                        >
+                          {suggestion.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <div />
               </div>

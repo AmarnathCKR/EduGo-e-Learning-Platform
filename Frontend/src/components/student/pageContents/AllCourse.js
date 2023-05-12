@@ -1,5 +1,6 @@
 import { Icon } from "@iconify/react";
 import React, { useEffect } from "react";
+import { Link } from "react-router-dom";
 
 function AllCourse(props) {
   const style = {
@@ -25,7 +26,7 @@ function AllCourse(props) {
         <div class="local-wrapper mx-2 p-3 ">
           <div class="w-96 p-5 rounded overflow-hidden shadow-lg">
             <img
-            style={style}
+              style={style}
               class="w-full"
               src={data.image}
               alt="Sunset in the mountains"
@@ -35,8 +36,16 @@ function AllCourse(props) {
               <p class="text-gray-700 text-base">
                 {data.headline}
               </p>
+              <Link to="/courses">
+                <p
+
+                  class="text-body-color hover:border-primary hover:bg-primary inline-block rounded-full border border-[#E5E7EB] py-2 px-7 text-base font-medium transition hover:text-white"
+                >
+                  View Details
+                </p>
+              </Link>
             </div>
-            
+
           </div>
         </div>
       </>

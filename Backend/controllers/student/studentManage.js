@@ -4,6 +4,7 @@ const jwt = require("jsonwebtoken");
 const nodemailer = require("nodemailer");
 const bcrypt = require("bcrypt");
 const Order = require("../../database/Order");
+const { default: mongoose } = require("mongoose");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -445,10 +446,10 @@ exports.displayCourses = async (req, res) => {
 };
 
 exports.getOwnedCourse = async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.params;
   const pageSize = 12;
   const currentPage = parseInt(req.query.page) || 1;
-  const searchQuery = { user: id };
+  const searchQuery = { user: new mongoose.Types.ObjectId(id) };
   const sortOrder = req.query.sort || "";
   const fieldOfStudyFilter = req.query.fieldOfStudy || "";
   const experienceFilter = req.query.experience || "";

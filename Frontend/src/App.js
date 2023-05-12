@@ -3,6 +3,7 @@ import { BrowserRouter } from "react-router-dom";
 import { PayPalScriptProvider } from "@paypal/react-paypal-js";
 import { SocketProvider } from "./helper/socketContext";
 
+
 function App() {
   const initialOptions = {
     "client-id": process.env.REACT_APP_PAYPAL_ID,

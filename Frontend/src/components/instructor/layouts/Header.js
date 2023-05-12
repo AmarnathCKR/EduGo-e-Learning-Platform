@@ -25,15 +25,15 @@ function Header(props) {
     setMenu(!menuResponsive);
   };
   const handleLogout = () => {
-    
-      localStorage.removeItem("teacherToken");
-      dispatch(unsuscribeToken());
-      localStorage.removeItem("teacherData");
-      dispatch(unsuscribeTeacher());
-      navigate("/instructor");
-      googleLogout()
-      toggleDropdown()
-  
+
+    localStorage.removeItem("teacherToken");
+    dispatch(unsuscribeToken());
+    localStorage.removeItem("teacherData");
+    dispatch(unsuscribeTeacher());
+    navigate("/instructor");
+    googleLogout()
+    toggleDropdown()
+
   };
   const handleLogout2 = () => {
     localStorage.removeItem("teacherToken");
@@ -51,7 +51,7 @@ function Header(props) {
       window.innerWidth < 900 ? setToggle(false) : setToggle(true);
       window.innerWidth < 900 ? setMenu(false) : setToggle(true);
       return () => {
-        window.removeEventListener("resize", () => {});
+        window.removeEventListener("resize", () => { });
       };
     });
   }, []);
@@ -62,8 +62,8 @@ function Header(props) {
       book: dropdown === "book" ? !isOpen.book : false,
     });
   };
- 
-  const handleLink = ()=>{
+
+  const handleLink = () => {
     navigate("/instructor/")
   }
   const handleSearch = debounce((value) => {
@@ -118,7 +118,7 @@ function Header(props) {
     <>
       <div className="z-20  grid grid-cols-6  border w-full mx-auto fixed shadow bg-[#fff]">
         <div className="flex w-[130px] h-[76px]  p-2 align-middle">
-          <img src={logo} alt="logo" onClick={handleLink}/>
+          <img src={logo} alt="logo" onClick={handleLink} />
           {menuToggler ? (
             <span className="my-1 mt-5 ml-4 mr-1 font-medium">Explore</span>
           ) : (
@@ -133,7 +133,7 @@ function Header(props) {
                   <Icon icon="material-symbols:search" />
                 </div>
                 <div className="grow">
-                <input
+                  <input
                     id="search-input"
                     value={searchKeyword}
                     onChange={handleInputChange}
@@ -204,22 +204,22 @@ function Header(props) {
                         {isOpen.book && (
                           <div className="absolute z-50 right-0 mt-2 py-2 w-48 bg-white rounded-md shadow-xl">
                             <Link to="/instructor/view-profile">
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Profile
-                            </span>
+                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                                Profile
+                              </span>
                             </Link>
                             <Link to="/instructor/course-page">
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Manage Course 
-                            </span>
+                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                                Manage Course
+                              </span>
                             </Link>
                             <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                               Payments
                             </span>
                             <Link to="/instructor/chat">
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Chat
-                            </span>
+                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                                Chat
+                              </span>
                             </Link>
                             <span onClick={handleLogout} className="block px-4 py-2 text-red-500 hover:bg-gray-100 cursor-pointer">
                               Logout
@@ -306,6 +306,11 @@ function Header(props) {
             </div>
             {props.token ? (
               <>
+                <Link to="/instructor/chat">
+                  <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
+                    Chat
+                  </div>
+                </Link>
                 <div
                   onClick={handleLogout2}
                   className="row-span-12 text-center border p-2 hover:bg-accent-focus"
@@ -323,10 +328,32 @@ function Header(props) {
                 </div>
                 <div className="grow">
                   <input
-                    className="w-full border-none rounded py-1 bg-neutral-100 text-gray-700 focus:outline-none items-center"
+                    id="search-input"
+                    value={searchKeyword}
+                    onChange={handleInputChange}
+                    onKeyDown={(event) => handleKeyDown(event, -1)}
+                    className="w-full border-none bg-white rounded py-1 text-gray-700bg-white focus:outline-none items-center"
                     type="text"
                     placeholder="Search anything"
                   />
+                  {searchSuggestions.length > 0 && (
+                    <ul className="bg-white md:w-1/2 p-2 border shadow absolute">
+                      {searchSuggestions.map((suggestion, index) => (
+                        <li
+                          className="bg-white hover:bg-neutral-50 cursor-pointer"
+                          key={suggestion.id}
+                          id={`suggestion-${index}`}
+                          onClick={() =>
+                            handleSelectSuggestion(suggestion.name)
+                          }
+                          onKeyDown={(event) => handleKeyDown(event, index)}
+                          tabIndex="0"
+                        >
+                          {suggestion.name}
+                        </li>
+                      ))}
+                    </ul>
+                  )}
                 </div>
                 <div />
               </div>

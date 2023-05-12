@@ -38,6 +38,17 @@ body {
   background-color: #fff;
 }
 
+.modal-local-content-chat  {
+  
+  width: 720px;
+  background-color: #fff;
+}
+.modal-local-content-review  {
+  
+  width: 480px;
+  
+  background-color: #fff;
+}
 .modal-local-header,
 .modal-local-footer {
   padding: 10px;
@@ -110,3 +121,9 @@ body {
 .container1:hover .overlay1 {
   opacity: 1;
 }
+
+@import url("https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap");
+@import "@fontsource/roboto/300.css";
+@import "@fontsource/roboto/400.css";
+@import "@fontsource/roboto/500.css";
+@import "@fontsource/roboto/700.css";

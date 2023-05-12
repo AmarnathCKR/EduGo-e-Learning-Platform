@@ -11,12 +11,15 @@ import VideoPlayer from './VideoPlayer';
 import { AiOutlineClose, AiOutlineFacebook, AiOutlineFieldTime, AiOutlineGithub, AiOutlineLinkedin, AiOutlineTwitter } from 'react-icons/ai';
 import { BsFillChatLeftDotsFill } from 'react-icons/bs'
 import ChatModal from '../chat/ChatModal';
+import Reviews from '../Reviews/Reviews';
+import RatingModal from '../Reviews/RatingModal';
 
 
 function OwnedCourse() {
     const [course, setCourse] = useState()
     const [students, setStudents] = useState()
     const [chat, setChat] = useState(false)
+    const [toggleReview , setReviewToggle] = useState(false)
 
     const [active, setActive] = useState(true)
     const [menuID, setNav] = useState("overview")
@@ -58,7 +61,7 @@ function OwnedCourse() {
     return (
         <>
             <HeaderLanding student={Instructor} search={search} token={auth} />
-            
+
             <div >
                 {active && <div className='mt-20 grid   md:grid-cols-4 w-full right-0 grid-cols-1 fixed h-screen ' >
                     <div className='flex flex-col col-span-3'>
@@ -157,12 +160,16 @@ function OwnedCourse() {
 
                             </div>
                         </>}
+                        {menuID === "review" && <>
+                            <Reviews open={()=>setReviewToggle(!toggleReview)}/>
+                        </>}
                     </div>
 
 
                 </div>
             </div>
-            {chat && <ChatModal course={course?.instructor} close={()=>setChat(!chat)} /> }
+            {chat && <ChatModal course={course?.instructor} close={() => setChat(!chat)} />}
+            {toggleReview && <RatingModal close={()=>setReviewToggle(!toggleReview)} />}
             <FooterLanding />
         </>
     )
