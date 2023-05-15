@@ -4,7 +4,7 @@ import io from 'socket.io-client'
 const SocketContext = React.createContext()
 
 const SocketProvider = ({ children }) => {
-    const ENDPOINT = 'http://api.edugo.website';
+    const ENDPOINT = 'https://api.edugo.website';
     const socket = io(ENDPOINT, { transports: ['websocket', 'polling'] })
     return (
         <SocketContext.Provider value={socket}>

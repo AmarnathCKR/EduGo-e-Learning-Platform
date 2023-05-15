@@ -91,7 +91,7 @@ function ChatModal(props) {
           <CircleSpinner size={50} color="#000000" />
         </div>
       }
-      <div className="z-30 modal-local p-4">
+      <div className="z-[999] modal-local p-4">
         <div className="modal-local-content-chat w-4/6 rounded">
           <div className="modal-local-header flex justify-between">
             <h4 className="modal-local-title text-center font-bold text-xl">

@@ -34,7 +34,7 @@ function RatingModal(props) {
 
     }
     return (
-        <div className="z-30 modal-local p-4">
+        <div className="z-[999] modal-local p-4">
             <div className="modal-local-content-review w-1/3 rounded">
                 <div className="modal-local-header flex justify-between">
                     <h4 className="modal-local-title text-center font-bold text-xl">

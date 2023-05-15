@@ -84,7 +84,7 @@ function StudentLoginModal(props) {
           Login with Google 🚀
         </button>
       )}
-      <div className="z-30 modal-local p-4">
+      <div className="z-[999] modal-local p-4">
         <div className="modal-local-content rounded">
           <div className="modal-local-header">
             <h4 className="modal-local-title text-center font-bold text-xl">
