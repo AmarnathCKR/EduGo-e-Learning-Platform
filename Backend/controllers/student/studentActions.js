@@ -24,6 +24,7 @@ const Order = require("../../database/Order");
 const Conversation = require("../../database/Conversation");
 const Message = require("../../database/Message");
 const { default: mongoose } = require("mongoose");
+const Review = require("../../database/Review");
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
@@ -553,16 +554,43 @@ exports.getStudentDetails = async (req, res) => {
 }
 
 exports.addNewReview = async (req, res) => {
-  const { id } = req.query;
+  const { id } = req.params;
   const data = { ...req.body, student: id }
-  await Review.create(data);
-  res.status(200).json("success");
+  let message;
+  await Review.create(data).then((res) => {
+    message = 'success'
+  })
+
+  res.status(200).json(message);
 };
 
 exports.deleteReview = async (req, res) => {
   const { reviewId } = req.query;
-  await Review.findByIdAndDelete({_id : reviewId})
+  await Review.findByIdAndDelete({ _id: reviewId })
   res.status(200).json("success");
 };
 
+exports.getReviews = async (req, res) => {
+  const { reviewId } = req.query;
+  console.log("reviewId"+reviewId)
+  const data = await Review.find({ courseId: reviewId }).populate("student")
+  if (data.length !== 0) {
+    res.status(200).json(data);
+  } else {
+    res.status(500).json(data);
+  }
 
+
+};
+
+
+exports.getMyReviews = async (req, res) => {
+  const { reviewId } = req.query;
+  const { id } = req.params;
+  const data = await Review.findOne({ courseId: reviewId, student: id }).populate("student")
+  if (data) {
+    res.status(200).json(data);
+  } else {
+    res.status(500).json(data);
+  }
+}

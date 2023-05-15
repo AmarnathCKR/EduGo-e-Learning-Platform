@@ -33,7 +33,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(
   cors({
-    origin: ["http://localhost:3000", "http://192.168.1.11:3000"],
+    origin: ["http://localhost:5000", "http://edugo.website","https://edugo.website"],
     methods: ["GET", "POST", "PUT", "DELETE", "PATCH"],
     credentials: true,
   })
@@ -54,7 +54,7 @@ const server = app.listen(5000, function () {
 const io = require("socket.io")(server, {
   pingTimeout: 60000,
   cors: {
-    origin: "http://localhost:3000",
+    origin: "http://api.edugo.website",
     methods: ["GET", "POST"],
     // origin: "http://localhost:3000",
   },

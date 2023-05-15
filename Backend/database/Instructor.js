@@ -21,6 +21,7 @@ const InstructorSchema = new mongoose.Schema(
     password: String,
     google: Boolean,
     status : Boolean,
+    payment : {}
   },
   { timestamps: true }
 );

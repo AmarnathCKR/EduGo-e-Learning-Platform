@@ -19,6 +19,8 @@ const {
   findCourseByID,
   ediInstructorCourse,
   generateOTP,
+  setPayment,
+  getAllPayments,
 } = require("../controllers/instructor/instructorActions");
 const instructorAuth = require("../middlewares/instructor/instructorAuth");
 const instructorProfileValidator = require("../middlewares/instructor/instructorProfileValidator");
@@ -57,5 +59,9 @@ router.get("/generate-otp", instructorAuth ,generateOTP)
 router.post("/send-message", instructorAuth , sendMessage)
 
 router.get("/get-message",instructorAuth, getMessage)
+
+router.post("/set-payment",instructorAuth,setPayment)
+
+router.get("/get-payment", instructorAuth,getAllPayments)
 
 module.exports = router;

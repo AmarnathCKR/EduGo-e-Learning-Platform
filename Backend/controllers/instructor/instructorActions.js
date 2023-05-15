@@ -6,6 +6,7 @@ const request = require("request");
 const nodemailer = require("nodemailer");
 const { Instructor } = require("../../database/Instructor");
 const { Course } = require("../../database/Course");
+const Order = require("../../database/Order");
 
 exports.updateProfile = async (req, res) => {
   const { id } = req.params;
@@ -272,4 +273,22 @@ exports.generateOTP = async (req, res) => {
   });
 
   res.json({result})
+}
+
+exports.setPayment = async (req,res)=>{
+  const { id} = req.params;
+  const data = await Instructor.findByIdAndUpdate({_id : id},{payment : req.body});
+
+  if(data){
+    res.status(200).json({data})
+  }
+  
+}
+
+exports.getAllPayments = async (req,res) => {
+  const {courseId} =req.query;
+  console.log("fdsfsdf")
+  const orders = await Order .find({courseId : courseId}).populate("user")
+  console.log(orders)
+  res.status(200).json({orders})
 }

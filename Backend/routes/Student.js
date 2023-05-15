@@ -19,6 +19,8 @@ const {
   getStudentDetails,
   addNewReview,
   deleteReview,
+  getReviews,
+  getMyReviews,
 
 } = require("../controllers/student/studentActions");
 const {
@@ -76,7 +78,12 @@ router.get("/get-message", studentAuth, getAllMessages)
 
 router.get("/get-student", getStudentDetails)
 
-router.get("/add-review", studentAuth, addNewReview)
+router.post("/add-review", studentAuth, addNewReview)
+
+router.get("/get-review", studentAuth,getReviews)
+
+router.get("/get-my-review", studentAuth,getMyReviews)
+
 
 router.get("/delete-review", studentAuth, deleteReview)
 
