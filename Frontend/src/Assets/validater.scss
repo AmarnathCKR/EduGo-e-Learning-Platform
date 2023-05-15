@@ -1,0 +1,65 @@
+$button-color: magenta;
+
+html, body, * {
+  box-sizing: border-box;
+  font-family: Helvetica, Arial, sans-serif;
+}
+
+h1 {
+  text-align: center;
+}
+
+input {
+  padding: 1em;
+  margin: 0.5em 0;
+  display: block;
+}
+
+
+main {
+   
+    font-weight: 700;
+    margin: 1em auto;
+    padding: 0.2em;
+    width: 100%;
+  }
+  
+  
+  
+  .input-group-local {
+    width: 60%;
+    display: inline-block;
+    position: relative;
+  
+  
+    input {
+      width: 100%;
+      border-radius: 5px;
+      border: 1px solid gray;
+    }
+  
+    label {
+      text-transform: uppercase;
+      font-weight: 400;
+      font-size: 14px;
+    }
+  
+    svg {
+      position: absolute;
+      right: 10px;
+      bottom: 30%;
+    }
+  }
+  
+  .multi-input-local {
+    margin-top: 20px;
+    width: 60%;
+    display: flex;
+    gap: 10px;
+  }
+  
+  small {
+    color: red;
+    font-size: 10px;
+    display: block;
+  }

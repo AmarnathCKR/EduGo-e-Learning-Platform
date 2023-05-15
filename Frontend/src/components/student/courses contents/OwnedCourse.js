@@ -161,7 +161,7 @@ function OwnedCourse() {
                             </div>
                         </>}
                         {menuID === "review" && <>
-                            <Reviews open={()=>setReviewToggle(!toggleReview)}/>
+                            <Reviews review={toggleReview} course={course?._id} open={()=>setReviewToggle(!toggleReview)}/>
                         </>}
                     </div>
 
@@ -169,7 +169,7 @@ function OwnedCourse() {
                 </div>
             </div>
             {chat && <ChatModal course={course?.instructor} close={() => setChat(!chat)} />}
-            {toggleReview && <RatingModal close={()=>setReviewToggle(!toggleReview)} />}
+            {toggleReview && <RatingModal course={course?._id} close={()=>setReviewToggle(!toggleReview)} />}
             <FooterLanding />
         </>
     )

@@ -1,12 +1,12 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useContext, useEffect, useRef, useState } from 'react'
 import { useSelector } from 'react-redux';
 import Header from '../layouts/Header';
 import Footer from '../layouts/Footer';
 import Message from '../../student/message/Message';
 import { createAny, getAnyData } from '../../../api/instructorAPI';
-import { postAnyStudentApi } from '../../../api/studentAPI';
 import { SocketContext } from '../../../helper/socketContext';
-import { BsSend, BsSendCheck } from 'react-icons/bs';
+import { BsSendCheck } from 'react-icons/bs';
 
 
 function InstructorChat() {

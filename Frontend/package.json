@@ -28,6 +28,7 @@
     "react": "^18.2.0",
     "react-bootstrap": "^2.7.4",
     "react-country-region-selector": "^3.6.1",
+    "react-creditcard-validator": "^1.0.6",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-dropzone-uploader": "^2.11.0",

@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useEffect,  useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
@@ -11,6 +11,7 @@ import { getAnyDataStudentAPI } from "../../../api/studentAPI";
 import HeaderLanding from "../layouts/HeaderLanding";
 import FooterLanding from "../layouts/FooterLanding";
 import { FaAngleRight } from "react-icons/fa";
+import Reviews from "../Reviews/Reviews";
 
 
 function SingleStudentCourse() {
@@ -68,7 +69,7 @@ function SingleStudentCourse() {
 
   const navigate = useNavigate();
 
-  
+
 
   const contents = courses?.topics?.map((item, index) => (
     <div key={item.name} className=" w-full group ">
@@ -127,6 +128,8 @@ function SingleStudentCourse() {
                 }
 
               </div>
+
+
             </div>
 
           </>
@@ -138,6 +141,10 @@ function SingleStudentCourse() {
               <p className="md:text-lg text-sm font-medium md:mx-0 mx-3 mb-5">{courses.description}</p>
               <h1 className="my-2 font-bold md:text-2xl text-xl md:mx-0 mx-3">Course Module Details</h1>
               {contents}
+              <div className="w-full">
+              {courses?._id && <Reviews browse={true} review={courses} course={courses?._id} open={()=>{}} />}
+
+              </div>
             </div>
             <div className="md:p-5 p-2 md:col-span-2 col-span-5 flex flex-col align-middle justify-start items-center">
               <p className="flex align-middle p-8 justify-center items-center w-full"><span className="border-[#baafaf] border p-2 mx-2 rounded-full"><TbCertificate size="35px" /></span><span className="flex flex-col"><h1 className="text-xl font-bold">Certificate</h1><h4>Earn a Certificate upon completion</h4></span></p>
@@ -155,6 +162,9 @@ function SingleStudentCourse() {
                 {owned ? <button onClick={() => { navigate(`/purcase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 md:p-3 p-2 text-sm text-black tracking-wide w-3/4 font-bold shadow-[#1f4077] hover:shadow-lg">Go back to Learning</button>
                   : <button onClick={() => { navigate(`/purchase-course/:${courses._id}`, { state: courses._id }) }} className="border-2 md:p-3 p-2 text-sm text-black tracking-wide w-3/4 font-bold shadow-[#1f4077] hover:shadow-lg">Enroll Now for ₹{courses.price}</button>
                 }
+              </div>
+              <div className="w-full my-2 flex-col font-semibold md:text-xl text-lg text-white flex justify-center items-center text-left ">
+
               </div>
             </div>
           </div>

@@ -38,6 +38,12 @@ body {
   background-color: #fff;
 }
 
+.modal-local-content-pay {
+  width: 600px;
+  width: 500px;
+  background-color: #fff;
+}
+
 .modal-local-content-chat  {
   
   width: 720px;
@@ -59,6 +65,12 @@ body {
 }
 
 .modal-local-body {
+  padding: 10px;
+  border-top: 1px solid #eee;
+  border-bottom: 1px solid #eee;
+}
+
+.modal-local-body-pay {
   padding: 10px;
   border-top: 1px solid #eee;
   border-bottom: 1px solid #eee;
@@ -127,3 +139,4 @@ body {
 @import "@fontsource/roboto/400.css";
 @import "@fontsource/roboto/500.css";
 @import "@fontsource/roboto/700.css";
+

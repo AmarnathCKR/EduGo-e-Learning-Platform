@@ -63,6 +63,8 @@ function ChatModal(props) {
 
   const handleSubmit = (e) => {
     e.preventDefault()
+    if(input!==""){
+      
     postAnyStudentApi("send-message", { sender: student._id, text: input, instructor: props?.course?._id }, token)
       .then((res) => {
         socket.emit('sendMessage', res.data, () => setInput(''))
@@ -72,6 +74,7 @@ function ChatModal(props) {
 
     return setInput("");
     /// submit
+    }
   }
   useEffect(() => {
     scrollRef.current?.scrollIntoView({

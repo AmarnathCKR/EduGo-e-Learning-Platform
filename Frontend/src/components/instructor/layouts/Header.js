@@ -213,9 +213,11 @@ function Header(props) {
                                 Manage Course
                               </span>
                             </Link>
-                            <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
-                              Payments
-                            </span>
+                            <Link to="/instructor/payments">
+                              <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                                Payments
+                              </span>
+                            </Link>
                             <Link to="/instructor/chat">
                               <span className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                                 Chat
@@ -309,6 +311,11 @@ function Header(props) {
                 <Link to="/instructor/chat">
                   <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
                     Chat
+                  </div>
+                </Link>
+                <Link to="/instructor/payments">
+                  <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
+                    Payments
                   </div>
                 </Link>
                 <div
