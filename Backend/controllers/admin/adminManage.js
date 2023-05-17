@@ -417,14 +417,15 @@ exports.editCoupon = async (req, res) => {
 
 exports.getMonthlyData = async (req, res) => {
   const { year } = req.query;
+  const month = parseInt(year)
 
 
   const studentData = await Student.aggregate([
     {
       $match: {
         createdAt: {
-          $gte: new Date(`${year}-01-01T00:00:00Z`),
-          $lt: new Date(`${year + 1}-01-01T00:00:00Z`)
+          $gte: new Date(`${month}-01-01T00:00:00Z`),
+          $lt: new Date(`${month + 1}-01-01T00:00:00Z`)
         }
       }
     },
@@ -473,8 +474,8 @@ exports.getMonthlyData = async (req, res) => {
     {
       $match: {
         createdAt: {
-          $gte: new Date(`${year}-01-01T00:00:00Z`),
-          $lt: new Date(`${year + 1}-01-01T00:00:00Z`)
+          $gte: new Date(`${month}-01-01T00:00:00Z`),
+          $lt: new Date(`${month + 1}-01-01T00:00:00Z`)
         }
       }
     },
