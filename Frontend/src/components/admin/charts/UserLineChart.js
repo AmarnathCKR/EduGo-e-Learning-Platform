@@ -123,17 +123,18 @@ export function UserLineChart() {
             <div className="z-[999]  p-64 loader-local ">
               <CircleSpinner size={40} color="#000000" loading={loading} />
             </div>}
-            <div className='grid md:grid-cols-2 grid-cols-1 '>
-                <div><p>The Total number of students registered on {year} : {userData?.student?.reduce(function (x, y) {
+            <p className='text-center text-xl font-semibold my-2'>User Statistics</p>
+            <div className='grid md:grid-cols-2 text-sm grid-cols-1 '>
+                <div><p>Students registered on {year} : {userData?.student?.reduce(function (x, y) {
                     return x + y;
                 }, 0)}</p>
-                    <p>The Total number of Instructors registered on {year} : {userData?.instructor?.reduce(function (x, y) {
+                    <p>Instructors registered on {year} : {userData?.instructor?.reduce(function (x, y) {
                         return x + y;
                     }, 0)}</p></div>
 
-                <div className='flex justify-end'>
+                <div className='flex justify-end items-center'>
                     <p>Choose a year :</p>
-                    <select onChange={(e)=>setYear(e.target.value)}>
+                    <select className='bg-slate-100 ml-2 rounded p-2' onChange={(e)=>setYear(e.target.value)}>
                         <option value={new Date().getFullYear()} >{new Date().getFullYear()}</option>
                         <option value={new Date().getFullYear() - 1}>{new Date().getFullYear() - 1}</option>
 

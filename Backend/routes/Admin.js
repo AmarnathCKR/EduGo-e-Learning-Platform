@@ -1,5 +1,5 @@
 const { adminLogin } = require("../controllers/admin/adminAuth");
-const { createFields, fetchAllFields, blockField, getField, editField, getAllCourse, getCourseData, changeCourse, createCoupons, fetchAllCoupons, blockCoupon, getCoupon, editCoupon, getMonthlyData } = require("../controllers/admin/adminManage");
+const { createFields, fetchAllFields, blockField, getField, editField, getAllCourse, getCourseData, changeCourse, createCoupons, fetchAllCoupons, blockCoupon, getCoupon, editCoupon, getMonthlyData, getAllAdminData, getAllOrder } = require("../controllers/admin/adminManage");
 const adminAccess = require("../middlewares/admin/adminAccess");
 
 const router = require("express").Router();
@@ -39,6 +39,11 @@ router.get("/fetch-course", adminAccess, getAllCourse)
 router.get("/get-course", adminAccess, getCourseData)
 
 router.get("/get-analytic", adminAccess,getMonthlyData)
+
+router.get("/get-users", adminAccess,getAllAdminData)
+
+router.get("/get-all", adminAccess,getAllOrder)
+
 
 
 router.patch("/course-status", adminAccess, changeCourse)

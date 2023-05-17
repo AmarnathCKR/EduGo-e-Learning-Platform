@@ -8,6 +8,7 @@ const { Admin } = require("../../database/Admin");
 const { FieldCategory } = require("../../database/FieldCategory");
 const Coupon = require("../../database/Coupon");
 const { Student } = require("../../database/Student");
+const Order = require("../../database/Order");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -524,4 +525,20 @@ exports.getMonthlyData = async (req, res) => {
 
 
 
+}
+
+
+exports.getAllAdminData = async (req,res)=>{
+  const student = await Student.count()
+  const instructor = await Instructor.count()
+  const course = await Course.count()
+
+  const total = student + instructor;
+  res.status(200).json({student,instructor,total,course})
+}
+
+exports.getAllOrder = async (req,res)=>{
+  const order = await Order.find();
+  res.status(200).json(order)
+  
 }

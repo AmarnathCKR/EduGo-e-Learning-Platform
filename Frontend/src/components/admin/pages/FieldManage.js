@@ -10,7 +10,7 @@ function FieldManage() {
     setShow(!show)
   }
   const style = {
-    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3)), url("https://res.cloudinary.com/dqrpxoouq/image/upload/v1683623573/axe1hjkpnybiqoo5fkhb.jpg")`,
+    backgroundImage: `linear-gradient(rgba(0, 0, 0, 0.3),rgba(0, 0, 0, 0.3)), url("https://res.cloudinary.com/dqrpxoouq/image/upload/v1684328058/szg637qgt6fqcjxlzufh.jpg")`,
     backgroundPosition: "70% 0%",
     backgroundSize: "cover"
   };
