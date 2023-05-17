@@ -1,6 +1,6 @@
 import { IoIosArrowDropdown } from "react-icons/io";
 import React from "react";
-import { ControlBar, Player } from "video-react";
+import ReactPlayer from 'react-player';
 
 import { useSelector } from "react-redux";
 import { toast } from "react-toastify";
@@ -25,12 +25,21 @@ function CourseViewModal(props) {
         <br />
         {item.description}
         <p className="text-center font-medium">Content Video</p>
-        <Player
-          className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-          src={item.video}
-        >
-          <ControlBar autoHide={false} className="my-class" />
-        </Player>
+        <ReactPlayer
+          className={"md:h-96 h-full z-20"}
+          url={item.video}
+          width='100%'
+
+          controls={true}
+          config={{
+            file: {
+              attributes: {
+                controlsList: 'nodownload',
+              },
+            },
+          }}
+
+        />
       </div>
     </div>
   ));
@@ -138,12 +147,21 @@ function CourseViewModal(props) {
                           Course Overview :{" "}
                         </span>{" "}
                       </h1>
-                      <Player
-                        className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-                        src={props.data.video}
-                      >
-                        <ControlBar autoHide={false} className="my-class" />
-                      </Player>
+                      <ReactPlayer
+                        className={"md:h-96 h-full z-20"}
+                        url={props.data.video}
+                        width='100%'
+
+                        controls={true}
+                        config={{
+                          file: {
+                            attributes: {
+                              controlsList: 'nodownload',
+                            },
+                          },
+                        }}
+
+                      />
                     </div>
 
                     <div className=" text-start grid grid-cols-2 text-lg  py-5 w-full">

@@ -538,7 +538,7 @@ exports.getAllAdminData = async (req,res)=>{
 }
 
 exports.getAllOrder = async (req,res)=>{
-  const order = await Order.find();
-  res.status(200).json(order)
+  const orders = await Order.find();
+  res.status(200).json(orders)
   
 }

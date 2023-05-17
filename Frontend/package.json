@@ -51,7 +51,6 @@
     "socket.io-client": "^4.6.1",
     "timeago.js": "^4.0.2",
     "uuidv4": "^6.2.13",
-    "video-react": "^0.16.0",
     "video.js": "^8.3.0",
     "videojs-contrib-hls": "^5.15.0",
     "web-vitals": "^2.1.4",

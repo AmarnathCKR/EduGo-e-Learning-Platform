@@ -8,7 +8,8 @@ import Footer from "../layouts/Footer";
 import { getAnyData } from "../../../api/instructorAPI";
 import { IoIosArrowDropdown, } from "react-icons/io";
 import { BiEditAlt } from "react-icons/bi";
-import { ControlBar, Player } from "video-react";
+import ReactPlayer from 'react-player';
+
 
 function SingleCourse() {
   const [courses, setCourse] = useState([]);
@@ -47,12 +48,21 @@ function SingleCourse() {
         <br />
         {item.description}
         <p className="text-center font-medium">Content Video</p>
-        <Player
-          className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-          src={item.video}
-        >
-          <ControlBar autoHide={false} className="my-class" />
-        </Player>
+        <ReactPlayer
+          className={"md:h-96 h-full z-20"}
+          url={item.video}
+          width='100%'
+
+          controls={true}
+          config={{
+            file: {
+              attributes: {
+                controlsList: 'nodownload',
+              },
+            },
+          }}
+
+        />
       </div>
     </div>
   ));
@@ -122,12 +132,21 @@ function SingleCourse() {
                           Course Overview :{" "}
                         </span>{" "}
                       </h1>
-                      <Player
-                        className="h-96 w-full md:w-1/3 mx-auto max-w-fit"
-                        src={courses.video}
-                      >
-                        <ControlBar autoHide={false} className="my-class" />
-                      </Player>
+                      <ReactPlayer
+                        className={"md:h-96 h-full z-20"}
+                        url={courses.video}
+                        width='100%'
+
+                        controls={true}
+                        config={{
+                          file: {
+                            attributes: {
+                              controlsList: 'nodownload',
+                            },
+                          },
+                        }}
+
+                      />
                     </div>
                     <div className="flex flex-col my-5 w-full">
                       <button onClick={() => { navigate(`/instructor/update-course/:${courses._id}`, { state: courses._id }) }} className="bg-black flex rounded border justify-center text-center text-2xl text-white p-3"><BiEditAlt size="30" color="white" /><h1 className="mx-3">Edit Course Details</h1></button>

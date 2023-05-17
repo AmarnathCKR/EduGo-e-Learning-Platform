@@ -4,16 +4,19 @@ import { getAnyAdmin } from '../../../api/adminAPI'
 function OrderDetails(props) {
     const [data, setData] = useState()
     useEffect(() => {
-        props.setLoading(true)
-        getAnyAdmin("get-all", props.token)
-            .then((res) => {
-                setData(res.data)
-                props.setLoading(false)
-            }).catch((err) => {
-                console.log(err)
-                props.setLoading(false)
-            })
-    })
+        if(props?.token){
+
+            props.setLoading(true)
+            getAnyAdmin("get-all", props?.token)
+                .then((res) => {
+                    setData(res.data)
+                    props.setLoading(false)
+                }).catch((err) => {
+                    console.log(err)
+                    props.setLoading(false)
+                })
+        }
+    },[ ])
     return (
         <div className='w-full overflow-x-auto my-6 bg-neutral-200 md:p-10 p-2'>
             <div className='flex md:flex-row gap-3 flex-col'>
