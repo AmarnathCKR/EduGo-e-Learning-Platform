@@ -518,6 +518,8 @@ exports.getMonthlyData = async (req, res) => {
 
   console.log(instructorData)
 
+  res.status(200).json({ student: studentData, instructor: instructorData })
+
 
 
 }
