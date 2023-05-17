@@ -538,7 +538,8 @@ exports.getAllAdminData = async (req,res)=>{
 }
 
 exports.getAllOrder = async (req,res)=>{
-  const orders = await Order.find();
+  const orders = await Order.find().populate("user");
+  console.log(orders)
   res.status(200).json(orders)
   
 }
