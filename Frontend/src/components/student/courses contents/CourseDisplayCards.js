@@ -156,6 +156,7 @@ const CourseDisplayCards = (props) => {
         {courses === [] ? <p className="">No Courses Found</p> : <>{courses.map((data) => (
           <>
             <div
+            className="cursor-pointer"
               onClick={() => {
                 navigate(
                   `${props.link ? "/owned-course" : "/coursePage"}/:${props.link ? data?.courseId?._id : data?._id

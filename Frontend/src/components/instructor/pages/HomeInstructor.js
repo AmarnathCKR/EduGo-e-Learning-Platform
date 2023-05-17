@@ -70,16 +70,16 @@ function HomeInstructor() {
         className=" z-10 w-100% h-screen bg-no-repeat bg-cover mt-20  saturate-150 flex md:justify-start justify-center bg-center items-center"
         style={style}
       >
-        <div className="w-80 mx-32">
+        <div className="w-80 flex flex-col justify-center mx-32">
           <h1 className="text-6xl text-neutral-50">Come teach with us</h1>
-          <p className="my-4 text-neutral-50">
+          <p className="my-4 text-center text-neutral-50">
             Become an instructor and change <br></br>lives — including your own
           </p>
           <button
             onClick={() => {
               setShow(true);
             }}
-            className="border bg-neutral-900 text-white p-2"
+            className="border bg-neutral-900 text-center text-white p-2"
           >
             Get Started
           </button>

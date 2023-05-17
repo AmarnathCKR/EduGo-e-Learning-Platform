@@ -131,7 +131,7 @@ function PaymentPage() {
             </div>
             <div className='flex flex-col'>
                 {course[0] && course?.map((items) =>
-                    <PaymentCards course={items._id} />
+                    <PaymentCards course={items} />
                 )}
             </div>
             <Footer />

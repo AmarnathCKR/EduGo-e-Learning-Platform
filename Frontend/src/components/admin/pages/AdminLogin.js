@@ -47,7 +47,7 @@ function AdminLogin() {
       className="flex justify-end items-center align-middle w-screen h-screen "
       style={style}
     >
-      <div className="z-30 modal-local justify-end p-4 ">
+      <div className="z-30 modal-local justify-center p-4 ">
         <div className=" bg-white md:w-1/2 w-full p-2 mx-3 h-auto rounded bg-opacity-70 flex justify-center  items-center align-middle">
           <div className="w-full">
             <div className="flex my-4 mx-2 items-center align-middle">

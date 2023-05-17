@@ -128,8 +128,8 @@ function Header(props) {
         {menuToggler ? (
           <>
             <div className="my-2 col-span-4">
-              <div className="border rounded-xl p-1 mt-1 py-2 flex">
-                <div className="my-2 mx-2">
+              <div className="border rounded-xl p-1 mt-1 py-1 flex items-center">
+                <div className="my-3 mx-2">
                   <Icon icon="material-symbols:search" />
                 </div>
                 <div className="grow">
@@ -138,7 +138,7 @@ function Header(props) {
                     value={searchKeyword}
                     onChange={handleInputChange}
                     onKeyDown={(event) => handleKeyDown(event, -1)}
-                    className="w-full border-none bg-white rounded py-1 text-gray-700bg-white focus:outline-none items-center"
+                    className="w-full border-none bg-white rounded py-0 text-gray-700bg-white focus:outline-none items-center"
                     type="text"
                     placeholder="Search anything"
                   />

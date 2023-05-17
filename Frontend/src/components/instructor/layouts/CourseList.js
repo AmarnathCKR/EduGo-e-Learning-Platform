@@ -12,12 +12,11 @@ function CourseList(props) {
   return (
     <>{props?.course?.map((data) => {
       return (
-        <div key={data._id} onClick={() => { navigate(`/instructor/coursePage/:${data._id}`, { state: data._id }) }}>
+        <div className="w-full" key={data._id} onClick={() => { navigate(`/instructor/coursePage/:${data._id}`, { state: data._id }) }}>
 
-          <section class="bg-white pt-5 pb-10 ">
-            <div class="container mx-auto">
-              <div class="-mx-4 flex flex-wrap">
-                <div class="w-full px-4 md:w-1/2 xl:w-1/3">
+          
+              <div class="-mx-4 flex w-full flex-wrap">
+                <div class="w-full px-4">
                   <div class="mb-10 overflow-hidden rounded-lg bg-white">
                     <img
                       src={data.image}
@@ -47,8 +46,7 @@ function CourseList(props) {
                 </div>
 
               </div>
-            </div>
-          </section>
+            
 
         </div>
       );

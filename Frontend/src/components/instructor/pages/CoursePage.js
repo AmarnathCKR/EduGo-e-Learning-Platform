@@ -85,7 +85,7 @@ function CoursePage() {
               </Link>
             </div>
           )}
-          <div className=" pt-2  flex justify-center border-b">
+          <div className=" pt-2  grid md:grid-cols-4 grid-cols-1 border-b">
             {!course[0] ? <CreateCourse /> : <CourseList course={course} />}
           </div>
           <div className="flex justify-center mt-10 text-center">

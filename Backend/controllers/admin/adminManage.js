@@ -7,6 +7,7 @@ const { Course } = require("../../database/Course");
 const { Admin } = require("../../database/Admin");
 const { FieldCategory } = require("../../database/FieldCategory");
 const Coupon = require("../../database/Coupon");
+const { Student } = require("../../database/Student");
 
 const createToken = (_id) => {
   return jwt.sign({ _id }, process.env.JWT, { expiresIn: "1d" });
@@ -20,7 +21,7 @@ exports.createFields = async (req, res) => {
       name: name,
       tag: tag,
       image: image,
-      status : true
+      status: true
     })
       .save()
       .then((result) => {
@@ -48,7 +49,7 @@ exports.createFields = async (req, res) => {
 };
 
 exports.fetchAllFields = async (req, res) => {
-  
+
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 100;
   const sortField = req.query.sortField || "name";
@@ -69,10 +70,10 @@ exports.fetchAllFields = async (req, res) => {
     .limit(pageSize)
     .exec();
 
-    console.log(data.length)
+  console.log(data.length)
 
   const result = await data.map((item) => {
-    return { id: item._id, image: item.image, name: item.name, tag: item.tag ,ref : item._id, status : item.status};
+    return { id: item._id, image: item.image, name: item.name, tag: item.tag, ref: item._id, status: item.status };
   });
 
   res.json({
@@ -81,17 +82,17 @@ exports.fetchAllFields = async (req, res) => {
   });
 };
 
-exports.blockField = async (req,res) =>{
-  let {id, status} = req.query;
-  const data = await FieldCategory.findOne({_id : id})
-  if(data.status == false){
+exports.blockField = async (req, res) => {
+  let { id, status } = req.query;
+  const data = await FieldCategory.findOne({ _id: id })
+  if (data.status == false) {
     status = true
   }
 
-  if(data.status == true){
+  if (data.status == true) {
     status = false
   }
-  await FieldCategory.findByIdAndUpdate(id,{status : status}).then((result)=>{
+  await FieldCategory.findByIdAndUpdate(id, { status: status }).then((result) => {
     const success = {
       status: true,
       content: {
@@ -99,16 +100,16 @@ exports.blockField = async (req,res) =>{
       },
     };
     res.status(200).send({ data: success });
-  }).catch((err)=>{
+  }).catch((err) => {
     console.log(err)
   })
 }
 
-exports.getField = async (req,res) => {
-  const {id} = req.query;
-  
-  const data = await FieldCategory.findOne({_id : id})
-  if(data){
+exports.getField = async (req, res) => {
+  const { id } = req.query;
+
+  const data = await FieldCategory.findOne({ _id: id })
+  if (data) {
     const success = {
       status: true,
       content: {
@@ -116,7 +117,7 @@ exports.getField = async (req,res) => {
       },
     };
     res.status(200).send({ data: success });
-  }else{
+  } else {
     const emailError = {
       status: false,
       errors: [
@@ -133,14 +134,14 @@ exports.getField = async (req,res) => {
 }
 
 
-exports.editField = async (req,res) => {
-  const {id} = req.query;
-  const {name, tag, image} = req.body;
-  await FieldCategory.findByIdAndUpdate(id,{
-    name : name,
-    tag : tag,
-    image : image
-  }).then((response)=>{
+exports.editField = async (req, res) => {
+  const { id } = req.query;
+  const { name, tag, image } = req.body;
+  await FieldCategory.findByIdAndUpdate(id, {
+    name: name,
+    tag: tag,
+    image: image
+  }).then((response) => {
     const success = {
       status: true,
       content: {
@@ -148,7 +149,7 @@ exports.editField = async (req,res) => {
       },
     };
     res.status(200).send({ data: success });
-  }).catch((err)=>{
+  }).catch((err) => {
     const emailError = {
       status: false,
       errors: [
@@ -163,7 +164,7 @@ exports.editField = async (req,res) => {
   })
 }
 
-exports.getAllCourse = async (req,res) => {
+exports.getAllCourse = async (req, res) => {
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 100;
   const sortField = req.query.sortField || "name";
@@ -184,11 +185,11 @@ exports.getAllCourse = async (req,res) => {
     .limit(pageSize)
     .exec();
 
-    console.log(data.length)
-    
+  console.log(data.length)
+
   const result = await data.map((item) => {
-    
-    return { image: item.image, name: item.name, instructor: item.instructor.name, headline: item.headline ,id : item._id, status : item.status};
+
+    return { image: item.image, name: item.name, instructor: item.instructor.name, headline: item.headline, id: item._id, status: item.status };
   });
 
   res.json({
@@ -198,11 +199,11 @@ exports.getAllCourse = async (req,res) => {
 }
 
 
-exports.getCourseData = async (req,res) => {
-  const {id} = req.query;
-  
-  const data = await Course.findOne({_id : id}).populate("instructor").populate("field")
-  if(data){
+exports.getCourseData = async (req, res) => {
+  const { id } = req.query;
+
+  const data = await Course.findOne({ _id: id }).populate("instructor").populate("field")
+  if (data) {
     console.log(data)
     const success = {
       status: true,
@@ -211,7 +212,7 @@ exports.getCourseData = async (req,res) => {
       },
     };
     res.status(200).send({ data: success });
-  }else{
+  } else {
     const emailError = {
       status: false,
       errors: [
@@ -227,12 +228,12 @@ exports.getCourseData = async (req,res) => {
 
 }
 
-exports.changeCourse = async (req, res)=>{
-  const {id, status}= req.body;
-  await Course.findByIdAndUpdate(id,{
-    status : status
-  }).then((response)=>{
-    
+exports.changeCourse = async (req, res) => {
+  const { id, status } = req.body;
+  await Course.findByIdAndUpdate(id, {
+    status: status
+  }).then((response) => {
+
     const success = {
       status: true,
       content: {
@@ -240,7 +241,7 @@ exports.changeCourse = async (req, res)=>{
       },
     };
     res.status(200).send({ data: success });
-  }).catch((err)=>{
+  }).catch((err) => {
     const emailError = {
       status: false,
       errors: [
@@ -270,7 +271,7 @@ exports.createCoupons = async (req, res) => {
       name: name,
       discount: discount,
       expirationTime: expirationTime,
-      status : true
+      status: true
     })
       .save()
       .then((result) => {
@@ -298,7 +299,7 @@ exports.createCoupons = async (req, res) => {
 };
 
 exports.fetchAllCoupons = async (req, res) => {
-  
+
   const page = parseInt(req.query.page) || 1;
   const pageSize = parseInt(req.query.pageSize) || 100;
   const sortCoupon = req.query.sortCoupon || "name";
@@ -319,10 +320,10 @@ exports.fetchAllCoupons = async (req, res) => {
     .limit(pageSize)
     .exec();
 
-    console.log(data.length)
+  console.log(data.length)
 
   const result = await data.map((item) => {
-    return { id: item._id, name: item.name, discount: item.discount, expirationTime: item.expirationTime ,ref : item._id, status : item.status};
+    return { id: item._id, name: item.name, discount: item.discount, expirationTime: item.expirationTime, ref: item._id, status: item.status };
   });
 
   res.json({
@@ -331,17 +332,17 @@ exports.fetchAllCoupons = async (req, res) => {
   });
 };
 
-exports.blockCoupon = async (req,res) =>{
-  let {id, status} = req.query;
-  const data = await Coupon.findOne({_id : id})
-  if(data.status == false){
+exports.blockCoupon = async (req, res) => {
+  let { id, status } = req.query;
+  const data = await Coupon.findOne({ _id: id })
+  if (data.status == false) {
     status = true
   }
 
-  if(data.status == true){
+  if (data.status == true) {
     status = false
   }
-  await Coupon.findByIdAndUpdate(id,{status : status}).then((result)=>{
+  await Coupon.findByIdAndUpdate(id, { status: status }).then((result) => {
     const success = {
       status: true,
       content: {
@@ -349,16 +350,16 @@ exports.blockCoupon = async (req,res) =>{
       },
     };
     res.status(200).send({ data: success });
-  }).catch((err)=>{
+  }).catch((err) => {
     console.log(err)
   })
 }
 
-exports.getCoupon = async (req,res) => {
-  const {id} = req.query;
-  
-  const data = await Coupon.findOne({_id : id})
-  if(data){
+exports.getCoupon = async (req, res) => {
+  const { id } = req.query;
+
+  const data = await Coupon.findOne({ _id: id })
+  if (data) {
     const success = {
       status: true,
       content: {
@@ -366,7 +367,7 @@ exports.getCoupon = async (req,res) => {
       },
     };
     res.status(200).send({ data: success });
-  }else{
+  } else {
     const emailError = {
       status: false,
       errors: [
@@ -383,14 +384,14 @@ exports.getCoupon = async (req,res) => {
 }
 
 
-exports.editCoupon = async (req,res) => {
-  const {id} = req.query;
-  const {name, discount, expirationTime} = req.body;
-  await Coupon.findByIdAndUpdate(id,{
-    name : name,
-    discount : discount,
-    expirationTime : expirationTime
-  }).then((response)=>{
+exports.editCoupon = async (req, res) => {
+  const { id } = req.query;
+  const { name, discount, expirationTime } = req.body;
+  await Coupon.findByIdAndUpdate(id, {
+    name: name,
+    discount: discount,
+    expirationTime: expirationTime
+  }).then((response) => {
     const success = {
       status: true,
       content: {
@@ -398,7 +399,7 @@ exports.editCoupon = async (req,res) => {
       },
     };
     res.status(200).send({ data: success });
-  }).catch((err)=>{
+  }).catch((err) => {
     const emailError = {
       status: false,
       errors: [
@@ -411,4 +412,97 @@ exports.editCoupon = async (req,res) => {
     };
     res.status(409).send({ data: emailError });
   })
+}
+
+
+exports.getMonthlyData = async (req, res) => {
+  const { student, instructor } = req.query;
+
+  if (student) {
+    const studentData = await Student.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          counts: { $push: { k: "$_id", v: "$count" } }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          counts: {
+            $map: {
+              input: { $range: [1, 13] },
+              as: "month",
+              in: {
+                $switch: {
+                  branches: [
+                    {
+                      case: { $in: ["$$month", "$counts.k"] },
+                      then: { $arrayElemAt: ["$counts.v", { $indexOfArray: ["$counts.k", "$$month"] }] }
+                    }
+                  ],
+                  default: 0
+                }
+              }
+            }
+          }
+        }
+      }
+    ])
+
+    console.log(studentData)
+    res.status(200).json({studentData})
+  }
+
+  if (instructor) {
+    const instructorData = await Instructor.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: null,
+          counts: { $push: { k: "$_id", v: "$count" } }
+        }
+      },
+      {
+        $project: {
+          _id: 0,
+          counts: {
+            $map: {
+              input: { $range: [1, 13] },
+              as: "month",
+              in: {
+                $switch: {
+                  branches: [
+                    {
+                      case: { $in: ["$$month", "$counts.k"] },
+                      then: { $arrayElemAt: ["$counts.v", { $indexOfArray: ["$counts.k", "$$month"] }] }
+                    }
+                  ],
+                  default: 0
+                }
+              }
+            }
+          }
+        }
+      }
+    ])
+
+    console.log(instructorData)
+    res.status(200).json({instructorData})
+  }
+
+
+
+
 }

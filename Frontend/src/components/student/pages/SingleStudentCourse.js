@@ -104,7 +104,7 @@ function SingleStudentCourse() {
             <div className={active ? "grid md:grid-cols-2 grid-cols-1  text-center text-white bg-gradient-to-r from-[#1f4077] to-[#588de2] p-1 w-full md:h-24 h-32 align-middle justify-items-center justify-center items-center fixed" : "grid md:grid-cols-2 grid-cols-1  text-center text-white bg-gradient-to-r from-[#1f4077] to-[#588de2] md:p-5 p-1 w-full h-96 align-middle justify-items-center justify-center items-center"} >
               <div className="flex flex-col md:p-5 p-1 md:px-1 px-5">
                 <p className={active ? " text-left md:text-lg text-base md:my-3 my-0 align-middle items-center hidden" : " text-left md:text-lg text-base my-3 flex align-middle items-center"}>Browse<span><FaAngleRight /></span>{courses?.field?.name}<span><FaAngleRight /></span> </p>
-                <p className={active ? "md:font-black font-bold text-left md:text-2xl text-lg md:my-3" : "font-black text-left md:text-3xl text-lg my-3"}>{courses.name}</p>
+                <p className={active ? "md:font-black font-bold text-left md:text-xl text-lg md:my-3" : "font-black text-left md:text-2xl text-lg my-3"}>{courses.name}</p>
 
                 <div className={active ? "hidden items-center my-2" : "flex items-center my-2"}>
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-yellow-500" viewBox="0 0 20 20"
