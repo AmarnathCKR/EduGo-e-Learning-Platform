@@ -423,8 +423,8 @@ exports.getMonthlyData = async (req, res) => {
     {
       $match: {
         createdAt: {
-          $gte: ISODate(`${year}-01-01T00:00:00Z`),
-          $lt: ISODate(`${year + 1}-01-01T00:00:00Z`)
+          $gte: new Date(`${year}-01-01T00:00:00Z`),
+          $lt: new Date(`${year + 1}-01-01T00:00:00Z`)
         }
       }
     },
@@ -464,7 +464,7 @@ exports.getMonthlyData = async (req, res) => {
     }
   ])
   console.log(studentData[0].count)
-  
+
 
 
 
@@ -473,8 +473,8 @@ exports.getMonthlyData = async (req, res) => {
     {
       $match: {
         createdAt: {
-          $gte: ISODate(`${year}-01-01T00:00:00Z`),
-          $lt: ISODate(`${year + 1}-01-01T00:00:00Z`)
+          $gte: new Date(`${year}-01-01T00:00:00Z`),
+          $lt: new Date(`${year + 1}-01-01T00:00:00Z`)
         }
       }
     },
