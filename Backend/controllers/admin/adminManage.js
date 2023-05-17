@@ -420,7 +420,7 @@ exports.getMonthlyData = async (req, res) => {
   const month = parseInt(year)
 
 
-  const studentData = await Student.aggregate([
+  let studentData = await Student.aggregate([
     {
       $match: {
         createdAt: {
@@ -469,7 +469,7 @@ exports.getMonthlyData = async (req, res) => {
     studentData=[{counts : [0,0,0,0,0,0,0,0,0,0,0,0]}]
   }
 
-  const instructorData = await Instructor.aggregate([
+  let instructorData = await Instructor.aggregate([
     {
       $match: {
         createdAt: {
