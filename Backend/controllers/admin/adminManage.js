@@ -465,10 +465,9 @@ exports.getMonthlyData = async (req, res) => {
     }
   ])
   console.log(studentData)
-
-
-
-
+  if(studentData===[]){
+    studentData=[0,0,0,0,0,0,0,0,0,0,0,0]
+  }
 
   const instructorData = await Instructor.aggregate([
     {
@@ -517,6 +516,9 @@ exports.getMonthlyData = async (req, res) => {
 
 
   console.log(instructorData)
+  if(instructorData===[]){
+    instructorData=[0,0,0,0,0,0,0,0,0,0,0,0]
+  }
 
   res.status(200).json({ student: studentData, instructor: instructorData })
 

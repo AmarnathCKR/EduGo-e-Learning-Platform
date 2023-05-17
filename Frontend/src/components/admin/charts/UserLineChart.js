@@ -13,6 +13,7 @@ import { Chart } from 'react-chartjs-2';
 import { faker } from '@faker-js/faker';
 import { getAnyAdmin } from '../../../api/adminAPI';
 import { useSelector } from 'react-redux';
+import { CircleSpinner } from 'react-spinners-kit';
 
 ChartJS.register(
     CategoryScale,
@@ -23,7 +24,7 @@ ChartJS.register(
     Legend
 );
 
-const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July','August', 'September','October', 'November','December'];
+const labels = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'];
 const colors = [
     'red',
     'orange',
@@ -35,28 +36,15 @@ const colors = [
     'purple',
 ];
 
-export const data = {
-    labels,
-    datasets: [
-        {
-            label: 'Student',
 
-            data: [100, 300, 200, 400,500, 150,220,1000,700,350,780,200 ],
-        },
-        {
-            label: 'Instructor',
-            data: labels.map(() => faker.datatype.number({ min: -1000, max: 1000 })),
-        },
-    ],
-};
 
 function createGradient(ctx, area) {
-    const colorStart = faker.color.human();
+    const colorStart = faker.color.rgb();
 
-    const colorMid = faker.color.human(colors.filter(color => color !== colorStart))
+    const colorMid = faker.color.rgb(colors.filter(color => color !== colorStart))
 
 
-    const colorEnd = faker.color.human(
+    const colorEnd = faker.color.rgb(
         colors.filter(color => color !== colorStart && color !== colorMid)
     );
 
@@ -70,6 +58,12 @@ function createGradient(ctx, area) {
 }
 
 export function UserLineChart() {
+    const [userData, setUser] = useState({
+        student: [],
+        instructor: []
+    })
+    const [year, setYear] = useState(new Date().getFullYear())
+    const [loading, setLoading] = useState(false)
 
 
     const chartRef = useRef(null);
@@ -77,16 +71,34 @@ export function UserLineChart() {
         datasets: [],
     });
 
-  const token = useSelector((state) => state.adminToken);
+    const token = useSelector((state) => state.adminToken);
 
 
-    useEffect(()=>{
-        getAnyAdmin("get-analytic?year=2023",token).then((res)=>{
-            console.log(res)
-        }).catch((err)=>{
+    useEffect(() => {
+        setLoading(true)
+        getAnyAdmin(`get-analytic?year=${year}`, token).then((res) => {
+            console.log(res.data.student[0].counts)
+            setUser((state) => ({ ...state, student: res.data.student[0].counts, instructor: res.data.instructor[0].counts }))
+            setLoading(false)
+        }).catch((err) => {
             console.log(err)
+            setLoading(false)
         })
-    },[])
+    }, [year])
+    const data = {
+        labels,
+        datasets: [
+            {
+                label: 'Student',
+
+                data: userData?.student,
+            },
+            {
+                label: 'Instructor',
+                data: userData?.instructor,
+            },
+        ],
+    };
 
     useEffect(() => {
         const chart = chartRef.current;
@@ -104,7 +116,37 @@ export function UserLineChart() {
         };
 
         setChartData(chartData);
-    }, []);
+    }, [userData]);
 
-    return <Chart ref={chartRef} type='line' data={chartData} />;
+    return (
+        <>{loading &&
+            <div className="z-[999]  p-64 loader-local ">
+              <CircleSpinner size={40} color="#000000" loading={loading} />
+            </div>}
+            <div className='grid md:grid-cols-2 grid-cols-1 '>
+                <div><p>The Total number of students registered on {year} : {userData?.student?.reduce(function (x, y) {
+                    return x + y;
+                }, 0)}</p>
+                    <p>The Total number of Instructors registered on {year} : {userData?.instructor?.reduce(function (x, y) {
+                        return x + y;
+                    }, 0)}</p></div>
+
+                <div className='flex justify-end'>
+                    <p>Choose a year :</p>
+                    <select onChange={(e)=>setYear(e.target.value)}>
+                        <option value={new Date().getFullYear()} >{new Date().getFullYear()}</option>
+                        <option value={new Date().getFullYear() - 1}>{new Date().getFullYear() - 1}</option>
+
+                        <option value={new Date().getFullYear() - 2}>{new Date().getFullYear() - 2}</option>
+
+                        <option value={new Date().getFullYear() - 3}>{new Date().getFullYear() - 3}</option>
+
+                    </select>
+                </div>
+            </div>
+
+
+            <Chart ref={chartRef} type='line' data={chartData} />
+
+        </>);
 }
