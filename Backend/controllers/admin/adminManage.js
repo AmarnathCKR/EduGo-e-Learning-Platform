@@ -416,92 +416,106 @@ exports.editCoupon = async (req, res) => {
 
 
 exports.getMonthlyData = async (req, res) => {
-  const { student, instructor } = req.query;
+  const { year } = req.query;
 
-  if (student) {
-    const studentData = await Student.aggregate([
-      {
-        $group: {
-          _id: { $month: "$createdAt" },
-          count: { $sum: 1 }
+
+  const studentData = await Student.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: ISODate(`${year}-01-01T00:00:00Z`),
+          $lt: ISODate(`${year + 1}-01-01T00:00:00Z`)
         }
-      },
-      {
-        $group: {
-          _id: null,
-          counts: { $push: { k: "$_id", v: "$count" } }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          counts: {
-            $map: {
-              input: { $range: [1, 13] },
-              as: "month",
-              in: {
-                $switch: {
-                  branches: [
-                    {
-                      case: { $in: ["$$month", "$counts.k"] },
-                      then: { $arrayElemAt: ["$counts.v", { $indexOfArray: ["$counts.k", "$$month"] }] }
-                    }
-                  ],
-                  default: 0
-                }
+      }
+    },
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        counts: { $push: { k: "$_id", v: "$count" } }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        counts: {
+          $map: {
+            input: { $range: [1, 13] },
+            as: "month",
+            in: {
+              $switch: {
+                branches: [
+                  {
+                    case: { $in: ["$$month", "$counts.k"] },
+                    then: { $arrayElemAt: ["$counts.v", { $indexOfArray: ["$counts.k", "$$month"] }] }
+                  }
+                ],
+                default: 0
               }
             }
           }
         }
       }
-    ])
+    }
+  ])
+  console.log(studentData[0].count)
+  
 
-    console.log(studentData)
-    res.status(200).json({studentData})
-  }
 
-  if (instructor) {
-    const instructorData = await Instructor.aggregate([
-      {
-        $group: {
-          _id: { $month: "$createdAt" },
-          count: { $sum: 1 }
+
+
+  const instructorData = await Instructor.aggregate([
+    {
+      $match: {
+        createdAt: {
+          $gte: ISODate(`${year}-01-01T00:00:00Z`),
+          $lt: ISODate(`${year + 1}-01-01T00:00:00Z`)
         }
-      },
-      {
-        $group: {
-          _id: null,
-          counts: { $push: { k: "$_id", v: "$count" } }
-        }
-      },
-      {
-        $project: {
-          _id: 0,
-          counts: {
-            $map: {
-              input: { $range: [1, 13] },
-              as: "month",
-              in: {
-                $switch: {
-                  branches: [
-                    {
-                      case: { $in: ["$$month", "$counts.k"] },
-                      then: { $arrayElemAt: ["$counts.v", { $indexOfArray: ["$counts.k", "$$month"] }] }
-                    }
-                  ],
-                  default: 0
-                }
+      }
+    },
+    {
+      $group: {
+        _id: { $month: "$createdAt" },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $group: {
+        _id: null,
+        counts: { $push: { k: "$_id", v: "$count" } }
+      }
+    },
+    {
+      $project: {
+        _id: 0,
+        counts: {
+          $map: {
+            input: { $range: [1, 13] },
+            as: "month",
+            in: {
+              $switch: {
+                branches: [
+                  {
+                    case: { $in: ["$$month", "$counts.k"] },
+                    then: { $arrayElemAt: ["$counts.v", { $indexOfArray: ["$counts.k", "$$month"] }] }
+                  }
+                ],
+                default: 0
               }
             }
           }
         }
       }
-    ])
+    }
+  ])
 
-    console.log(instructorData)
-    res.status(200).json({instructorData})
-  }
 
+  console.log(instructorData[0].count)
 
 
 
