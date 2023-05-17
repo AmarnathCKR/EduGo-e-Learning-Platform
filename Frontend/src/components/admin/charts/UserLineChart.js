@@ -81,7 +81,7 @@ export function UserLineChart() {
 
 
     useEffect(()=>{
-        getAnyAdmin("get-analytic?year=2022",token).then((res)=>{
+        getAnyAdmin("get-analytic?year=2023",token).then((res)=>{
             console.log(res)
         }).catch((err)=>{
             console.log(err)

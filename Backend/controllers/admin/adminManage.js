@@ -463,7 +463,7 @@ exports.getMonthlyData = async (req, res) => {
       }
     }
   ])
-  console.log(studentData[0].count)
+  console.log(studentData)
 
 
 
@@ -515,7 +515,7 @@ exports.getMonthlyData = async (req, res) => {
   ])
 
 
-  console.log(instructorData[0].count)
+  console.log(instructorData)
 
 
 
