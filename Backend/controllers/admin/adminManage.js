@@ -464,10 +464,10 @@ exports.getMonthlyData = async (req, res) => {
       }
     }
   ])
-  console.log(studentData)
-  if(studentData===[]){
-    studentData=[{counts : [0,0,0,0,0,0,0,0,0,0,0,0]}]
+  if (studentData.length === 0) {
+    studentData = [{ counts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }]
   }
+  console.log(studentData)
 
   let instructorData = await Instructor.aggregate([
     {
@@ -515,11 +515,11 @@ exports.getMonthlyData = async (req, res) => {
   ])
 
 
-  console.log(instructorData)
-  if(instructorData===[]){
-    instructorData=[{counts : [0,0,0,0,0,0,0,0,0,0,0,0]}]
+  if (instructorData.length === 0) {
+    instructorData = [{ counts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }]
   }
 
+  console.log(instructorData)
   res.status(200).json({ student: studentData, instructor: instructorData })
 
 
