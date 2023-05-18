@@ -17,7 +17,7 @@ exports.adminLogin = async (req,res) => {
         const admin = await Admin.findOne({email : email})
         
         if(admin){
-            console.log('admin')
+            
             const match = await bcrypt.compare(password, admin.password);
           if (match) {
             const token = await createToken(admin._id);
@@ -46,7 +46,7 @@ exports.adminLogin = async (req,res) => {
               res.status(409).send({ data: emailError });
         }
     }else{
-        console.log(' no admin')
+        
         const emailError = {
             status: false,
             errors: [

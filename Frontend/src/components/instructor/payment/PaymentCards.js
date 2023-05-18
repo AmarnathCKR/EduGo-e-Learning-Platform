@@ -1,14 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { getAnyData } from '../../../api/instructorAPI';
+import { unsuscribeTeacher, unsuscribeToken } from '../../../store/store';
+import { googleLogout } from '@react-oauth/google';
+import { useNavigate } from 'react-router-dom';
 
 function PaymentCards(props) {
     const [payment, setPayment] = useState([])
     const token = useSelector((state) => state.token);
+    const dispatch = useDispatch()
+    const navigate = useNavigate()
+    
     useEffect(() => {
         getAnyData(`get-payment?courseId=${props?.course?._id}`, token).then((res) => {
 
             setPayment(res.data.orders)
+        }).catch((err)=>{
+            if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                localStorage.removeItem("teacherToken");
+                dispatch(unsuscribeToken());
+                localStorage.removeItem("teacherData");
+                dispatch(unsuscribeTeacher());
+                navigate("/instructor");
+                googleLogout();
+              }
         })
     }, [])
     return (

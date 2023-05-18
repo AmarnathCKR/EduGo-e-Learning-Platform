@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import Header from "../layouts/Header";
@@ -9,6 +9,8 @@ import { getAnyData } from "../../../api/instructorAPI";
 import { IoIosArrowDropdown, } from "react-icons/io";
 import { BiEditAlt } from "react-icons/bi";
 import ReactPlayer from 'react-player';
+import { unsuscribeTeacher, unsuscribeToken } from "../../../store/store";
+import { googleLogout } from "@react-oauth/google";
 
 
 function SingleCourse() {
@@ -19,14 +21,24 @@ function SingleCourse() {
 
   const token = useSelector((state) => state.token);
   const location = useLocation();
+  const dispatch = useDispatch();
 
   useEffect(() => {
     getAnyData(`get-course?course=${location.state}`, token)
       .then((res) => {
-        console.log(res.data.data.content.data);
+       
         setCourse(res.data.data.content.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("teacherToken");
+          dispatch(unsuscribeToken());
+          localStorage.removeItem("teacherData");
+          dispatch(unsuscribeTeacher());
+          navigate("/instructor");
+          googleLogout();
+        }
+      });
   }, []);
   const navigate = useNavigate()
 

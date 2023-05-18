@@ -5,7 +5,7 @@ import MainContent from "../pageContents/MainContent";
 
 import React, { useEffect, useState } from "react";
 // import { Link } from "react-router-dom";
-import { subscribeAllCourse } from "../../../store/store";
+import { subscribeAllCourse, unsuscribeStudentData, unsuscribeStudentToken } from "../../../store/store";
 import { useDispatch, useSelector } from "react-redux";
 import { RotateSpinner } from "react-spinners-kit";
 import AllCourse from "../pageContents/AllCourse";
@@ -14,6 +14,8 @@ import StudentRegisterModal from "../register/StudentRegisterModal";
 import StudentLoginModal from "../loginAuth/StudentLoginModal";
 import { ToastContainer } from "react-toastify";
 import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
+import { googleLogout } from "@react-oauth/google";
+import { useNavigate } from "react-router-dom";
 function StudentLanding() {
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
@@ -33,6 +35,8 @@ function StudentLanding() {
   const handleClose1 = () => {
     setShow1(false);
   };
+
+  const navigate =useNavigate()
   // const navigate = useNavigate();
   const dispatch = useDispatch();
   useEffect(() => {
@@ -47,7 +51,15 @@ function StudentLanding() {
       .catch((err) => {
         setLoading(false);
 
-        console.log(err.response.data.data.errors[0].message);
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
+
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+      }
       });
   }, []);
   const allCourse = useSelector((state) => state.AllCourse);

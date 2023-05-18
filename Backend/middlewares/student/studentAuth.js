@@ -19,7 +19,7 @@ const studentAuth = async (req, res, next) => {
       };
       res.status(409).send({ data: emailError });
     } else {
-      console.log(decoded._id)
+      
       const user = await Student.findOne({ _id: decoded._id });
       if (user) {
         if (user.status === false) {

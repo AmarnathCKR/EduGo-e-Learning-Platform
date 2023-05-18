@@ -29,7 +29,7 @@ function InstructorChat() {
         if (Instructor) {
             getAnyData("get-message", token).then((res) => {
                 setMessage(res.data)
-                console.log(Instructor)
+
                 socket.emit('login', { name: Instructor._id, room: Instructor._id }, error => {
                     if (error) {
                         console.log(error)
@@ -65,7 +65,7 @@ function InstructorChat() {
     }
     useEffect(() => {
         socket.on("message", msg => {
-            console.log(msg)
+
             setMessage(messages => [...messages, msg.text]);
         })
     }, [])

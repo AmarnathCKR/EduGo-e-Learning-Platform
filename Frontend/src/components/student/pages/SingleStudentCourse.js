@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 
@@ -12,6 +12,8 @@ import HeaderLanding from "../layouts/HeaderLanding";
 import FooterLanding from "../layouts/FooterLanding";
 import { FaAngleRight } from "react-icons/fa";
 import Reviews from "../Reviews/Reviews";
+import { unsuscribeStudentData, unsuscribeStudentToken } from "../../../store/store";
+import { googleLogout } from "@react-oauth/google";
 
 
 function SingleStudentCourse() {
@@ -49,14 +51,25 @@ function SingleStudentCourse() {
   const Instructor = useSelector((state) => state.studentData);
   const search = useSelector((state) => state.studentSearch);
   const location = useLocation();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     getAnyDataStudentAPI(`get-course?course=${location.state}`, auth)
       .then((res) => {
-        console.log(res.data.data.content.data);
+        
         setCourse(res.data.data.content.data);
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
+
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+      }
+      });
   }, []);
 
   useEffect(() => {
@@ -64,7 +77,17 @@ function SingleStudentCourse() {
       .then((res) => {
         setOwned(true)
       })
-      .catch((err) => console.log(err));
+      .catch((err) => {
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
+
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+      }
+      });
   }, [])
 
   const navigate = useNavigate();

@@ -60,12 +60,12 @@ function Google(props) {
         })
 
         .catch((err) => {
-          console.log(err);
+          
           setLoading(false);
         });
     },
 
-    onError: (error) => console.log("Login Failed:" + error),
+    
   });
 
   return (

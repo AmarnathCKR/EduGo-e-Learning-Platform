@@ -29,7 +29,7 @@ function DataTable(props) {
 
   const handleEdit = (id) => {
     getDataApi("get-field",id, token).then((res) => {
-      // console.log(res.data.data.content.data)
+      
       setItem(res.data.data.content.data);
       setShow(true);
     });
@@ -101,7 +101,7 @@ function DataTable(props) {
 
     fetchAnyDetailsApi("fetch-field",queries, token)
       .then((response) => {
-        console.log(response.data.items);
+        
         setData(response.data.items);
         setTotalCount(response.data.totalCount);
         setLoading(false);

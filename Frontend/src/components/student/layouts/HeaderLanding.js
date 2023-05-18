@@ -11,6 +11,7 @@ import { Icon } from "@iconify/react";
 import logo from "../../../Assets/logo.png";
 
 import { getAnyDataWithoutAuthStudentApi } from "../../../api/studentAPI";
+import { FaGraduationCap } from "react-icons/fa";
 
 function HeaderLanding(props) {
   const [menuToggler, setToggle] = useState(false);
@@ -65,6 +66,10 @@ function HeaderLanding(props) {
   };
 
   const handleLink = () => {
+    navigate("/courses");
+  };
+
+  const handleLinkHome = () => {
     navigate("/");
   };
 
@@ -72,13 +77,21 @@ function HeaderLanding(props) {
   const handleSearch = (search) => {
     clearTimeout(timeout)
     const newTimer = setTimeout(() => {
-      console.log('first')
+
       getAnyDataWithoutAuthStudentApi(`search?search=${search}`)
         .then((res) => {
           setSearchSuggestions(res.data.data.content.data);
         })
         .catch((err) => {
-          console.log(err.response.data.data.errors[0].message);
+          if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+            localStorage.removeItem("StudentToken");
+            dispatch(unsuscribeStudentToken());
+            localStorage.removeItem("StudentData");
+
+            dispatch(unsuscribeStudentData());
+            navigate("/");
+            googleLogout();
+          }
         });
     }, 600)
     setTimeoutTimer(newTimer)
@@ -128,7 +141,7 @@ function HeaderLanding(props) {
     <div className='z-[700]'>
       <div className="  grid grid-cols-6  border w-full mx-auto fixed shadow bg-[#fff]">
         <div className="flex w-[130px] h-[76px]  p-2 align-middle">
-          <img src={logo} alt="logo" onClick={handleLink} />
+          <img src={logo} alt="logo" onClick={handleLinkHome} />
           {menuToggler ? (
             <span
               onClick={() => {
@@ -231,7 +244,7 @@ function HeaderLanding(props) {
                               </span>
                             </Link>
 
-                            <span  onClick={handleLink} className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
+                            <span onClick={handleLink} className="block px-4 py-2 text-black hover:bg-gray-100 cursor-pointer">
                               Browse Courses
                             </span>
                             <span
@@ -268,9 +281,10 @@ function HeaderLanding(props) {
                 </>
               )}
 
-              <div className="my-3 mr-2">
-                <Icon
-                  className="w-11 h-auto border-2 border-neutral-900 rounded"
+              <div onClick={() => navigate("/instructor")} className="my-3 mr-2">
+                <FaGraduationCap
+                  size="30px"
+                  className="w-11 cursor-pointer h-auto border-2 border-neutral-900 rounded"
                   icon="material-symbols:language"
                 />
               </div>
@@ -290,7 +304,8 @@ function HeaderLanding(props) {
       {menuResponsive ? (
         <>
           <div className="z-20 grid grid-row-5 border p-2 w-full mx-auto fixed shadow mt-20 bg-neutral-200">
-            <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
+
+            <div onClick={handleLink} className="row-span-12 text-center border p-2 hover:bg-accent-focus">
               Browse courses
             </div>
 
@@ -301,9 +316,12 @@ function HeaderLanding(props) {
                     Profile
                   </div>
                 </Link>
-                <div className="row-span-12 text-center border p-2 hover:bg-accent-focus flex justify-center">
-                  Purchased Courses
-                </div>
+                <Link to="/purchased-courses">
+                  <div className="row-span-12 text-center border p-2 hover:bg-accent-focus flex justify-center">
+                    Purchased Courses
+                  </div>
+                </Link>
+
               </>
             ) : (
               <>
@@ -322,8 +340,8 @@ function HeaderLanding(props) {
               </>
             )}
 
-            <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
-              Language
+            <div onClick={() => navigate("/instructor")} className="row-span-12 text-center border p-2 hover:bg-accent-focus">
+              Instructor
             </div>
             {props.token ? (
               <>

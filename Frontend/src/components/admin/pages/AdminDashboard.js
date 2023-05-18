@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import Layout from '../layouts/Layout'
-import { UserLineChart } from '../charts/UserLineChart';
 import { BsPersonBadge } from 'react-icons/bs';
 import { useSelector } from 'react-redux';
 import { getAnyAdmin } from '../../../api/adminAPI';
@@ -9,6 +8,7 @@ import { FiCloudDrizzle } from 'react-icons/fi';
 import { BiBook } from 'react-icons/bi';
 import OrderDetails from '../charts/OrderDetails';
 import { CircleSpinner } from 'react-spinners-kit';
+import UserLineChart from '../charts/UserLineChart';
 
 function AdminDashboard() {
   const [userDetails, setUser] = useState();
@@ -20,10 +20,10 @@ function AdminDashboard() {
   useEffect(() => {
     setLoading(true)
     getAnyAdmin("get-users", token).then((res) => {
-      setUser(res.data)
       setLoading(false)
+      setUser(res.data)
     }).catch((err) => {
-      console.log(err)
+     
       setLoading(false)
     })
   }, [])
@@ -32,7 +32,7 @@ function AdminDashboard() {
       <Layout title="Admin Dashboard">
       {loading &&
             <div className="z-[999]  p-64 loader-local ">
-              <CircleSpinner size={40} color="#000000" loading={loading} />
+              <CircleSpinner size={40} color="#000000"  />
             </div>}
         <div className='ml-0 md:mt-0 mt-16 md:ml-[250px] h-full p-3 bg-neutral-900' >
 
@@ -85,7 +85,7 @@ function AdminDashboard() {
           <div className='flex flex-col text-sm items-center bg-white rounded my-5'>
             <p className='text-center font-bold my-4 text-lg'>Profit from Course enrollments</p>
             <div className='flex flex-col items-center w-full'>
-              <OrderDetails token={token} setLoading={setLoading} />
+              <OrderDetails token={token} loadingRef={()=>setLoading(!loading)} />
             </div>
           </div>
         </div>

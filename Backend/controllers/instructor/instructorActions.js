@@ -63,9 +63,7 @@ exports.updateProfile = async (req, res) => {
         };
         res.status(200).send({ data: success });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      
   });
 };
 
@@ -196,7 +194,7 @@ exports.findCourseByID = async (req, res) => {
 };
 
 exports.ediInstructorCourse = async (req, res) => {
-  console.log("edit course")
+  
   const { id } = req.params;
   const {
     name,
@@ -225,10 +223,6 @@ exports.ediInstructorCourse = async (req, res) => {
       total: total,
       topics: topics,
       video: video,
-    }).then((result)=>{
-      console.log(result)
-    }).catch((err)=>{
-      console.log(err)
     })
 
     const courseData = await Course.findOne({
@@ -264,9 +258,7 @@ exports.generateOTP = async (req, res) => {
   let result;
 
   await request(options, function (error, response, body) {
-    if (error) {console.log(error)}
-
-    console.log(body);
+    
     
     result =  response
     
@@ -287,8 +279,8 @@ exports.setPayment = async (req,res)=>{
 
 exports.getAllPayments = async (req,res) => {
   const {courseId} =req.query;
-  console.log("fdsfsdf")
+  
   const orders = await Order .find({courseId : courseId}).populate("user")
-  console.log(orders)
+  
   res.status(200).json({orders})
 }

@@ -3,7 +3,10 @@ import { useState } from 'react';
 import "../../../Assets/validater.scss"
 import { IoMdClose } from 'react-icons/io';
 import { createAny } from '../../../api/instructorAPI';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { unsuscribeTeacher, unsuscribeToken } from '../../../store/store';
+import { googleLogout } from '@react-oauth/google';
 
 const PaymentOption = (props) => {
     
@@ -28,10 +31,22 @@ const PaymentOption = (props) => {
         meta: { erroredInputs }
     } = useCreditCardValidator({ expiryDateValidator: expDateValidate });
 
+    const navigate =useNavigate()
+    const dispatch = useDispatch()
+
     const handleSubmit = ()=>{
         createAny(`set-payment`,cardstate,token)
         .then((res)=>{
             props.close()
+        }).catch((err)=>{
+            if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                localStorage.removeItem("teacherToken");
+                dispatch(unsuscribeToken());
+                localStorage.removeItem("teacherData");
+                dispatch(unsuscribeTeacher());
+                navigate("/instructor");
+                googleLogout();
+              }
         })
         
     }

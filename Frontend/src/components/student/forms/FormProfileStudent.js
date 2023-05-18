@@ -101,7 +101,7 @@ function FormProfileStudent(props) {
         formData.append("file", file);
         formData.append("upload_preset", "n0d0jino");
         
-        try {
+      
           if (formData) {
             const response = await uploadImage(formData)
 
@@ -138,9 +138,7 @@ function FormProfileStudent(props) {
                 }
               });
           }
-        } catch (error) {
-          console.error(error);
-        }
+        
       }
     }
   };

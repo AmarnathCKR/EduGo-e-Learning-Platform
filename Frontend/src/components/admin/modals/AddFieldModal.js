@@ -21,7 +21,7 @@ function AddFieldModal(props) {
     });
   }, [props.data]);
 
-  // console.log(props.data)
+  
 
   const [loading, setLoading] = useState(false);
   const token = useSelector((state) => state.adminToken);
@@ -55,7 +55,7 @@ function AddFieldModal(props) {
         createAny(url, input, token)
           .then((res) => {
             setLoading(false);
-            console.log(res.data.data.content.data);
+            
             setInput({
               name: "",
               tag: "",
@@ -92,7 +92,7 @@ function AddFieldModal(props) {
         formData.append("file", file);
         formData.append("upload_preset", "n0d0jino");
 
-        try {
+       
           if (formData) {
             const response = await uploadImage(formData);
 
@@ -130,9 +130,7 @@ function AddFieldModal(props) {
                 }
               });
           }
-        } catch (error) {
-          console.error(error);
-        }
+       
       }
     }
   };

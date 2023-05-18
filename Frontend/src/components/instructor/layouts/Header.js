@@ -9,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { Link, useNavigate } from "react-router-dom";
 import { getAnyData } from "../../../api/instructorAPI";
 import { debounce } from "lodash";
+import { FaBookOpen } from "react-icons/fa";
 
 function Header(props) {
   const [menuToggler, setToggle] = useState(false);
@@ -74,7 +75,14 @@ function Header(props) {
         setSearchSuggestions(res.data.data.content.data);
       })
       .catch((err) => {
-        console.log(err.response.data.data.errors[0].message);
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("teacherToken");
+          dispatch(unsuscribeToken());
+          localStorage.removeItem("teacherData");
+          dispatch(unsuscribeTeacher());
+          navigate("/instructor");
+          googleLogout();
+        }
       });
   }, 200);
 
@@ -120,7 +128,7 @@ function Header(props) {
         <div className="flex w-[130px] h-[76px]  p-2 align-middle">
           <img src={logo} alt="logo" onClick={handleLink} />
           {menuToggler ? (
-            <span className="my-1 mt-5 ml-4 mr-1 font-medium">Explore</span>
+            <span className="my-1 mt-5 ml-4 mr-1 font-medium"></span>
           ) : (
             ""
           )}
@@ -129,7 +137,7 @@ function Header(props) {
           <>
             <div className="my-2 col-span-4">
               <div className="border rounded-xl p-1 mt-1 py-1 flex items-center">
-                <div className="my-3 mx-2">
+              <div className="my-3 mx-2">
                   <Icon icon="material-symbols:search" />
                 </div>
                 <div className="grow">
@@ -254,9 +262,10 @@ function Header(props) {
                 </>
               )}
 
-              <div className="my-3 mr-2">
-                <Icon
-                  className="w-11 h-auto border-2 border-neutral-900 rounded"
+              <div onClick={()=>{navigate("/")}} className="my-3 mr-2">
+                <FaBookOpen
+                size="30px"
+                  className="w-11 cursor-pointer h-auto border-2 border-neutral-900 rounded"
                   icon="material-symbols:language"
                 />
               </div>
@@ -276,15 +285,14 @@ function Header(props) {
       {menuResponsive ? (
         <>
           <div className="z-20 grid grid-row-5 border p-2 w-full mx-auto fixed shadow mt-20 bg-neutral-200">
-            <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
-              Explore
-            </div>
-
+           
             {props.token ? (
               <>
+              <Link to="/instructor/profile">
                 <div className="row-span-12 text-center border p-2 hover:bg-accent-focus flex justify-center">
                   Profile
                 </div>
+                </Link>
               </>
             ) : (
               <>
@@ -303,8 +311,8 @@ function Header(props) {
               </>
             )}
 
-            <div className="row-span-12 text-center border p-2 hover:bg-accent-focus">
-              Language
+            <div onClick={()=>{navigate("/")}} className="row-span-12 text-center border p-2 hover:bg-accent-focus">
+              Student
             </div>
             {props.token ? (
               <>

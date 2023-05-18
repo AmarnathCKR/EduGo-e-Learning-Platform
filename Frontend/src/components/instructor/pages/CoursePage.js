@@ -85,8 +85,8 @@ function CoursePage() {
               </Link>
             </div>
           )}
-          <div className=" pt-2  grid md:grid-cols-4 grid-cols-1 border-b">
-            {!course[0] ? <CreateCourse /> : <CourseList course={course} />}
+          <div className=" pt-2  grid md:grid-cols-4 grid-cols-1 justify-center border-b">
+            {!course[0] ? <div className="md:col-span-4 col-span-1 flex justify-center"><CreateCourse /></div> : <CourseList course={course} />}
           </div>
           <div className="flex justify-center mt-10 text-center">
             <div className="max-w-6xl grid grid-cols-3 gap-5 text-base md:text-3xl font-bold text-center border-b">

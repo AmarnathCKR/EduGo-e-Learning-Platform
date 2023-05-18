@@ -31,7 +31,7 @@ function CouponDatatable(props) {
 
   const handleEdit = (id) => {
     getDataApi("get-coupon",id, token).then((res) => {
-      // console.log(res.data.data.content.data)
+      
       setItem(res.data.data.content.data);
       setShow(true);
     });
@@ -100,7 +100,7 @@ function CouponDatatable(props) {
 
     fetchAnyDetailsApi("fetch-coupon",queries, token)
       .then((response) => {
-        console.log(response.data.items);
+        
         setData(response.data.items);
         setTotalCount(response.data.totalCount);
         setLoading(false);

@@ -22,7 +22,7 @@ function CourseDataTable(props) {
 
   const handleView = (id) => {
     getDataApi("get-course", id, token).then((res) => {
-      // console.log(res.data.data.content.data)
+      
       setItem(res.data.data.content.data);
       setShow(true);
     });

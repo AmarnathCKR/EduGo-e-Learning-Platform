@@ -105,7 +105,7 @@ function FormProfileInstructor(props) {
         formData.append("width", "300");
         formData.append("height", "300");
 
-        try {
+        
           if (formData) {
             const response = await uploadImage(formData);
 
@@ -139,9 +139,7 @@ function FormProfileInstructor(props) {
                 }
               });
           }
-        } catch (error) {
-          console.error(error);
-        }
+        
       }
     }
   };

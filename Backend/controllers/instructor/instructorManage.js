@@ -458,7 +458,7 @@ exports.getMessage = async (req, res) => {
     const conversation = await Conversation.findOne({
       members: new mongoose.Types.ObjectId(req.params.id),
     }); 
-    console.log(conversation)
+    
     const messages = await Message.find({
       conversationId: conversation._id,
     });

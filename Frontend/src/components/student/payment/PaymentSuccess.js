@@ -1,11 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import { Navigate, useLocation } from 'react-router-dom'
+import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import {  getSearchStudentAPI } from '../../../api/studentAPI'
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { ToastContainer } from 'react-toastify';
 import HeaderLanding from '../layouts/HeaderLanding';
 import FooterLanding from '../layouts/FooterLanding';
+import { unsuscribeStudentData, unsuscribeStudentToken } from '../../../store/store';
+import { googleLogout } from '@react-oauth/google';
 
 function PaymentSuccess() {
     const [order, setOrder] = useState()
@@ -13,11 +15,21 @@ function PaymentSuccess() {
     const auth = useSelector((state) => state.studentToken);
     const Instructor = useSelector((state) => state.studentData);
     const search = useSelector((state) => state.studentSearch);
+    const navigate = useNavigate()
+    const dispatch = useDispatch()
     useEffect(() => {
         getSearchStudentAPI("get-order", location.state, auth).then((res) => {
             setOrder(res.data.data.content.data)
         }).catch((err) => {
-            console.log(err)
+            if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                localStorage.removeItem("StudentToken");
+                dispatch(unsuscribeStudentToken());
+                localStorage.removeItem("StudentData");
+      
+                dispatch(unsuscribeStudentData());
+                navigate("/");
+                googleLogout();
+            }
         })
     }, [])
     return (

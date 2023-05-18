@@ -52,7 +52,7 @@ function StudentGoogleAuthLogin(props) {
                 "StudentToken",
                 res.data.data.content.meta.access_token
               );
-              console.log(res.data.data.content.data);
+              
               dispatch(subscribeStudentData(res.data.data.content.data));
 
               localStorage.setItem(

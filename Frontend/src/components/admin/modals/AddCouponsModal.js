@@ -21,7 +21,7 @@ function AddCouponsModal(props) {
         });
     }, [props.data]);
 
-    // console.log(props.data)
+
 
     const [loading, setLoading] = useState(false);
     const token = useSelector((state) => state.adminToken);
@@ -51,7 +51,7 @@ function AddCouponsModal(props) {
                 createAny(url, input, token)
                     .then((res) => {
                         setLoading(false);
-                        console.log(res.data.data.content.data);
+
                         setInput({
                             name: "",
                             discount: null,
@@ -85,44 +85,39 @@ function AddCouponsModal(props) {
 
                 setLoading(true);
 
-                try {
+                const data = input;
 
+                const url = `${props.link}?id=${props?.data?._id}`;
+                createAny(url, data, token)
+                    .then((res) => {
+                        setLoading(false);
 
-                    const data = input;
+                        setInput({
+                            name: "",
+                            discount: "",
 
-                    const url = `${props.link}?id=${props?.data?._id}`;
-                    createAny(url, data, token)
-                        .then((res) => {
-                            setLoading(false);
-
-                            setInput({
-                                name: "",
-                                discount: "",
-
-                                expirationTime: null,
-                            });
-                            showToastSuccess();
-                            props.click();
-
-                            if (props.data) {
-                                props.toggle();
-                            }
-                        })
-                        .catch((err) => {
-                            setLoading(false);
-                            setError(err.response.data.data.errors[0].message);
-                            if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
-                                localStorage.removeItem("adminToken");
-
-                                dispatch(unsuscribeAdminToken());
-                                navigate("/admin");
-                                googleLogout();
-                            }
+                            expirationTime: null,
                         });
+                        showToastSuccess();
+                        props.click();
 
-                } catch (error) {
-                    console.error(error);
-                }
+                        if (props.data) {
+                            props.toggle();
+                        }
+                    })
+                    .catch((err) => {
+                        setLoading(false);
+                        setError(err.response.data.data.errors[0].message);
+                        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                            localStorage.removeItem("adminToken");
+
+                            dispatch(unsuscribeAdminToken());
+                            navigate("/admin");
+                            googleLogout();
+                        }
+                    });
+
+
             }
         }
     };

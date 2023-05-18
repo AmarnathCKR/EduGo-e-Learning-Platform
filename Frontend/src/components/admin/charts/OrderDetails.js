@@ -2,18 +2,16 @@ import React, { useEffect, useState } from 'react'
 import { getAnyAdmin } from '../../../api/adminAPI'
 
 function OrderDetails(props) {
-    const [data, setData] = useState()
+    const [dataItems, setData] = useState()
     useEffect(() => {
         if(props?.token){
 
-            props.setLoading(true)
+            props.loadingRef()
             getAnyAdmin("get-all", props?.token)
                 .then((res) => {
+                    props.loadingRef()
+                    
                     setData(res.data)
-                    props.setLoading(false)
-                }).catch((err) => {
-                    console.log(err)
-                    props.setLoading(false)
                 })
         }
     },[ ])
@@ -21,7 +19,7 @@ function OrderDetails(props) {
         <div className='w-full overflow-x-auto my-6 bg-neutral-200 md:p-10 p-2'>
             <div className='flex md:flex-row gap-3 flex-col'>
                 
-                <span className='my-2'><strong>Number of Enrollment :</strong> {data?.orders?.length}</span>
+                <span className='my-2'><strong>Number of Enrollment :</strong> {dataItems?.length}</span>
             </div>
             <table className='w-full p-3'>
                 <thead className='text-start border border-white p-5'>
@@ -31,7 +29,7 @@ function OrderDetails(props) {
                     <th className='text-start p-2 m-2 border-l border-white'>Payment Received</th>
                 </thead>
                 <tbody className='text-start border border-white p-5'>
-                    {data?.orders?.map((items) => {
+                    {dataItems?.map((items) => {
                         return (<tr className='text-start p-2 m-2' key={items._id}>
                             <td className='text-start p-2 m-2 border-b border-white'>{items.orderId}</td>
                             <td className='text-start p-2 m-2 border-l border-white border-b'>{items.user.name}</td>

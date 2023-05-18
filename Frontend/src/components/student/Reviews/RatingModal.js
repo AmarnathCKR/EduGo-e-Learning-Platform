@@ -5,7 +5,10 @@ import { AiOutlineClose } from 'react-icons/ai'
 import Box from "@mui/material/Box";
 import Rating from "@mui/material/Rating";
 import { postAnyStudentApi } from '../../../api/studentAPI';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import { unsuscribeStudentData, unsuscribeStudentToken } from '../../../store/store';
+import { googleLogout } from '@react-oauth/google';
 
 function RatingModal(props) {
     const [value, setValue] = useState({
@@ -17,15 +20,25 @@ function RatingModal(props) {
     const [error, setError] = useState("")
 
     const auth = useSelector((state) => state.studentToken);
+    const navigate =useNavigate()
+    const dispatch = useDispatch()
 
     const handleSubmit = () => {
         if ( value.review !== "" || value.title !== "") {
             postAnyStudentApi("add-review", value, auth).then((res) => {
-                console.log(res);
+                
                 setError("")
                 props.close();
             }).catch((err) => {
-                console.log(err)
+                if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                    localStorage.removeItem("StudentToken");
+                    dispatch(unsuscribeStudentToken());
+                    localStorage.removeItem("StudentData");
+        
+                    dispatch(unsuscribeStudentData());
+                    navigate("/");
+                    googleLogout();
+                }
             })
 
         }else{

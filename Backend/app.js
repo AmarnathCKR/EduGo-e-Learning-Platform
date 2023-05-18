@@ -79,7 +79,7 @@ socket.on('sendMessage', message => {
 })
 
 socket.on("disconnect", () => {
-    console.log("User disconnected");
+    
     const user = deleteUser(socket.id)
     if (user) {
         io.in(user.room).emit('notification', { title: 'Someone just left', description: `${user.name} just left the room` })

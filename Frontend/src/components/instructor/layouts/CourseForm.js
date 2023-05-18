@@ -165,7 +165,7 @@ function CourseForm(props) {
             .catch((err) => {
               setLoading(false);
               if (!err?.response?.data?.data?.errors[0]?.message) {
-                console.log(err?.response?.data?.data?.errors)
+                
                 seterrorInput(err?.response?.data?.data?.errors);
               }
               if (err?.response?.data?.data?.errors[0]?.message) {
@@ -188,7 +188,7 @@ function CourseForm(props) {
 
       } catch (error) {
         setLoading(false);
-        console.error(error);
+        
       }
     }
   };
@@ -255,14 +255,10 @@ function CourseForm(props) {
 
           setTopics(newTopics);
         },
-        (error) => {
-          // Handle error
-          console.log("hererer");
-          console.error(error);
-        },
+        
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log(url)
+          
 
           const newTopics = [...topics];
           newTopics[index].video = url;
@@ -289,17 +285,13 @@ function CourseForm(props) {
           // Handle progress
           const progresss =
             (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            console.log(progresss)
+            
 
         },
-        (error) => {
-          // Handle error
-          console.log("hererer");
-          console.error(error);
-        },
+        
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);
-          console.log(url)
+          
 
           setcourse((state) => ({ ...state, video: url }))
         }
@@ -403,7 +395,7 @@ function CourseForm(props) {
             setTopics(courseData.topics);
             setEffect(true)
           })
-          .catch((err) => console.log(err));
+          
 
       }
     }

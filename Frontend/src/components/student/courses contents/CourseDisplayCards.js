@@ -6,7 +6,9 @@ import {
   getAnyDataWithoutAuthStudentApi,
 } from "../../../api/studentAPI";
 import { useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
+import { unsuscribeStudentData, unsuscribeStudentToken } from "../../../store/store";
+import { googleLogout } from "@react-oauth/google";
 
 const CourseDisplayCards = (props) => {
   const [courses, setCourses] = useState([]);
@@ -18,6 +20,8 @@ const CourseDisplayCards = (props) => {
   const [experienceFilter, setExperienceFilter] = useState("");
   const [fieldData, setFieldData] = useState([]);
   const auth = useSelector((state) => state.studentToken);
+  const dispatch=useDispatch();
+
   useEffect(() => {
     const url = "fetch-fields";
     getAnyDataWithoutAuthStudentApi(url)
@@ -25,13 +29,21 @@ const CourseDisplayCards = (props) => {
         setFieldData(res.data.data.content.data);
       })
       .catch((err) => {
-        console.log(err);
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
+
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+      }
       });
   }, []);
 
   useEffect(() => {
     const fetchCourses = async () => {
-      try {
+      
         const url = `${props?.link ? props?.link : "display-courses"
           }?page=${currentPage}&search=${searchQuery}&sort=${sortOrder}&fieldOfStudy=${fieldOfStudyFilter}&experience=${experienceFilter}`;
         if (props?.link) {
@@ -43,9 +55,7 @@ const CourseDisplayCards = (props) => {
           setCourses(response.data.courses);
           setTotalPages(response.data.totalPages);
         }
-      } catch (error) {
-        console.error(error);
-      }
+     
     };
 
     fetchCourses();

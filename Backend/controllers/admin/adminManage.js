@@ -16,7 +16,7 @@ const createToken = (_id) => {
 
 exports.createFields = async (req, res) => {
   const { name, tag, image } = req.body;
-  console.log(req.body);
+  
   if (req.body) {
     new FieldCategory({
       name: name,
@@ -71,7 +71,7 @@ exports.fetchAllFields = async (req, res) => {
     .limit(pageSize)
     .exec();
 
-  console.log(data.length)
+  
 
   const result = await data.map((item) => {
     return { id: item._id, image: item.image, name: item.name, tag: item.tag, ref: item._id, status: item.status };
@@ -101,8 +101,6 @@ exports.blockField = async (req, res) => {
       },
     };
     res.status(200).send({ data: success });
-  }).catch((err) => {
-    console.log(err)
   })
 }
 
@@ -186,7 +184,7 @@ exports.getAllCourse = async (req, res) => {
     .limit(pageSize)
     .exec();
 
-  console.log(data.length)
+ 
 
   const result = await data.map((item) => {
 
@@ -205,7 +203,7 @@ exports.getCourseData = async (req, res) => {
 
   const data = await Course.findOne({ _id: id }).populate("instructor").populate("field")
   if (data) {
-    console.log(data)
+   
     const success = {
       status: true,
       content: {
@@ -266,7 +264,7 @@ exports.changeCourse = async (req, res) => {
 
 exports.createCoupons = async (req, res) => {
   const { name, discount, expirationTime } = req.body;
-  console.log(req.body);
+  
   if (req.body) {
     new Coupon({
       name: name,
@@ -321,7 +319,7 @@ exports.fetchAllCoupons = async (req, res) => {
     .limit(pageSize)
     .exec();
 
-  console.log(data.length)
+ 
 
   const result = await data.map((item) => {
     return { id: item._id, name: item.name, discount: item.discount, expirationTime: item.expirationTime, ref: item._id, status: item.status };
@@ -351,8 +349,6 @@ exports.blockCoupon = async (req, res) => {
       },
     };
     res.status(200).send({ data: success });
-  }).catch((err) => {
-    console.log(err)
   })
 }
 
@@ -468,7 +464,7 @@ exports.getMonthlyData = async (req, res) => {
   if (studentData.length === 0) {
     studentData = [{ counts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }]
   }
-  console.log(studentData)
+ 
 
   let instructorData = await Instructor.aggregate([
     {
@@ -520,7 +516,6 @@ exports.getMonthlyData = async (req, res) => {
     instructorData = [{ counts: [0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0] }]
   }
 
-  console.log(instructorData)
   res.status(200).json({ student: studentData, instructor: instructorData })
 
 
@@ -539,7 +534,7 @@ exports.getAllAdminData = async (req,res)=>{
 
 exports.getAllOrder = async (req,res)=>{
   const orders = await Order.find().populate("user");
-  console.log(orders)
+  
   res.status(200).json(orders)
   
 }

@@ -69,9 +69,7 @@ function CourseViewModal(props) {
           showToastReject();
         }
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      
   };
 
   return (

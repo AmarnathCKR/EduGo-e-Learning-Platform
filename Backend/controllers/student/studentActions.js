@@ -51,7 +51,7 @@ exports.studentSearch = async (req, res) => {
 
   if (req.query.search) {
     const { search } = req.query;
-    console.log("searched" + search)
+    
     const escapedQuery = search.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     const searchObject = search
       ? { name: { $regex: new RegExp(escapedQuery, 'i') } }
@@ -82,7 +82,7 @@ exports.studentSearch = async (req, res) => {
 };
 
 exports.updateStudentProfile = async (req, res) => {
-  console.log(req.body);
+  
   const { id } = req.params;
   const {
     name,
@@ -136,9 +136,7 @@ exports.updateStudentProfile = async (req, res) => {
         };
         res.status(200).send({ data: success });
       })
-      .catch((err) => {
-        console.log(err);
-      });
+      
   });
 };
 
@@ -247,7 +245,7 @@ exports.streamVideo = async (req, res) => {
     setTimeout(() => URL.revokeObjectURL(url), 10000);
   } catch (error) {
     res.status(404).send("Video not found");
-    console.error(error);
+    
   }
 };
 
@@ -355,7 +353,7 @@ exports.purchase = async (req, res) => {
     final,
     discount
   } = req.body;
-  console.log(req.body)
+  
 
   const { id } = req.params;
   let newOrder = new Order({
@@ -387,12 +385,10 @@ exports.purchase = async (req, res) => {
       const conversation = await Conversation.findOne({
         members: courseData.instructor,
       });
-      console.log(conversation)
+     
       const dataUpdate = await Conversation.findByIdAndUpdate({ _id: conversation._id },
         { $push: { members: id } }
-      ).catch((err) => {
-        console.log(err)
-      })
+      )
 
       const success = {
         status: true,
@@ -402,7 +398,7 @@ exports.purchase = async (req, res) => {
       };
       res.status(200).send({ data: success });
     }).catch((err) => {
-      console.log(err)
+      
       const emailError = {
         status: false,
         errors: [
@@ -438,10 +434,8 @@ exports.getOrder = async (req, res) => {
 exports.getStatus = async (req, res) => {
   const { id } = req.params;
   const { course } = req.query;
-  console.log(id)
-  console.log(course)
+  
   const status = await Order.findOne({ user: new mongoose.Types.ObjectId(id), courseId: course })
-  console.log(status)
   if (status) {
     const success = {
       status: true,
@@ -482,7 +476,7 @@ exports.generateCookie = async (req, res) => {
     expires: Math.floor(Date.now() / 1000) + 60 * 60 * 24,
   });
 
-  console.log(myCookie)
+ 
   res.json({ myCookie })
 
 }
@@ -517,7 +511,7 @@ exports.sendNewMessage = async (req, res) => {
   const conversation = await Conversation.findOne({
     members: new mongoose.Types.ObjectId(req.body.instructor),
   });
-  console.log(conversation)
+  
   const newMessage = new Message({ sender: req.body.sender, text: req.body.text, conversationId: conversation._id });
 
   try {
@@ -530,11 +524,11 @@ exports.sendNewMessage = async (req, res) => {
 
 exports.getAllMessages = async (req, res) => {
   try {
-    console.log(req.query.userId)
+    
     const conversation = await Conversation.findOne({
       members: new mongoose.Types.ObjectId(req.query.userId),
     });
-    console.log(conversation)
+    
     const messages = await Message.find({
       conversationId: conversation._id,
     });
@@ -572,7 +566,7 @@ exports.deleteReview = async (req, res) => {
 
 exports.getReviews = async (req, res) => {
   const { reviewId } = req.query;
-  console.log("reviewId"+reviewId)
+  
   const data = await Review.find({ courseId: reviewId }).populate("student")
   if (data.length !== 0) {
     res.status(200).json(data);

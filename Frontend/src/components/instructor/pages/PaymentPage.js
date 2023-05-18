@@ -125,7 +125,7 @@ function PaymentPage() {
 
 
                 </>) : <>
-                    {!card && <p onClick={() => setCard(!card)} className='bg-black text-white text-center text-xl font-bold my-10 w-fit p-4 rounded cursor-pointer'>Add Payment Details to receive Payments</p>}
+                    {!card && <div className='w-full flex justify-center'><p onClick={() => setCard(!card)} className='bg-black text-white text-center text-xl font-bold my-10 w-fit p-4 rounded cursor-pointer'>Add Payment Details to receive Payments</p></div>}
                 </>}
                 {card && <PaymentOption close={() => setCard(!card)} />}
             </div>

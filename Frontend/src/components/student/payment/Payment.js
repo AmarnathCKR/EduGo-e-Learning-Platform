@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 import { getAnyDataStudentAPI, getSearchStudentAPI, postAnyStudentApi } from "../../../api/studentAPI";
@@ -11,6 +11,8 @@ import { CountryDropdown, RegionDropdown } from "react-country-region-selector";
 import { SlClose } from "react-icons/sl";
 import { BiCheck, } from "react-icons/bi";
 import { PayPalButtons } from "@paypal/react-paypal-js";
+import { unsuscribeStudentData, unsuscribeStudentToken } from "../../../store/store";
+import { googleLogout } from "@react-oauth/google";
 
 function Payment() {
   const [courses, setCourse] = useState([]);
@@ -33,31 +35,42 @@ function Payment() {
   const Instructor = useSelector((state) => state.studentData);
   const search = useSelector((state) => state.studentSearch);
   const location = useLocation();
+  const dispatch = useDispatch()
 
   useEffect(() => {
     getAnyDataStudentAPI(`get-course?course=${location.state}`, auth)
       .then((res) => {
-        console.log(res.data.data.content.data);
+
         setCourse(res.data.data.content.data);
       })
-      .catch((err) => console.log(err));
-    
+      .catch((err) => {
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
+
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+        }
+      });
+
     setPayment("paypal")
   }, []);
 
-  useEffect(()=>{
- 
-    if(coupon){
+  useEffect(() => {
+
+    if (coupon) {
       let total = (courses.price - (coupon.discount / 100) * courses.price) / 71
       setFinal(total.toFixed(2))
-    
-    }else{
+
+    } else {
       let total = courses.price / 71
       setFinal(total.toFixed(2))
     }
 
 
-  },[input,coupon,payment,courses])
+  }, [input, coupon, payment, courses])
 
 
 
@@ -70,7 +83,15 @@ function Payment() {
         setCoupon(res.data.data.content.data)
         setError((state) => ({ ...state, input: "" }))
       }).catch((err) => {
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
 
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+        }
         setError((state) => ({ ...state, input: err.response.data.data.errors[0].message }))
       })
     } else {
@@ -219,10 +240,10 @@ function Payment() {
               <p className="text-2xl font-semibold text-gray-900">₹{coupon ? courses.price - (coupon.discount / 100) * courses.price : courses.price}</p>
             </div>
           </div>
-          
 
 
-          
+
+
           <button className="mt-4 mb-8 w-full rounded-md bg-gray-900 px-6 py-3 font-medium text-white">
             {payment === "paypal" && final != null &&
               <div className="-z-0">
@@ -238,7 +259,7 @@ function Payment() {
                   forceReRender={[final]}
 
                   createOrder={(data, actions) => {
-                    
+
 
                     return actions.order.create({
                       purchase_units: [
@@ -255,29 +276,26 @@ function Payment() {
                   onApprove={async (data, actions) => {
                     const order = await actions.order.capture();
                     let orderData = {
-                      orderId : order.id,
-                      courseId : courses._id,
-                      coupon : coupon ? coupon._id : "nil",
-                      amount : courses.price,
-                      final : final*71,
-                      discount :  coupon ? coupon.discount : 0,
+                      orderId: order.id,
+                      courseId: courses._id,
+                      coupon: coupon ? coupon._id : "nil",
+                      amount: courses.price,
+                      final: final * 71,
+                      discount: coupon ? coupon.discount : 0,
                     }
-                    postAnyStudentApi("purchase",orderData, auth)
-                    .then((res)=>{
-                      toast.success("Payment Successfull")
-                      navigate(`/payment-success/:${res.data.data.content.data._id}`,{state : res.data.data.content.data._id})
-                    }).catch((err)=>{
-                      console.log(err)
-                      toast.error("Purchase Failed")
-                    })
+                    postAnyStudentApi("purchase", orderData, auth)
+                      .then((res) => {
+                        toast.success("Payment Successfull")
+                        navigate(`/payment-success/:${res.data.data.content.data._id}`, { state: res.data.data.content.data._id })
+                      }).catch((err) => {
+
+                        toast.error("Purchase Failed")
+                      })
 
 
                   }}
 
-                  onError={(err) => {
 
-                    console.error("PayPal Checkout onError", err);
-                  }}
 
 
                 /></div>}

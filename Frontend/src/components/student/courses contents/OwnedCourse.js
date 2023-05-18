@@ -1,7 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState } from 'react'
-import { useSelector } from 'react-redux';
-import { useLocation } from 'react-router-dom';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { getAnyDataStudentAPI } from '../../../api/studentAPI';
 import HeaderLanding from '../layouts/HeaderLanding';
 import FooterLanding from '../layouts/FooterLanding';
@@ -13,13 +13,15 @@ import { BsFillChatLeftDotsFill } from 'react-icons/bs'
 import ChatModal from '../chat/ChatModal';
 import Reviews from '../Reviews/Reviews';
 import RatingModal from '../Reviews/RatingModal';
+import { unsuscribeStudentData, unsuscribeStudentToken } from '../../../store/store';
+import { googleLogout } from '@react-oauth/google';
 
 
 function OwnedCourse() {
     const [course, setCourse] = useState()
     const [students, setStudents] = useState()
     const [chat, setChat] = useState(false)
-    const [toggleReview , setReviewToggle] = useState(false)
+    const [toggleReview, setReviewToggle] = useState(false)
 
     const [active, setActive] = useState(true)
     const [menuID, setNav] = useState("overview")
@@ -28,13 +30,24 @@ function OwnedCourse() {
     const Instructor = useSelector((state) => state.studentData);
     const search = useSelector((state) => state.studentSearch);
     const location = useLocation();
+    const navigate = useNavigate()
+    const dispatch =useDispatch()
+
     useEffect(() => {
         getAnyDataStudentAPI(`get-course?course=${location.state}`, auth)
             .then((res) => {
                 setCourse(res.data.data.content.data)
 
             }).catch((err) => {
-                console.log(err)
+                if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                    localStorage.removeItem("StudentToken");
+                    dispatch(unsuscribeStudentToken());
+                    localStorage.removeItem("StudentData");
+
+                    dispatch(unsuscribeStudentData());
+                    navigate("/");
+                    googleLogout();
+                }
             })
 
         getAnyDataStudentAPI(`get-count?course=${location.state}`, auth)
@@ -42,7 +55,15 @@ function OwnedCourse() {
                 setStudents(res.data.data.content.data.length)
 
             }).catch((err) => {
-                console.log(err)
+                if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+                    localStorage.removeItem("StudentToken");
+                    dispatch(unsuscribeStudentToken());
+                    localStorage.removeItem("StudentData");
+
+                    dispatch(unsuscribeStudentData());
+                    navigate("/");
+                    googleLogout();
+                }
             })
 
 
@@ -161,7 +182,7 @@ function OwnedCourse() {
                             </div>
                         </>}
                         {menuID === "review" && <>
-                            <Reviews review={toggleReview} course={course?._id} open={()=>setReviewToggle(!toggleReview)}/>
+                            <Reviews review={toggleReview} course={course?._id} open={() => setReviewToggle(!toggleReview)} />
                         </>}
                     </div>
 
@@ -169,7 +190,7 @@ function OwnedCourse() {
                 </div>
             </div>
             {chat && <ChatModal course={course?.instructor} close={() => setChat(!chat)} />}
-            {toggleReview && <RatingModal course={course?._id} close={()=>setReviewToggle(!toggleReview)} />}
+            {toggleReview && <RatingModal course={course?._id} close={() => setReviewToggle(!toggleReview)} />}
             <FooterLanding />
         </>
     )

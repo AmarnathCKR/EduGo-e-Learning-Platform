@@ -3,7 +3,10 @@ import React, { useEffect, useState } from 'react'
 import RatingStars1 from './RatingStars1'
 import { AiOutlineEdit } from 'react-icons/ai'
 import { getAnyDataStudentAPI } from '../../../api/studentAPI'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import { unsuscribeStudentData, unsuscribeStudentToken } from '../../../store/store'
+import { googleLogout } from '@react-oauth/google'
 
 
 const Reviews = (props) => {
@@ -18,7 +21,15 @@ const Reviews = (props) => {
       getAnyDataStudentAPI(`get-my-review?reviewId=${props?.course}`, auth).then((result) => {
         setOwn(result.data)
       }).catch((err) => {
-        console.log(err)
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
+
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+      }
         setOwn()
       })
     }
@@ -29,20 +40,38 @@ const Reviews = (props) => {
         const value = res.data.reduce((total, currentReview) => total + currentReview.rating, 0) / res.data.length;
         setAvg(value)
       }).catch((err) => {
-        console.log(err)
+        if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+          localStorage.removeItem("StudentToken");
+          dispatch(unsuscribeStudentToken());
+          localStorage.removeItem("StudentData");
+
+          dispatch(unsuscribeStudentData());
+          navigate("/");
+          googleLogout();
+      }
         setReview()
         setAvg(null)
       })
 
   }, [props?.review, trigger])
 
+  const navigate = useNavigate()
+  const dispatch = useDispatch()
+
   const handleDelete = () => {
     getAnyDataStudentAPI(`delete-review?reviewId=${own?._id}`, auth).then((res) => {
 
       setTrigger(!trigger)
     }).catch((err) => {
-      console.log(err)
+      if (err.response.data.data.errors[0].code === "USER_BLOCKED") {
+        localStorage.removeItem("StudentToken");
+        dispatch(unsuscribeStudentToken());
+        localStorage.removeItem("StudentData");
 
+        dispatch(unsuscribeStudentData());
+        navigate("/");
+        googleLogout();
+    }
       setTrigger(!trigger)
     })
   }
