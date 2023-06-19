@@ -81,39 +81,40 @@ exports.updateInstructorCourse = async (req, res) => {
     price,
     video,
   } = req.body;
+  console.log(req.params)
   console.log(req.body)
 
-  Instructor.findOne({ _id: id }).then(async (user) => {
-    Course({
-      name: name,
-      headline: headline,
-      description: description,
-      image: image,
-      status: "pending",
-      field: field,
-      price: price,
-      experience: experience,
-      total: total,
-      topics: topics,
-      video: video,
-      instructor: user._id,
-    }).save();
+  // Instructor.findOne({ _id: id }).then(async (user) => {
+  //   Course({
+  //     name: name,
+  //     headline: headline,
+  //     description: description,
+  //     image: image,
+  //     status: "pending",
+  //     field: field,
+  //     price: price,
+  //     experience: experience,
+  //     total: total,
+  //     topics: topics,
+  //     video: video,
+  //     instructor: user._id,
+  //   }).save();
 
-    const courseData = await Course.find({
-      instructor: user._id,
-    });
+  //   const courseData = await Course.find({
+  //     instructor: user._id,
+  //   });
 
-    const success = {
-      status: true,
-      content: {
-        data: courseData,
-      },
-    };
-    res.status(200).send({ data: success });
-  }).catch((err)=>{
-    console.log("error happenned while course creation")
-    console.log(err)
-  })
+  //   const success = {
+  //     status: true,
+  //     content: {
+  //       data: courseData,
+  //     },
+  //   };
+  //   res.status(200).send({ data: success });
+  // }).catch((err)=>{
+  //   console.log("error happenned while course creation")
+  //   console.log(err)
+  // })
 };
 
 exports.fetchInstructorCourse = async (req, res) => {
