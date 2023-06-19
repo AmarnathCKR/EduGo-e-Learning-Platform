@@ -8,7 +8,7 @@ import {
   ref,
   uploadBytesResumable,
   getDownloadURL,
-  
+
 } from "firebase/storage";
 
 
@@ -111,7 +111,8 @@ function CourseForm(props) {
       !course.field ||
       !course.experience ||
       !course.image ||
-      !course.imageRaw
+      !course.imageRaw ||
+      !course.video
 
     ) {
       setError("Please fill all the fields required");
@@ -165,7 +166,7 @@ function CourseForm(props) {
             .catch((err) => {
               setLoading(false);
               if (!err?.response?.data?.data?.errors[0]?.message) {
-                
+
                 seterrorInput(err?.response?.data?.data?.errors);
               }
               if (err?.response?.data?.data?.errors[0]?.message) {
@@ -188,7 +189,7 @@ function CourseForm(props) {
 
       } catch (error) {
         setLoading(false);
-        
+
       }
     }
   };
@@ -255,16 +256,20 @@ function CourseForm(props) {
 
           setTopics(newTopics);
         },
-        
+        (error) => {
+          console.log(error)
+        },
         async () => {
           const url = await getDownloadURL(uploadTask.snapshot.ref);
-          
+          console.log("file upaloaded")
+          console.log(url);
 
           const newTopics = [...topics];
           newTopics[index].video = url;
           setTopics(newTopics);
         }
       );
+
     }
 
 
@@ -283,25 +288,24 @@ function CourseForm(props) {
         "state_changed",
         async (snapshot) => {
           // Handle progress
-          const progresss =
-            (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-            
-
+          const progresss = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
+          console.log(progresss)
+        }, (error) => {
+          console.log(error)
         },
-        
-        async () => {
-          const url = await getDownloadURL(uploadTask.snapshot.ref);
-          
 
+        async () => {
+          console.log("file upaloaded")
+          const url = await getDownloadURL(uploadTask.snapshot.ref);
+          console.log(url);
           setcourse((state) => ({ ...state, video: url }))
         }
       );
+
     }
 
 
   };
-
-
 
   const topic = topics.map((topic, index) => (
     <div
@@ -395,7 +399,7 @@ function CourseForm(props) {
             setTopics(courseData.topics);
             setEffect(true)
           })
-          
+
 
       }
     }

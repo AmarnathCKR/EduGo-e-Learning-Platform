@@ -63,7 +63,7 @@ exports.updateProfile = async (req, res) => {
         };
         res.status(200).send({ data: success });
       })
-      
+
   });
 };
 
@@ -84,37 +84,37 @@ exports.updateInstructorCourse = async (req, res) => {
   console.log(req.params)
   console.log(req.body)
 
-  // Instructor.findOne({ _id: id }).then(async (user) => {
-  //   Course({
-  //     name: name,
-  //     headline: headline,
-  //     description: description,
-  //     image: image,
-  //     status: "pending",
-  //     field: field,
-  //     price: price,
-  //     experience: experience,
-  //     total: total,
-  //     topics: topics,
-  //     video: video,
-  //     instructor: user._id,
-  //   }).save();
+  Instructor.findOne({ _id: id }).then(async (user) => {
+    Course({
+      name: name,
+      headline: headline,
+      description: description,
+      image: image,
+      status: "pending",
+      field: field,
+      price: price,
+      experience: experience,
+      total: total,
+      topics: topics,
+      video: video,
+      instructor: user._id,
+    }).save();
 
-  //   const courseData = await Course.find({
-  //     instructor: user._id,
-  //   });
+    const courseData = await Course.find({
+      instructor: user._id,
+    });
 
-  //   const success = {
-  //     status: true,
-  //     content: {
-  //       data: courseData,
-  //     },
-  //   };
-  //   res.status(200).send({ data: success });
-  // }).catch((err)=>{
-  //   console.log("error happenned while course creation")
-  //   console.log(err)
-  // })
+    const success = {
+      status: true,
+      content: {
+        data: courseData,
+      },
+    };
+    res.status(200).send({ data: success });
+  }).catch((err) => {
+    console.log("error happenned while course creation")
+    console.log(err)
+  })
 };
 
 exports.fetchInstructorCourse = async (req, res) => {
@@ -200,7 +200,7 @@ exports.findCourseByID = async (req, res) => {
 };
 
 exports.ediInstructorCourse = async (req, res) => {
-  
+
   const { id } = req.params;
   const {
     name,
@@ -247,7 +247,7 @@ exports.ediInstructorCourse = async (req, res) => {
 
 
 exports.generateOTP = async (req, res) => {
-  const auth =process.env.VIDEO_API;
+  const auth = process.env.VIDEO_API;
 
   const { videoId } = req.query;
   var options = {
@@ -264,29 +264,29 @@ exports.generateOTP = async (req, res) => {
   let result;
 
   await request(options, function (error, response, body) {
-    
-    
-    result =  response
-    
+
+
+    result = response
+
   });
 
-  res.json({result})
+  res.json({ result })
 }
 
-exports.setPayment = async (req,res)=>{
-  const { id} = req.params;
-  const data = await Instructor.findByIdAndUpdate({_id : id},{payment : req.body});
+exports.setPayment = async (req, res) => {
+  const { id } = req.params;
+  const data = await Instructor.findByIdAndUpdate({ _id: id }, { payment: req.body });
 
-  if(data){
-    res.status(200).json({data})
+  if (data) {
+    res.status(200).json({ data })
   }
-  
+
 }
 
-exports.getAllPayments = async (req,res) => {
-  const {courseId} =req.query;
-  
-  const orders = await Order .find({courseId : courseId}).populate("user")
-  
-  res.status(200).json({orders})
+exports.getAllPayments = async (req, res) => {
+  const { courseId } = req.query;
+
+  const orders = await Order.find({ courseId: courseId }).populate("user")
+
+  res.status(200).json({ orders })
 }
