@@ -81,6 +81,7 @@ exports.updateInstructorCourse = async (req, res) => {
     price,
     video,
   } = req.body;
+  console.log(req.body)
 
   Instructor.findOne({ _id: id }).then(async (user) => {
     Course({
@@ -109,7 +110,10 @@ exports.updateInstructorCourse = async (req, res) => {
       },
     };
     res.status(200).send({ data: success });
-  });
+  }).catch((err)=>{
+    console.log("error happenned while course creation")
+    console.log(err)
+  })
 };
 
 exports.fetchInstructorCourse = async (req, res) => {
@@ -128,6 +132,7 @@ exports.fetchInstructorCourse = async (req, res) => {
 exports.fetchInstructor = async (req, res) => {
   const { id } = req.params;
   const inData = await Instructor.findOne({ _id: id });
+  console.log(inData)
   const success = {
     status: true,
     content: {
