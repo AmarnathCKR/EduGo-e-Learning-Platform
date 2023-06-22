@@ -11,15 +11,15 @@ const instructorAuth = async (req, res, next) => {
         status: false,
         errors: [
           {
-            param: "access denied",
-            message: "Unautharized Access",
-            code: "No access",
+            param: "user blocked",
+            message: "User have been blocked",
+            code: "USER_BLOCKED",
           },
         ],
       };
       res.status(409).send({ data: emailError });
     } else {
-        const user = await Instructor.findOne({ _id: decoded._id });
+      const user = await Instructor.findOne({ _id: decoded._id });
       if (!user.status) {
         const emailError = {
           status: false,

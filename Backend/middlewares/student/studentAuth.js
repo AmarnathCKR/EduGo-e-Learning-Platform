@@ -11,9 +11,9 @@ const studentAuth = async (req, res, next) => {
         status: false,
         errors: [
           {
-            param: "access denied",
-            message: "Unautharized Access",
-            code: "No access",
+            param: "user blocked",
+            message: "User have been blocked",
+            code: "USER_BLOCKED",
           },
         ],
       };
